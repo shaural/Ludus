@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 const database = admin.database().ref('/users');
-
+const cors = require('cors')({origin: true});
 //needed for request parsing
 var bodyParser = require('body-parser');
 
@@ -12,7 +12,7 @@ var bodyParser = require('body-parser');
 exports.myEndpoint = functions.https.onRequest((request, response) => {
     return cors(request, response, () => {
          switch (request.method) {
-            case(POST):
+            case('POST'):
                 //parse JSON fields
                 var inputName = request.body.name
                 var hashedPassword = request.body.password
@@ -25,21 +25,21 @@ exports.myEndpoint = functions.https.onRequest((request, response) => {
                 //TODO: Validate data before making object
                 database.set({
                     inputName:{
-                        Name = inputName,
-                        password = hashedPassword,
-                        email = inputEmail,
-                        DOB = inputDob
+                        database:Name = inputName,
+                        database:password = hashedPassword,
+                        database:Email = inputEmail,
+                        database:DoB = inputDob
                     }
                 });
 
-                return res.status(200).json({
+                return response.status(200).json({
                     message: 'User created'
                 })
 
 
             default:
                 // unsupported method
-                return res.status(405).json({
+                return response.status(405).json({
                     message: 'Method not allowed!'
                 });
 
