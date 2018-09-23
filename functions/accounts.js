@@ -1,4 +1,3 @@
-```js
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -47,5 +46,5 @@ exports.myEndpoint = functions.https.onRequest((request, response) => {
 
          }
         }
-    }
-`js;
+    )},
+);
