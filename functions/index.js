@@ -1,5 +1,5 @@
 const functions = require('firebase-functions');
-
+exports.accounts = require('./myEndpoint').myEndpoint;
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
