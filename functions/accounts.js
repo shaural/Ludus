@@ -1,7 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
-const database = admin.database().ref('/users');
+const database = admin.database().ref('/Users');
 const cors = require('cors')({origin: true});
 
 exports.myEndpoint = functions.https.onRequest((request, response) => {
@@ -14,31 +14,50 @@ exports.myEndpoint = functions.https.onRequest((request, response) => {
                 email,
                 dob
                 } = request.body
-
-
-                //console.log(inputName, hashedPassword, inputEmail, inputDob)
-
-                //TODO: Validate data before making object
+                //basic validation tests
+                if(email.toString().includes('@') == false){
+                    return response.status(400).json({
+                        message: 'Invalid email, please try again'
+                    })
+                }
+                else if(password.toString().length == 0){
+                    return response.status(400).json({
+                        message: 'Empty passwords are not allowed, please try again'
+                    })
+                }
+                else if(password.toString().length < 10){
+                    return response.status(400).json({
+                        message: 'Minimum password length: 10 characters, please try again'
+                    })
+                }
+                else if(name.toString().length == 0){
+                    return response.status(400).json({
+                        message: 'You may not have an empty name'
+                    })
+                }
+                //this will be obselete with HTML forms
+                // placeholder for testing purposes
+                else if(dob.toString().length == 0){
+                    return response.status(400).json({
+                        message: 'Please enter your age'
+                    })
+                }
+                else{
                 database.set({
-                    inputName:name,
-                    hashedPassword:password,
-                    inputEmail:email,
-                    inputDob:dob
+                    'Name':name,
+                    'Password':password,
+                    'Email':email,
+                    'DoB':dob
                 });
-
                 return response.status(200).json({
                     message: 'User created'
                 })
-
-
+            }
             default:
                 // unsupported method
                 return response.status(405).json({
                     message: 'Method not allowed!'
                 });
-
-
          }
-        
         });
     });
