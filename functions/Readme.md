@@ -23,7 +23,7 @@ admin.initializeApp();
 const database = admin.database().ref('/users');
 
 // add your endpoint
-exports.myEndpoint = functions.https.onReques((request, response) => {
+exports.myEndpoint = functions.https.onRequest((request, response) => {
     return cors(request, response, () => {
         // handle different methods as required by the endpoint (you don't need all of these, this is an example)
         switch (request.method) {
