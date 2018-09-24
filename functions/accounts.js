@@ -4,7 +4,7 @@ admin.initializeApp();
 const database = admin.database().ref('/Users');
 const cors = require('cors')({origin: true});
 
-exports.accountCreate = functions.https.onRequest((request, response) => {
+exports.accounts = functions.https.onRequest((request, response) => {
     return cors(request, response, () => {
         switch (request.method) {
             case('POST'):
