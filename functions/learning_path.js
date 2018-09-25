@@ -18,17 +18,21 @@ exports.create_learning_path = functions.https.onRequest((request, response) => 
         switch (request.method) {
             case('POST'):
                 const {
-                    ID,
-                    Topic,
-                    Name,
-                    Owner,
+                    lpid,
+                    topic,
+                    name,
+                    owner,
                     Class_List = null,
                     Students_Enrolled = null,
                     Teachers_who_recommend = null
 
                 } = request.body
             }
-            if(validate_input(ID,Topic,Name,Owner) == false){
+            console.log("Body " + request.body)
+            console.log(request.headers)
+            // console.log(name, owner)
+            console.log(lpid, name, Owner)
+            if(validate_input(lpid,topic,name,owner) == false){
                 return response.status(400).json({
                     message: 'Something went wrong, undefined data was passed in!'
                 })
@@ -51,8 +55,8 @@ exports.create_learning_path = functions.https.onRequest((request, response) => 
             const database = admin.database().ref('/Users/' + user_id +'/' + teacher + '/' + learningPaths);
             
                 database.set({
-                        'ID':ID,
-                        'Topic': Topic,
+                        'ID':lpid,
+                        'Topic': topic,
                         'Name': name,
                         'Owner': owner,
                         'Class_List': null,
