@@ -1,6 +1,5 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
 const cors = require('cors')({origin: true});
 
 function validate_input(id,topic, name,owner ){
@@ -13,7 +12,7 @@ function validate_input(id,topic, name,owner ){
     return true;
 }
 
-exports.accounts = functions.https.onRequest((request, response) => {
+exports.create_learning_path = functions.https.onRequest((request, response) => {
 
     return cors(request, response, () => {
         switch (request.method) {

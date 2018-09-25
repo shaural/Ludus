@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 exports.accounts = require('./accounts').accounts;
-exports.create_learning_path = require('./learning_paths').reate_learning_path;
+exports.create_learning_path = require('./learning_path').create_learning_path;
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
