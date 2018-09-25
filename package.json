@@ -1,0 +1,34 @@
+{
+  "name": "ludus",
+  "version": "0.0.1",
+  "description": "Learning and Teaching community based web application focused on hobbies and passions.",
+  "scripts": {
+    "precommit": "lint-staged",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "lint-staged": {
+    "frontend/src/**/*.{js,jsx,json,css}": [
+      "prettier --single-quote --write",
+      "git add"
+    ],
+    "functions/src/**/*.{js,json}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShauralP/Ludus.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShauralP/Ludus/issues"
+  },
+  "homepage": "https://github.com/ShauralP/Ludus#readme",
+  "devDependencies": {
+    "husky": "^1.0.0-rc.15",
+    "lint-staged": "^7.3.0",
+    "prettier": "^1.14.3"
+  }
+}
