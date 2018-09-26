@@ -1,21 +1,23 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Class from 'class.jsx';
+
+//Need some array, to store ClassID's fetched from the database using the userID
+
+state = {
+
+}
 
 class Classlist extends Component {
   render() {
+    fetchClassIDs(userID)
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Boi</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      insanity
     );
+  }
+
+  fetchClassIDs(userID) {
+    //Fetch ClassIDs using UserID
   }
 }
 
-export default App;
+export default Classlist;
