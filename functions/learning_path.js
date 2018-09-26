@@ -4,17 +4,17 @@ const cors = require('cors')({origin: true});
 
 function validate_input(topic, name,owner ){
     if(topic === undefined || name === undefined || owner === undefined){
-        console.log("undefined data")
+        // console.log("undefined data")
         return false;
     }
-    else if(topic.toString().length == 0 || name.toString().length == 0 || owner.toString().length == 0){
-         console.log("zero-length string")
+    else if(!topic.toString().length && !name.toString().length && !owner.toString().length){
+        //  console.log("zero-length string")
         return false;
     }
     return true;
 }
 
-exports.create_learning_path = functions.https.onRequest((request, response) => {
+exports.learning_path = functions.https.onRequest((request, response) => {
     return cors(request, response, () => {
         switch (request.method) {
             case('POST'):
@@ -37,8 +37,8 @@ exports.create_learning_path = functions.https.onRequest((request, response) => 
                     Teachers_who_recommend = null
 
                 } = request.body
-                console.log(lpname, topic,owner)
-                if(validate_input(topic,lpname,owner) == false){
+                // console.log(lpname, topic,owner)
+                if(!validate_input(topic,lpname,owner)){
                     return response.status(400).json({
                         message: 'Something went wrong, undefined data was passed in!'
                     })
@@ -68,9 +68,11 @@ exports.create_learning_path = functions.https.onRequest((request, response) => 
                         'St_Enrolled': null,
                         'T_recommend': null
                 })
+
                 return response.status(200).json({
                     message: 'Created a new learning path!'
                 })
             }
+
             })
         })
