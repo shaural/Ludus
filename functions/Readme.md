@@ -17,8 +17,7 @@ const app = require('express')();
 app.use(require('cors')({origin: true}));
 
 // set up google admin API
-const admin = require('firebase-admin');
-admin.initializeApp();
+const admin = require('./utils').firebaseAdmin;
 
 // set up database
 // change the ref to the appropriate database key
