@@ -23,15 +23,6 @@ exports.learning_path = functions.https.onRequest((request, response) => {
                     topic,
                     lpname,
                     owner,
-
-                    //NOTE: URL will be hardcoded for testing purposes, change the variable
-                    //as needed
-                    //in production code, this part will be called by the frontend page
-                    //which then will pass in our actual URL
-                    url = "https://ludus.com/users/12313122/teacher/testteacher",
-
-                    //for now, these parts will be null until a class gets added
-                    //to a learning path
                     ClassList = null,
                     StudentsEnrolled = null,
                     Teachers_who_recommend = null
@@ -44,29 +35,14 @@ exports.learning_path = functions.https.onRequest((request, response) => {
                     })
                 }
 
-            //parse url to find users id and teacher
-            //this part will be unused, for now
-            let url_tokens = url.split('/')
-            let user_id = null;
-            let teacher = null;
-                for(var i = 0; i < url_tokens.length; i++){
-                    if(url_tokens[i] == 'users'){
-                        user_id = url_tokens[i+1];
-                    }
-                    else if(url_tokens[i] == 'teacher'){
-                        teacher = url_tokens[i+1];
-                        break;
-                    }
-                }
-                
                 const database = admin.database().ref('/Learning_Paths');
                 database.set({
                         'Topic': topic,
                         'Name': lpname,
                         'Owner': owner,
-                        'Class_List': null,
-                        'St_Enrolled': null,
-                        'T_recommend': null
+                        'Class_List': " ",
+                        'St_Enrolled': " ",
+                        'T_recommend': " "
                 })
 
                 return response.status(200).json({
