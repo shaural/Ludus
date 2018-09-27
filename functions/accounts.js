@@ -1,5 +1,4 @@
-const admin = require('firebase-admin');
-admin.initializeApp();
+const admin = require('./utils').firebaseAdmin;
 
 const database = admin.database().ref('/Users');
 
