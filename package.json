@@ -11,7 +11,7 @@
       "prettier --single-quote --write",
       "git add"
     ],
-    "functions/src/**/*.{js,json}": [
+    "functions/**/*.{js,json}": [
       "prettier --single-quote --write",
       "git add"
     ]
