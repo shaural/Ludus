@@ -79,4 +79,48 @@ app.post('/:user_id/teacher', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+app.post('/:user_id/teacher/learningPath', async (request, response) => {
+  // TODO: verify that user_id is valid
+  const validate_input = (topic, name, owner) =>
+    topic &&
+    topic.toString().length &&
+    (name && name.toString().length) &&
+    (owner && owner.toString().length);
+
+  const {
+    topic,
+    lpname,
+    ClassList = null,
+    StudentsEnrolled = null,
+    Teachers_who_recommend = null
+  } = request.body;
+  // console.log(lpname, topic,owner)
+  if (!validate_input(topic, lpname, owner)) {
+    return response.status(400).json({
+      message: 'Something went wrong, undefined data was passed in!'
+    });
+  }
+
+  const database = admin.database().ref('/Learning_Paths');
+  let resp = {};
+  await database
+    .push({
+      Topic: topic,
+      Name: lpname,
+      Owner: request.params.user_id,
+      Class_List: [],
+      St_Enrolled: [],
+      T_recommend: []
+    })
+    .once('value')
+    .then(snapshot => {
+      resp = {
+        id: snapshot.key,
+        learning_path: { ...snapshot.val() }
+      };
+    });
+
+  return response.status(200).json(resp);
+});
+
 exports.route = app;
