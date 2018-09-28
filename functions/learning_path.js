@@ -14,20 +14,24 @@ app.post('/:lp_id/class', async (request, response) => {
 
   // TODO: can we inherit owner from learningPath?
   const { name, content_type, owner, tags } = request.body;
-  await db
-    .push({
-      Name: name,
-      Owner: owner,
-      Content_type: content_type || [],
-      Tags: tags || []
-    })
-    .once('value')
-    .then(snapshot => {
-      resp = {
-        id: snapshot.key,
-        class: { ...snapshot.val() }
-      };
-    });
+  try {
+    await db
+      .push({
+        Name: name,
+        Owner: owner,
+        Content_type: content_type || [],
+        Tags: tags || []
+      })
+      .once('value')
+      .then(snapshot => {
+        resp = {
+          id: snapshot.key,
+          class: { ...snapshot.val() }
+        };
+      });
+  } catch (e) {
+    return response.status(400).json({ message: 'malformed request' });
+  }
   return response.status(200).json(resp);
 });
 
