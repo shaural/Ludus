@@ -1,5 +1,5 @@
 const functions = require('firebase-functions');
-exports.accounts = functions.https.onRequest(require('./accounts').route);
+exports.users = functions.https.onRequest(require('./users').route);
 exports.learningPath = functions.https.onRequest(
   require('./learning_path').route
 );
