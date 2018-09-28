@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import 'react-bootstrap';
-class App extends Component {
+import ReactDOM from 'react-dom';
+import {
+  FormGroup,
+  ControlLabel,
+  HelpBlock,
+  FormControl
+} from 'react-bootstrap';
+
+class Login extends Component {
   constructor(props, context) {
     super(props, context);
     this.handleChange = this.handleChange.bind(this);
@@ -53,5 +60,5 @@ class App extends Component {
     );
   }
 }
-render(<FormExample />);
 export default App;
+ReactDOM.render(<Login />);
