@@ -1,12 +1,12 @@
 const admin = require('./utils').firebaseAdmin;
 
-const database = admin.database().ref('/Users');
-
 const app = require('express')();
 
 app.use(require('cors')({ origin: true }));
 
-app.post('/', (request, response) => {
+app.post('/', async (request, response) => {
+  const db = admin.database().ref('/Users');
+
   const { name, password, email, dob } = request.body;
 
   //basic validation tests
@@ -34,17 +34,49 @@ app.post('/', (request, response) => {
       message: 'Please enter your age'
     });
   } else {
-    database.set({
-      Name: name,
-      Password: password,
-      Email: email,
-      DoB: dob
-    });
+    let resp = {};
+    await db
+      .push({
+        Name: name,
+        Password: password,
+        Email: email,
+        DoB: dob
+      })
+      .once('value')
+      .then(snapshot => {
+        resp = {
+          id: snapshot.key,
+          user: { ...snapshot.val() }
+        };
+      });
 
-    return response.status(200).json({
-      message: 'User created'
-    });
+    return response.status(200).json(resp);
   }
+});
+
+// https://example.com/api/accounts/12345/teacher
+app.post('/:user_id/teacher', async (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const { bio } = request.body;
+
+  let resp = {};
+  await db
+    .push({
+      Bio: bio || ''
+    })
+    .once('value')
+    .then(snapshot => {
+      resp = {
+        id: request.params.user_id,
+        teacher: { ...snapshot.val() }
+      };
+    });
+  return response.status(200).json(resp);
 });
 
 exports.route = app;
