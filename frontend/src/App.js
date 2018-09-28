@@ -1,35 +1,11 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import ReactDOM from 'react-dom';
-import {
-  FormGroup,
-  ControlLabel,
-  HelpBlock,
-  FormControl
-} from 'react-bootstrap';
 
-class Login extends Component {
-  constructor(props, context) {
-    super(props, context);
-    this.handleChange = this.handleChange.bind(this);
+// import custom component
+import { Login } from './login';
 
-    this.state = {
-      value: ''
-    };
-  }
-
-  getValidationState() {
-    const isEmpty = this.state.value.length;
-    if (isEmpty == 0) {
-      return 'bad data';
-    }
-  }
-
-  handleChange(e) {
-    this.setState({ value: e.target.value });
-  }
-
+class App extends Component {
   render() {
     return (
       <div className="App">
@@ -40,25 +16,11 @@ class Login extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <form>
-          <FormGroup
-            name="Enter name"
-            validationState={this.getValidationState()}
-          >
-            <ControlLabel>Working example with validation</ControlLabel>
-            <FormControl
-              type="text"
-              value={this.state.value}
-              placeholder="Enter text"
-              onChange={this.handleChange}
-            />
-            <FormControl.Feedback />
-            <HelpBlock>Validation is based on string length.</HelpBlock>
-          </FormGroup>
-        </form>
+
+        {/* This is how you render a custom component */}
+        <Login />
       </div>
     );
   }
 }
 export default App;
-ReactDOM.render(<Login />);
