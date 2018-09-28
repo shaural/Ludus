@@ -8,12 +8,11 @@ app.post('/:lp_id/class', async (request, response) => {
     .database()
     .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
   if (!db)
-    return response
-      .status(404)
-      .json({
-        message: `learning path with id ${request.params.lp_id} not found`
-      });
+    return response.status(404).json({
+      message: `learning path with id ${request.params.lp_id} not found`
+    });
 
+  // TODO: can we inherit owner from learningPath?
   const { name, content_type, owner, tags } = request.body;
   await db
     .push({

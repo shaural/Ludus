@@ -81,21 +81,18 @@ app.post('/:user_id/teacher', async (request, response) => {
 
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
   // TODO: verify that user_id is valid
-  const validate_input = (topic, name, owner) =>
-    topic &&
-    topic.toString().length &&
-    (name && name.toString().length) &&
-    (owner && owner.toString().length);
+  // const validate_input = (topic, name) =>
+  //   (topic && topic.toString().length) &&
+  //   (name && name.toString().length);
 
   const {
     topic,
-    lpname,
+    name,
     ClassList = null,
     StudentsEnrolled = null,
     Teachers_who_recommend = null
   } = request.body;
-  // console.log(lpname, topic,owner)
-  if (!validate_input(topic, lpname, owner)) {
+  if (!(topic && topic.toString().length && (name && name.toString().length))) {
     return response.status(400).json({
       message: 'Something went wrong, undefined data was passed in!'
     });
@@ -106,7 +103,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
   await database
     .push({
       Topic: topic,
-      Name: lpname,
+      Name: name,
       Owner: request.params.user_id,
       Class_List: [],
       St_Enrolled: [],
