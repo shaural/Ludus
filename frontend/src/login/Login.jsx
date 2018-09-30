@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
+import 'aws-sdk/dist/aws-sdk';
 import {
   FormGroup,
   ControlLabel,
-  HelpBlock,
   Form,
   FormControl,
   Button
 } from 'react-bootstrap';
-
-var firebase = require('firebase-login');
-const bcrypt = require('bcrypt');
+// import { HttpRequest, HttpResponse } from 'aws-sdk/lib/core';
+require('firebase-auth');
+const firebase = require('firebase');
+// TODO: Uncomment this library to implement password hashing
+// const bcrypt = require('bcrypt');
 
 export class Login extends Component {
   constructor(props, context) {
     super(props, context);
     // this.passwordHandleChange = this.passwordHandleChange.bind(this);
     this.userNameHandleChange = this.userNameHandleChange.bind(this);
+    this.submitData = this.submitData.bind(this);
     this.state = {
       username: '',
       password: ''
@@ -23,26 +26,25 @@ export class Login extends Component {
   }
 
   submitData() {
-    bcrypt.hash(this.password, 10, function(err, hash) {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.username, this.password)
-        .catch(function(error) {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // ...
-        });
-    });
+    // let hash = bcrypt.hashSync(this.password, 10);
+    let uname = this.state.username;
+    let pwd = this.state.password;
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(uname, pwd)
+      .catch(function(error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        if (error) {
+          alert(errorCode);
+          alert(errorMessage);
+        }
+      });
   }
 
   userNameHandleChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
-  // passwordHandleChange(e){
-
-  //   this.setState({ value: e.target.value });
-  // }
-
   render() {
     return (
       <Form horizontal>

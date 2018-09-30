@@ -32,6 +32,10 @@
     "prettier": "^1.14.3"
   },
   "dependencies": {
+    "firebase": "^5.5.2",
+    "firebase-admin": "^6.0.0",
+    "firebase-auth": "^0.1.2",
+    "firebase-login": "^1.0.0",
     "react": "^16.5.2",
     "react-bootstrap": "^0.32.4",
     "react-dom": "^16.5.2"
