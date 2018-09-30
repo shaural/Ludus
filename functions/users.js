@@ -79,6 +79,32 @@ app.post('/:user_id/teacher', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+// shen282 Update Teacher API
+app.patch('/:user_id/teacher', async (request, response) => {
+  const database = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
+  if (!database)
+    return response.status(404).json({ 
+      message: 'user with id ${request.params.user_id} not found' 
+    });
+
+  const { bio, nickName } = request.body;
+
+  let resp = {};
+  await db
+    .push({
+      Bio: bio,
+      Nickname: nickName
+    })
+    .once('value')
+    .then(snapshot => {
+      resp = {
+        id: snapshot.key,
+        teacher: { ...snapshot.val() }
+      };
+    });
+  return response.status(200).json(resp);
+});
+
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
   // TODO: verify that user_id is valid
   // const validate_input = (topic, name) =>
