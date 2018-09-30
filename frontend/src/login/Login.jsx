@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import 'aws-sdk/dist/aws-sdk';
+import conf from '../conf.js';
+import 'firebase-auth';
+import firebase from 'firebase';
 import {
   FormGroup,
   ControlLabel,
@@ -7,16 +10,13 @@ import {
   FormControl,
   Button
 } from 'react-bootstrap';
-require('firebase-auth');
-const firebase = require('firebase');
+firebase.initializeApp(conf);
+
 // TODO: Uncomment this library to implement password hashing
 // const bcrypt = require('bcrypt');
-// admin.initializeApp();
-firebase.initializeApp();
 export class Login extends Component {
   constructor(props, context) {
     super(props, context);
-    // this.passwordHandleChange = this.passwordHandleChange.bind(this);
     this.userNameHandleChange = this.userNameHandleChange.bind(this);
     this.submitData = this.submitData.bind(this);
     this.state = {
@@ -39,6 +39,11 @@ export class Login extends Component {
           alert(errorCode);
           alert(errorMessage);
         }
+        // else{
+        //   return response.status(200).json{
+
+        //   }
+        // }
       });
   }
 
