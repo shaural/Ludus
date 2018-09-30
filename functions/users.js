@@ -129,7 +129,7 @@ app.post('/:user_id', async (request, response) => {
 //delete user
 app.delete('/:user_id', async (request, response) => {
   const userref = admin.database().ref(`/Users/${request.params.user_id}`);
-  if (!db)
+  if (!userref)
   return response
     .status(404)
     .json({ message: `user with id ${request.params.user_id} not found` });
