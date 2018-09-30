@@ -1,0 +1,11 @@
+.ClassInfo {
+  display: block;
+  width: 750px;
+  max-width: 750px;
+  height: 50px;
+  background-color: #fff;
+  float: left;
+}
+.Rating {
+  float: right;
+}
