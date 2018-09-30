@@ -97,10 +97,7 @@ app.get('/:user_id', (request, response) => {
 // Update user
 app.patch('/:user_id', async (request, response) => {
   const uid = request.params.user_id;
-  // when printing request.body i get all values, but all assigned values are undef?!
   const { name, password, email, dob } = request.body;
-  process.stdout.write("Reached here...." + name);
-  process.stdout.write("Reached here...." + request.body);
   const userRef = admin.database().ref(`/Users`).child(uid);
   let resp;
   var updates = {};
