@@ -7,12 +7,12 @@ import {
   FormControl,
   Button
 } from 'react-bootstrap';
-// import { HttpRequest, HttpResponse } from 'aws-sdk/lib/core';
 require('firebase-auth');
 const firebase = require('firebase');
 // TODO: Uncomment this library to implement password hashing
 // const bcrypt = require('bcrypt');
-
+// admin.initializeApp();
+firebase.initializeApp();
 export class Login extends Component {
   constructor(props, context) {
     super(props, context);
