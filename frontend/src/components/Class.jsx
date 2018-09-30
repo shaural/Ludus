@@ -1,26 +1,29 @@
 import React, { Component } from 'react';
+//import './Class.css';
 
 class Class extends Component {
-
-    render(ClassID) { 
-        this.fetchData(ClassID);
-        return (
-            <div>
-                
-                <button>Edit</button>
-            </div>
-        );
-    }
+  render() { 
+    return (
+      <container>
+        {this.fetchData(this.props.classID)}
+        <span className="highlight">
+          <button>Edit</button>
+          <text>{" "}</text>
+          <button>Remove</button>
+        </span>
+      </container>
+    );
+  }
 
     fetchData(ClassID) {
-        //API Call for info on the class from database
+        //TODO: API Call for info on the class from database
         return (
-            <div>
-                <span>{/* name */}</span>
-                <span>{/* lp */}</span>
-                <span>{/* ct */}</span>
-                <span>{/* rating */}</span>
-            </div>
+            <container>
+                <span>
+                  {/* name */}ClassName {/* lp */} LearningPath {/* ct */"\n"} ContentType {this.props.classID}
+                </span> 
+                <span>{/* rating */} Rating</span>
+            </container>
         );
     }
 
