@@ -79,20 +79,20 @@ app.post('/:user_id/teacher', async (request, response) => {
   return response.status(200).json(resp);
 });
 
-// NOTE: same URL as above, different method (GET vs POST)
+  // GET method (for all records)
 app.get('/', (request, response) => {
-  // TODO: implement GET method (for all records)
   const userRef = admin.database().ref("/Users");
-  // let userDate;
   userRef.once("value", function(snapshot) {
-    // userData = snapshot.val();
-    // response.body = userData;
-    // // response.send(userData);
     return response.status(200).json(snapshot.val());
   });
-
 });
-
+// GET method (for user with user_id)
+app.get('/:user_id', (request, response) => {
+  const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
+  userRef.once("value", function(snapshot) {
+    return response.status(200).json(snapshot.val());
+  });
+});
 
 // Update user
 app.post('/:user_id', async (request, response) => {
