@@ -36,7 +36,7 @@ export class Login extends Component {
         const errorCode = error.code;
         const errorMessage = error.message;
         if (error) {
-          alert(errorCode);
+          // alert(errorCode);
           alert(errorMessage);
         }
         // else{
