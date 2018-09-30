@@ -79,4 +79,71 @@ app.post('/:user_id/teacher', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+// NOTE: same URL as above, different method (GET vs POST)
+app.get('/', (request, response) => {
+  // TODO: implement GET method (for all records)
+  const userRef = admin.database().ref("/Users");
+
+  userRef.once("value", function(snapshot) {
+    const userData = snapshot.val();
+    response.body = userData;
+    // response.send(userData);
+    return response.status(200).json(response);
+  })
+
+  return response.status(501).json({
+    message: 'method not implemented'
+  });
+});
+
+
+// Update user
+app.post('/:user_id', async (request, response) => {
+  const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
+  userRef.once('value', function(snapshot) {
+    if(snapshot.val() != null) {
+      const { name, password, email, dob } = request.body;
+      userRef.update({
+        Name: name || snapshot.val().name,
+        Password: password || snapshot.val().password,
+        Email: email || snapshot.val().email,
+        DoB: dob || snapshot.val().dob
+      }).then(snapshot => {
+        resp = {
+          id: request.params.user_id,
+          user: { ...snapshot.val() }
+        };
+      });
+      return response.status(200).json(resp);
+    } else {
+      return response.status(400).json({
+        message: 'Error, could not updaate user'
+      });
+    }
+  });
+  
+
+  let resp = {};
+});
+
+//delete user
+app.delete('/:user_id', async (request, response) => {
+  const userref = admin.database().ref(`/Users/${request.params.user_id}`);
+  if (!db)
+  return response
+    .status(404)
+    .json({ message: `user with id ${request.params.user_id} not found` });
+  
+  //remove from db
+  userref.remove().then(function() {
+    return response.status(200).json(resp);
+  }).catch(function(error) {
+    console.log('Error deleting user:', error);
+    return response.status(400).json({
+      message: 'Error, could not delete user: ${request.params.user_id}'
+    });
+  })
+  
+});
+
 exports.route = app;
