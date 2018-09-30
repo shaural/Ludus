@@ -95,34 +95,35 @@ app.get('/:user_id', (request, response) => {
 });
 
 // Update user
-app.post('/:user_id', async (request, response) => {
-  const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
-  // userRef.once('value', function(snapshot) {
-  let resp = {};  
+app.patch('/:user_id', async (request, response) => {
+  const uid = request.params.user_id;
+  // when printing request.body i get all values, but all assigned values are undef?!
+  const { name, password, email, dob } = request.body;
+  process.stdout.write("Reached here...." + name);
+  process.stdout.write("Reached here...." + request.body);
+  const userRef = admin.database().ref(`/Users`).child(uid);
+  let resp;
+  var updates = {};
   if(userRef) {
-      const { name, password, email, dob } = request.body;
-      userRef.update({
-        // Name: name || snapshot.val().name,
-        // Password: password || snapshot.val().password,
-        // Email: email || snapshot.val().email,
-        // DoB: dob || snapshot.val().dob
-        Name: name,
-        Password: password,
-        Email: email,
-        DoB: dob
-      }).once('value').then(snapshot => {
-        resp = {
-          id: request.params.user_id,
-          user: { ...snapshot.val() }
-        };
+      if(name != undefined) {
+        updates['Name'] = name;
+      }
+      if(password != undefined) {
+        updates['/Password'] = password;
+      }
+      if(email != undefined) {
+        updates['/Email'] = email;
+      }
+      if(dob != undefined) {
+        updates['/DoB'] = dob;
+      }
+      userRef.update(updates);
+      userRef.once("value", function(snapshot) {
+        return response.status(200).json(snapshot.val());
       });
-      return response.status(200).json(resp);
     } else {
-      return response.status(400).json({
-        message: 'Error, could not update user'
-      });
+      return response.status(404).json({ message: `user with id ${request.params.user_id} not found` });
     }
-  // });
   
 });
 
