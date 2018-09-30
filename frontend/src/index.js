@@ -7,6 +7,11 @@ import ClasslistHeader from './components/class/ClasslistHeader';
 import Nav from './components/Nav';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<div><Nav /> <App /> <ClasslistHeader /> <Classlist /></div>, document.getElementById('root'));
+ReactDOM.render(
+	<div>
+		<Nav /> <App /> <ClasslistHeader /> <Classlist />
+	</div>,
+	document.getElementById('root')
+);
 
 registerServiceWorker();
