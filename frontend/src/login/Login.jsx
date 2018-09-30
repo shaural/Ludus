@@ -3,45 +3,76 @@ import {
   FormGroup,
   ControlLabel,
   HelpBlock,
-  FormControl
+  Form,
+  FormControl,
+  Button
 } from 'react-bootstrap';
+
+var firebase = require('firebase-login');
+const bcrypt = require('bcrypt');
 
 export class Login extends Component {
   constructor(props, context) {
     super(props, context);
-    this.handleChange = this.handleChange.bind(this);
-
+    // this.passwordHandleChange = this.passwordHandleChange.bind(this);
+    this.userNameHandleChange = this.userNameHandleChange.bind(this);
     this.state = {
-      value: ''
+      username: '',
+      password: ''
     };
   }
 
-  getValidationState() {
-    if (this.state.value.length <= 0) return 'bad data';
+  submitData() {
+    bcrypt.hash(this.password, 10, function(err, hash) {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.username, this.password)
+        .catch(function(error) {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ...
+        });
+    });
   }
 
-  handleChange(e) {
-    this.setState({ value: e.target.value });
+  userNameHandleChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
   }
+  // passwordHandleChange(e){
+
+  //   this.setState({ value: e.target.value });
+  // }
 
   render() {
     return (
-      <form>
-        <FormGroup
-          name="Enter name"
-          validationState={this.getValidationState()}
-        >
-          <ControlLabel>Working example with validation</ControlLabel>
+      <Form horizontal>
+        <FormGroup name="Enter name">
+          <ControlLabel>Username: </ControlLabel>
           <FormControl
             type="text"
+            name="username"
             value={this.state.value}
             placeholder="Enter text"
-            onChange={this.handleChange}
+            onChange={this.userNameHandleChange}
           />
-          <FormControl.Feedback />
-          <HelpBlock>Validation is based on string length.</HelpBlock>
         </FormGroup>
-      </form>
+
+        <FormGroup name="Enter password">
+          <ControlLabel>Password: </ControlLabel>
+          <FormControl
+            type="password"
+            name="password"
+            value={this.state.value}
+            placeholder="password"
+            onChange={this.userNameHandleChange}
+          />
+        </FormGroup>
+        <Button bsStyle="primary" onClick={this.submitData}>
+          Enter
+        </Button>
+        <FormControl.Feedback />
+        {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
+      </Form>
     );
   }
 }
