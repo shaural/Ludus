@@ -83,32 +83,34 @@ app.post('/:user_id/teacher', async (request, response) => {
 app.get('/', (request, response) => {
   // TODO: implement GET method (for all records)
   const userRef = admin.database().ref("/Users");
-
+  // let userDate;
   userRef.once("value", function(snapshot) {
-    const userData = snapshot.val();
-    response.body = userData;
-    // response.send(userData);
-    return response.status(200).json(response);
-  })
-
-  return response.status(501).json({
-    message: 'method not implemented'
+    // userData = snapshot.val();
+    // response.body = userData;
+    // // response.send(userData);
+    return response.status(200).json(snapshot.val());
   });
+
 });
 
 
 // Update user
 app.post('/:user_id', async (request, response) => {
   const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
-  userRef.once('value', function(snapshot) {
-    if(snapshot.val() != null) {
+  // userRef.once('value', function(snapshot) {
+  let resp = {};  
+  if(userRef) {
       const { name, password, email, dob } = request.body;
       userRef.update({
-        Name: name || snapshot.val().name,
-        Password: password || snapshot.val().password,
-        Email: email || snapshot.val().email,
-        DoB: dob || snapshot.val().dob
-      }).then(snapshot => {
+        // Name: name || snapshot.val().name,
+        // Password: password || snapshot.val().password,
+        // Email: email || snapshot.val().email,
+        // DoB: dob || snapshot.val().dob
+        Name: name,
+        Password: password,
+        Email: email,
+        DoB: dob
+      }).once('value').then(snapshot => {
         resp = {
           id: request.params.user_id,
           user: { ...snapshot.val() }
@@ -117,13 +119,11 @@ app.post('/:user_id', async (request, response) => {
       return response.status(200).json(resp);
     } else {
       return response.status(400).json({
-        message: 'Error, could not updaate user'
+        message: 'Error, could not update user'
       });
     }
-  });
+  // });
   
-
-  let resp = {};
 });
 
 //delete user
