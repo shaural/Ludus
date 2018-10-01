@@ -102,17 +102,17 @@ app.patch('/:user_id', async (request, response) => {
   let resp;
   var updates = {};
   if(userRef) {
-      if(name != undefined) {
+      if(name) {
         updates['Name'] = name;
       }
-      if(password != undefined) {
-        updates['/Password'] = password;
+      if(password) {
+        updates['Password'] = password;
       }
-      if(email != undefined) {
-        updates['/Email'] = email;
+      if(email) {
+        updates['Email'] = email;
       }
-      if(dob != undefined) {
-        updates['/DoB'] = dob;
+      if(dob) {
+        updates['DoB'] = dob;
       }
       userRef.update(updates);
       userRef.once("value", function(snapshot) {
