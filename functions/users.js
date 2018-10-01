@@ -148,8 +148,8 @@ app.delete('/:user_id', async (request, response) => {
         message: 'Error, could not delete user: ${request.params.user_id}'
       });
     });
-  });
-  
+});
+
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
   // TODO: verify that user_id is valid
   // const validate_input = (topic, name) =>
