@@ -140,7 +140,11 @@ app.delete('/:user_id', async (request, response) => {
   userref
     .remove()
     .then(function() {
-      return response.status(200).json({message: 'User with user_id:' + request.params.user_id + ' deleted.'});
+      return response
+        .status(200)
+        .json({
+          message: 'User with user_id:' + request.params.user_id + ' deleted.'
+        });
     })
     .catch(function(error) {
       console.log('Error deleting user:', error);
