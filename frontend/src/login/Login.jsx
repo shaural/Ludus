@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import 'aws-sdk/dist/aws-sdk';
 import conf from '../conf.js';
 import 'firebase-auth';
 import firebase from 'firebase';
