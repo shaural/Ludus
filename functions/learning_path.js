@@ -50,4 +50,20 @@ app.post('/', (request, response) => {
   });
 });
 
+app.post('/lp_id/class', (request, response) => {
+  const db = admin
+    .database()
+    .ref(`/Learning_Paths/${request.params.lp_id}/class`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: ` ${request.params.lp_id} does not have any classes` });
+  const classes = db.Class_List;
+  const out = [];
+  for (c of classes) {
+    out.push(c);
+  }
+  return response.status(200).json(out);
+});
+
 exports.route = app;
