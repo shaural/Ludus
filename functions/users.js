@@ -90,7 +90,7 @@ app.patch('/:user_id/teacher', async (request, response) => {
   const { bio, nickName } = request.body;
 
   //check for empty fields
-  if((bio.toString().length == 0) || (nickName.toString().length == 0)){
+  if((!bio.toString().length) || (!nickName.toString().length)){
      return response.status(400).json({
       message: 'Please enter information for both fields'
     });
