@@ -79,6 +79,26 @@ app.post('/:user_id/teacher', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+app.post('/:user_id/student', async (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not fount` });
+
+  let resp = {};
+  await db
+    .push({})
+    .once('value')
+    .then(snapshot => {
+      resp = {
+        id: request.params.user_id,
+        student: { ...snapshot.val() }
+      };
+    });
+  return response.status(200).json(resp);
+});
+
 // GET method (for all records)
 app.get('/', (request, response) => {
   const userRef = admin.database().ref('/Users');
