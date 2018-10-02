@@ -146,13 +146,11 @@ app.delete('/:user_id', async (request, response) => {
     })
     .catch(function(error) {
       console.log('Error deleting user:', error);
-      return response
-        .status(400)
-        .json({
-          message: `Error, Could not delete user with id ${
-            request.params.user_id
-          }`
-        });
+      return response.status(400).json({
+        message: `Error, Could not delete user with id ${
+          request.params.user_id
+        }`
+      });
     });
 });
 
