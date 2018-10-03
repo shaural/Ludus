@@ -35,7 +35,7 @@ app.post('/:lp_id/class', async (request, response) => {
   return response.status(200).json(resp);
 });
 
-app.get('/lp_id/class', (request, response) => {
+app.get('/:lp_id/class', (request, response) => {
   console.log('Ran new code');
   const db = admin
     .database()
@@ -45,12 +45,9 @@ app.get('/lp_id/class', (request, response) => {
       .status(404)
       .json({ message: ` ${request.params.lp_id} does not have any classes` });
   else {
-    const classes = db.Class_List;
-    const out = [];
-    for (c of classes) {
-      out.push(c);
-    }
-    return response.status(200).json(out);
+    db.once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
   }
 });
 
