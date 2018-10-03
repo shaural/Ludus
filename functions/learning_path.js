@@ -35,7 +35,8 @@ app.post('/:lp_id/class', async (request, response) => {
   return response.status(200).json(resp);
 });
 
-app.post('/lp_id/class', (request, response) => {
+app.get('/lp_id/class', (request, response) => {
+  console.log('Ran new code');
   const db = admin
     .database()
     .ref(`/Learning_Paths/${request.params.lp_id}/class`);
@@ -43,12 +44,14 @@ app.post('/lp_id/class', (request, response) => {
     return response
       .status(404)
       .json({ message: ` ${request.params.lp_id} does not have any classes` });
-  const classes = db.Class_List;
-  const out = [];
-  for (c of classes) {
-    out.push(c);
+  else {
+    const classes = db.Class_List;
+    const out = [];
+    for (c of classes) {
+      out.push(c);
+    }
+    return response.status(200).json(out);
   }
-  return response.status(200).json(out);
 });
 
 exports.route = app;
