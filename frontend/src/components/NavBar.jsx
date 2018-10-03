@@ -11,10 +11,16 @@ class NavBar extends Component {
           </Navbar.Brand>
         </Navbar.Header>
         {/* <Navbar.Collapse> */}
-          <Nav>
-            <NavItem eventKey={1} href="#"> Student Dash </NavItem>
-            <NavItem eventKey={2} href="#"> Teacher Dash </NavItem>
-          </Nav>
+        <Nav>
+          <NavItem eventKey={1} href="#">
+            {' '}
+            Student Dash{' '}
+          </NavItem>
+          <NavItem eventKey={2} href="#">
+            {' '}
+            Teacher Dash{' '}
+          </NavItem>
+        </Nav>
         {/* </Navbar.Collapse> */}
       </Navbar>
     );
