@@ -3,51 +3,36 @@ const admin = require('./utils').firebaseAdmin;
 const app = require('express')();
 app.use(require('cors')({ origin: true }));
 
-function validate_input(topic, name, owner) {
-  if (topic === undefined || name === undefined || owner === undefined) {
-    // console.log("undefined data")
-    return false;
-  } else if (
-    !topic.toString().length &&
-    !name.toString().length &&
-    !owner.toString().length
-  ) {
-    //  console.log("zero-length string")
-    return false;
-  }
-  return true;
-}
-
-app.post('/', (request, response) => {
-  const {
-    // lpid,
-    topic,
-    lpname,
-    owner,
-    ClassList = null,
-    StudentsEnrolled = null,
-    Teachers_who_recommend = null
-  } = request.body;
-  // console.log(lpname, topic,owner)
-  if (!validate_input(topic, lpname, owner)) {
-    return response.status(400).json({
-      message: 'Something went wrong, undefined data was passed in!'
+app.post('/:lp_id/class', async (request, response) => {
+  const db = admin
+    .database()
+    .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+  if (!db)
+    return response.status(404).json({
+      message: `learning path with id ${request.params.lp_id} not found`
     });
+
+  // TODO: can we inherit owner from learningPath?
+  const { name, content_type, owner, tags } = request.body;
+  try {
+    await db
+      .push({
+        Name: name,
+        Owner: owner,
+        Content_type: content_type || [],
+        Tags: tags || []
+      })
+      .once('value')
+      .then(snapshot => {
+        resp = {
+          id: snapshot.key,
+          class: { ...snapshot.val() }
+        };
+      });
+  } catch (e) {
+    return response.status(400).json({ message: 'malformed request' });
   }
-
-  const database = admin.database().ref('/Learning_Paths');
-  database.set({
-    Topic: topic,
-    Name: lpname,
-    Owner: owner,
-    Class_List: ' ',
-    St_Enrolled: ' ',
-    T_recommend: ' '
-  });
-
-  return response.status(200).json({
-    message: 'Created a new learning path!'
-  });
+  return response.status(200).json(resp);
 });
 
 app.post('/lp_id/class', (request, response) => {
