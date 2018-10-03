@@ -3,7 +3,7 @@ const admin = require('./utils').firebaseAdmin;
 const app = require('express')();
 app.use(require('cors')({ origin: true }));
 
-app.patch('/:classes/class_id', async (request, response) => {
+app.patch('/classes/:class_id', async (request, response) => {
   const db = admin.database().ref(`/classes/${request.params.class_id}`);
   if (!db)
     return response.status(404).json({
