@@ -167,36 +167,20 @@ app.delete('/:user_id', async (request, response) => {
 });
 
 // shen282 Update Teacher API
-app.patch('/:user_id/teacher', async (request, response) => {
-  const database = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
-  if (!database)
-    return response.status(404).json({ 
-      message: 'user with id ${request.params.user_id} not found' 
+app.patch('/:user_id/teacher', (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
+  if (!db)
+    return response.status(404).json({
+      message: 'user with id ${request.params.user_id} not found'
     });
 
   const { bio, nickName } = request.body;
+  let updates = {};
+  if (bio) updates['Bio'] = bio;
+  if (nickName) updates['Nickname'] = nickName;
 
-  //check for empty fields
-  if((!bio.toString().length) || (!nickName.toString().length)){
-     return response.status(400).json({
-      message: 'Please enter information for both fields'
-    });
-  }
-  
-  let resp = {};
-  await db
-    .push({
-      Bio: bio,
-      Nickname: nickName
-    })
-    .once('value')
-    .then(snapshot => {
-      resp = {
-        id: snapshot.key,
-        teacher: { ...snapshot.val() }
-      };
-    });
-  return response.status(200).json(resp);
+  db.update(updates);
+  return response.status(200);
 });
 
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
