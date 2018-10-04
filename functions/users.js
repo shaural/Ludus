@@ -166,6 +166,23 @@ app.delete('/:user_id', async (request, response) => {
     });
 });
 
+// shen282 Update Teacher API
+app.patch('/:user_id/teacher', (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
+  if (!db)
+    return response.status(404).json({
+      message: 'user with id ${request.params.user_id} not found'
+    });
+
+  const { bio, nickName } = request.body;
+  let updates = {};
+  if (bio) updates['Bio'] = bio;
+  if (nickName) updates['Nickname'] = nickName;
+
+  db.update(updates);
+  return response.status(200);
+});
+
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
   // TODO: verify that user_id is valid
   // const validate_input = (topic, name) =>
