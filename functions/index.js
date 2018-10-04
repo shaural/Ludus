@@ -3,6 +3,7 @@ exports.users = functions.https.onRequest(require('./users').route);
 exports.learningPath = functions.https.onRequest(
   require('./learning_path').route
 );
+exports.classes = functions.https.onRequest(require('./classes').route);
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
 //
