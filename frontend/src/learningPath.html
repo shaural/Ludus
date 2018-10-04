@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+
+    <title>Title</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.0/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser.js"></script>
+    <style type="text/css">
+        .btn {
+            padding: 5px;
+            border: 1px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #create {
+            position: absolute;
+            right: 5%;
+            top: 5%;
+        }
+
+        .courses {
+            position: absolute;
+            width: 100%;
+            top: 10%;
+            padding: 2%;
+            box-sizing: border-box;
+        }
+
+        .course {
+            position: relative;
+            display: inline-block;
+            width: 45%;
+            margin-right: 30%;
+            margin-left: 20%;
+            margin-bottom: 14%;
+            height: 35%;
+            padding: 3%;
+            box-sizing: border-box;
+            border: 1px solid black;
+        }
+
+        .name {
+            padding: 3%;
+            box-sizing: border-box;
+        }
+
+        .description {
+            padding: 3%;
+            box-sizing: border-box;
+        }
+
+        .name-wrapper {
+            position: absolute;
+            top: 5%;
+            left: 5%;
+            border: 1px solid black;
+            padding: 1%;
+        }
+
+        .name-wrapper span {
+            width: 150px;
+            display: inline-block;
+        }
+
+        .description-wrapper {
+            position: absolute;
+            width: 50%;
+            top: 28%;
+            border: 1px solid black;
+            left: 10%;
+            height: 200px;
+            padding: 3%;
+            box-sizing: border-box;
+            min-width: 500px;
+            min-height: 250px;
+        }
+
+        .description-wrapper textarea {
+            position: absolute;
+            height: 100px;
+            width: 250px;
+            top: 38px;
+            left: 190px;
+        }
+
+        .description-wrapper span {
+            position: absolute;
+            display: inline-block;
+            top: 38px;
+            width: 150px;
+        }
+
+        .circles {
+            position: absolute;
+            top: 70%;
+            left: 10%;
+        }
+
+        .circle {
+            position: relative;
+            border: 1px solid black;
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            line-height: 100px;
+            border-radius: 100px;
+            display: inline-block;
+            margin-right: 50px;
+            cursor: pointer;
+        }
+
+        .circle:before {
+            content: '';
+            position: absolute;
+            width: 50px;
+            left: 100%;
+            top: 50%;
+            height: 1px;
+            transform: translateY(-50%);
+            border: 1px solid black;
+            background: black;
+        }
+
+        .circle.active {
+            border: 1px solid green;
+            color: green;
+        }
+
+        .add-module-btn {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            line-height: 100px;
+            border-radius: 100px;
+            display: inline-block;
+            margin-right: 50px;
+            cursor: pointer;
+        }
+
+
+        .add-module-btn:after {
+            pointer-events: none;
+            content: '+';
+            font-size: 135px;
+            color: green;
+            position: absolute;
+            left: 50%;
+            top: 40%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        .description div {
+            cursor: pointer;;
+        }
+
+        .save-btn {
+            position: absolute;
+            bottom: 5%;
+            right: 5%;
+            padding: 5px 25px;
+        }
+
+        .edit-btn {
+            position: absolute;
+            bottom: 15%;
+            right: 5%;
+            padding: 5px 25px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="content"></div>
+
+    <script type="text/babel">
+    var courses = [
+        {
+            id: 1,
+            name: "LearningPath 1",
+            modules: [
+                {
+                    id: 1,
+                    name: 'Class 1',
+                    description: 'Insert class element here'
+                },
+                {
+                    id: 2,
+                    name: 'Class 2',
+                    description: 'Insert class 2 elemenet here'
+                }
+            ]
+        },
+        {
+            id: 2,
+            name: "LearningPath 2",
+            modules: [
+                {
+                    id: 1,
+                    name: 'Class 1',
+                    description: 'Insert class element here'
+                },
+                {
+                    id: 2,
+                    name: 'Class 2',
+                    description: 'Insert class element 2 here'
+                }
+            ]
+        }
+    ];
+
+    var CoursePreview = React.createClass({
+        render: function() {
+            const { name, modules, ind} = this.props;
+            var handleEditClick = this.props.handleEditClick;
+
+            return (
+                <div className='course'>
+                    <div className='name'>
+                        {name}
+                    </div>
+                    <div className='description'>
+                        {
+                            modules.map( (module, ind) =>
+                               <div key={ module.id } onClick={ () => alert(module.description)}> { module.name }</div>
+                            )
+                        }
+                    </div>
+                    <div className="btn edit-btn" onClick = { () => handleEditClick(ind)} >Edit</div>
+                </div>
+            );
+        }
+    });
+
+    var CoursesList = React.createClass({
+        render: function() {
+            var courses = this.props.courses;
+            var handleEditClick = this.props.handleEditClick;
+
+            return (
+                <div className='courses'>
+                    {
+                        courses.map( (course, ind) =>
+                            <CoursePreview
+                                key = { course.id }
+                                ind = { ind }
+                                name = { course.name }
+                                modules = { course.modules }
+                                handleEditClick = { handleEditClick }
+                            />
+                        )
+                    }
+                </div>
+            );
+        }
+    });
+
+
+    var Circle = React.createClass({
+        render: function() {
+            var name = this.props.name;
+            var handleModuleClick = this.props.handleModuleClick;
+            var ind = this.props.ind;
+            var selectedInd = this.props.selectedInd;
+
+            return (
+                <div
+                className={ "circle " + (selectedInd == ind ? 'active' : '')}
+                onClick={() => handleModuleClick(ind)}>{ name }
+                </div>
+                );
+        }
+    });
+
+    var CreateCourse = React.createClass({
+        getInitialState: function() {
+            return {
+                index: 0,
+                modules: [{
+                    id: 1,
+                    name: 'Class 1',
+                    description: 'Insert class element here'
+                }
+                ]
+            };
+        },
+
+        handleModuleClick: function(index) {
+            var modules = [...document.querySelectorAll('.circle')];
+            modules.map(module => module.classList.contains('active') && module.classList.remove('active'));
+            this.setState(Object.assign({}, this.state, { index }));
+
+            modules[index].classList.add('active');
+        },
+
+        handleAddModule: function() {
+            var newID = this.state.modules.length + 1;
+            var newModules = this.state.modules.slice();
+            newModules.push({ id:newID, name: `Class ${newID}`, description: '' });
+            this.setState( Object.assign({}, this.state, { modules: newModules }));
+        },
+
+        handleChangeDescription: function() {
+            var index = this.state.index;
+            var value = this._inputEl.value;
+            var modules = this.state.modules.slice();
+            modules[index].description = value;
+
+            this.setState( Object.assign({}, this.state, { modules}));
+        },
+
+        handleSave: function() {
+            var handleAddCourse = this.props.handleAddCourse;
+            var id = this.props.id;
+            var name = this._inputCname.value;
+            var course = { id, name, modules: this.state.modules};
+            handleAddCourse(course);
+        },
+
+        render: function() {
+            var modules = this.state.modules;
+            var index = this.state.index;
+            var description = modules[index].description;
+            var handleModuleClick = this.handleModuleClick;
+            var handleAddModule = this.handleAddModule;
+            var handleChangeDescription = this.handleChangeDescription;
+            var handleSave = this.handleSave;
+
+            return (
+                <div className="create-wrapper">
+                     <div className="name-wrapper">
+                         <span>Path name:</span>
+                         <input type="text" name="cname" ref={(node) => this._inputCname = node}/>
+                     </div>
+
+                    <div className="description-wrapper">
+                         <span>Class description:</span>
+                         <textarea value={description} ref={(node) => this._inputEl = node} onChange={handleChangeDescription}></textarea>
+                         <div className="save-btn btn" onClick={handleSave}>Save</div>
+                     </div>
+                     <div className="circles">
+                        {
+                            modules.map( (module, ind) =>
+                                <Circle
+                                    key = { module.id }
+                                    name = { module.name }
+                                    selectedInd = {index}
+                                    ind = {ind}
+                                    handleModuleClick = { handleModuleClick }
+                                />
+                            )
+                        }
+                         <div className="add-module-btn" onClick={ handleAddModule }></div>
+                     </div>
+                </div>
+            );
+        }
+    });
+
+    var EditCourse = React.createClass({
+        getInitialState: function() {
+            return {
+                index: 0,
+                course: Object.assign({}, this.props.course)
+            };
+        },
+
+        handleModuleClick: function(index) {
+            var modules = [...document.querySelectorAll('.circle')];
+            modules.map(module => module.classList.contains('active') && module.classList.remove('active'));
+            this.setState(Object.assign({}, this.state, { index }));
+
+            modules[index].classList.add('active');
+        },
+
+        handleAddModule: function() {
+            var newID = this.state.course.modules.length + 1;
+            var newModules = this.state.course.modules.slice();
+            newModules.push({ id:newID, name: `Class ${newID}`, description: '' });
+            var newState = Object.assign({}, this.state);
+            newState.course.modules = newModules;
+            this.setState(newState);
+        },
+
+        handleChangeDescription: function() {
+            var index = this.state.index;
+            var value = this._inputEl.value;
+            var modules = this.state.course.modules.slice();
+            modules[index].description = value;
+
+            this.setState( Object.assign({}, this.state, { modules}));
+        },
+
+        handleSave: function() {
+            this.props.handleEditCourse(this.state.course);
+        },
+
+        handleNameChange: function() {
+            var name = this._inputCname.value;
+            var newState = Object.assign({}, this.state);
+            newState.course.name = name;
+            this.setState(newState);
+        },
+
+        render: function() {
+            var modules = this.state.course.modules;
+            var index = this.state.index;
+            var description = modules[index].description;
+            var handleModuleClick = this.handleModuleClick;
+            var handleAddModule = this.handleAddModule;
+            var handleChangeDescription = this.handleChangeDescription;
+            var handleSave = this.handleSave;
+            var handleNameChange = this.handleNameChange;
+
+            return (
+                <div className="create-wrapper">
+                     <div className="name-wrapper">
+                         <span>Path name:</span>
+                         <input type="text" name="cname" value={this.state.course.name} onChange={ handleNameChange } ref={(node) => this._inputCname = node}/>
+                     </div>
+
+                    <div className="description-wrapper">
+                         <span>Class description:</span>
+                         <textarea value={description} ref={(node) => this._inputEl = node} onChange={handleChangeDescription}></textarea>
+                         <div className="save-btn btn" onClick={handleSave}>Save</div>
+                     </div>
+                     <div className="circles">
+                        {
+                            modules.map( (module, ind) =>
+                                <Circle
+                                    key = { module.id }
+                                    name = { module.name }
+                                    selectedInd = {index}
+                                    ind = {ind}
+                                    handleModuleClick = { handleModuleClick }
+                                />
+                            )
+                        }
+                         <div className="add-module-btn" onClick={ handleAddModule }></div>
+                     </div>
+                </div>
+            );
+        }
+    });
+
+
+    var App = React.createClass({
+        getInitialState: function() {
+            return {
+                courses,
+                create: false,
+                edit: false,
+                editInd: 0
+            };
+        },
+
+        render: function() {
+            var create = this.state.create;
+            var edit = this.state.edit;
+            var handleCreateClick = this.handleCreateClick;
+            var handleAddCourse = this.handleAddCourse;
+            var handleEditClick = this.handleEditClick;
+            var handleEditCourse = this.handleEditCourse;
+            var course = this.state.courses[this.state.editInd];
+
+            if (create) {
+             return  (
+                 <div className='App'>
+                    <CreateCourse
+                    handleAddCourse={ handleAddCourse }
+                    id={ this.state.courses.length + 1}
+                    />
+                 </div>
+             )
+            }
+
+            if (edit) {
+             return  (
+                 <div className='App'>
+                    <EditCourse course={ course }
+                    handleEditCourse={ handleEditCourse }
+                    />
+                 </div>
+             )
+            }
+
+            return (
+                <div className='App'>
+                    <div className="btn" id="create" onClick={handleCreateClick}>Create new Path</div>
+                    <CoursesList courses={ this.state.courses }
+                    handleEditClick={ handleEditClick }
+                    />
+                </div>
+            );
+        },
+
+        handleCreateClick: function() {
+            this.setState(Object.assign({}, this.state, { create: true }));
+        },
+
+        handleEditClick: function(ind) {
+            this.setState(Object.assign({}, this.state,  { editInd: ind, edit: true }));
+        },
+
+        handleEditCourse: function(course) {
+            var newCourses = this.state.courses.slice();
+            newCourses[this.state.editInd] = course;
+            this.setState(Object.assign({}, this.state, { edit: false, courses: newCourses }));
+        },
+
+        handleAddCourse: function(course) {
+            var newCourses = this.state.courses.slice();
+            newCourses.push(course);
+            this.setState(Object.assign({}, this.state, { create: false, courses: newCourses }));
+        }
+    });
+
+    ReactDOM.render(
+        <div>
+            <App/>
+        </div>,
+        document.getElementById("content")
+    );
+    </script>
+
+</body>
+</html>
