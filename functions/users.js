@@ -64,19 +64,31 @@ app.post('/:user_id/teacher', async (request, response) => {
 
   const { bio } = request.body;
 
-  let resp = {};
-  await db
-    .push({
-      Bio: bio || ''
-    })
-    .once('value')
-    .then(snapshot => {
-      resp = {
-        id: request.params.user_id,
-        teacher: { ...snapshot.val() }
-      };
-    });
-  return response.status(200).json(resp);
+  await db.set({
+    Bio: bio || ''
+  });
+  return response.status(200).json();
+});
+
+app.post('/:user_id/student', async (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const { name } = request.body;
+  if (!name)
+    return response
+      .status(400)
+      .json({ message: 'You may not have an empty name' });
+  await db.set({
+    Nickname: name,
+    Interests: [],
+    LP_Enrolled: [],
+    T_Following: []
+  });
+  return response.status(200).json();
 });
 
 // GET method (for all records)
@@ -152,6 +164,23 @@ app.delete('/:user_id', async (request, response) => {
         }`
       });
     });
+});
+
+// shen282 Update Teacher API
+app.patch('/:user_id/teacher', (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
+  if (!db)
+    return response.status(404).json({
+      message: 'user with id ${request.params.user_id} not found'
+    });
+
+  const { bio, nickName } = request.body;
+  let updates = {};
+  if (bio) updates['Bio'] = bio;
+  if (nickName) updates['Nickname'] = nickName;
+
+  db.update(updates);
+  return response.status(200);
 });
 
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
