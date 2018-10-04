@@ -64,19 +64,10 @@ app.post('/:user_id/teacher', async (request, response) => {
 
   const { bio } = request.body;
 
-  let resp = {};
-  await db
-    .push({
-      Bio: bio || ''
-    })
-    .once('value')
-    .then(snapshot => {
-      resp = {
-        id: request.params.user_id,
-        teacher: { ...snapshot.val() }
-      };
-    });
-  return response.status(200).json(resp);
+  await db.set({
+    Bio: bio || ''
+  });
+  return response.status(200).json();
 });
 
 app.post('/:user_id/student', async (request, response) => {
@@ -91,22 +82,13 @@ app.post('/:user_id/student', async (request, response) => {
     return response
       .status(400)
       .json({ message: 'You may not have an empty name' });
-  let resp = {};
-  await db
-    .push({
-      Nickname: name,
-      Interests: [],
-      LP_Enrolled: [],
-      T_Following: []
-    })
-    .once('value')
-    .then(snapshot => {
-      resp = {
-        id: request.params.user_id,
-        student: { ...snapshot.val() }
-      };
-    });
-  return response.status(200).json(resp);
+  await db.set({
+    Nickname: name,
+    Interests: [],
+    LP_Enrolled: [],
+    T_Following: []
+  });
+  return response.status(200).json();
 });
 
 // GET method (for all records)
