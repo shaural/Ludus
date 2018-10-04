@@ -64,19 +64,106 @@ app.post('/:user_id/teacher', async (request, response) => {
 
   const { bio } = request.body;
 
-  let resp = {};
-  await db
-    .push({
-      Bio: bio || ''
-    })
-    .once('value')
-    .then(snapshot => {
-      resp = {
-        id: request.params.user_id,
-        teacher: { ...snapshot.val() }
-      };
+  await db.set({
+    Bio: bio || ''
+  });
+  return response.status(200).json();
+});
+
+app.post('/:user_id/student', async (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const { name } = request.body;
+  if (!name)
+    return response
+      .status(400)
+      .json({ message: 'You may not have an empty name' });
+  await db.set({
+    Nickname: name,
+    Interests: [],
+    LP_Enrolled: [],
+    T_Following: []
+  });
+  return response.status(200).json();
+});
+
+// GET method (for all records)
+app.get('/', (request, response) => {
+  const userRef = admin.database().ref('/Users');
+  userRef.once('value', function(snapshot) {
+    return response.status(200).json(snapshot.val());
+  });
+});
+// GET method (for user with user_id)
+app.get('/:user_id', (request, response) => {
+  const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
+  userRef.once('value', function(snapshot) {
+    return response.status(200).json(snapshot.val());
+  });
+});
+
+// Update user
+app.patch('/:user_id', async (request, response) => {
+  const uid = request.params.user_id;
+  const { name, password, email, dob } = request.body;
+  const userRef = admin
+    .database()
+    .ref(`/Users`)
+    .child(uid);
+  let resp;
+  var updates = {};
+  if (userRef) {
+    if (name) {
+      updates['Name'] = name;
+    }
+    if (password) {
+      updates['Password'] = password;
+    }
+    if (email) {
+      updates['Email'] = email;
+    }
+    if (dob) {
+      updates['DoB'] = dob;
+    }
+    userRef.update(updates);
+    userRef.once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
     });
-  return response.status(200).json(resp);
+  } else {
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  }
+});
+
+//delete user
+app.delete('/:user_id', async (request, response) => {
+  const userref = admin.database().ref(`/Users/${request.params.user_id}`);
+  if (!userref)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  //remove from db
+  userref
+    .remove()
+    .then(function() {
+      return response
+        .status(200)
+        .json({ message: `User with id ${request.params.user_id} deleted.` });
+    })
+    .catch(function(error) {
+      console.log('Error deleting user:', error);
+      return response.status(400).json({
+        message: `Error, Could not delete user with id ${
+          request.params.user_id
+        }`
+      });
+    });
 });
 
 // shen282 Update Teacher API
