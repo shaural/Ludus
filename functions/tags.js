@@ -46,10 +46,13 @@ exports.route = app;
 app.get('/:tag_name', async (request, response) => {
   const ref = admin.database().ref(`/Tags`);
   console.log(request.params.tag_name);
-  await ref.orderByChild("Name").equalTo(request.params.tag_name).once('value', snapshot => {
-    snapshot.forEach(function(childSnapshot) {
-      return response.status(200).json(childSnapshot.key);
-    })
-    // return response.status(200).json(snapshot.ref);
-  })
+  await ref
+    .orderByChild('Name')
+    .equalTo(request.params.tag_name)
+    .once('value', snapshot => {
+      snapshot.forEach(function(childSnapshot) {
+        return response.status(200).json(childSnapshot.key);
+      });
+      // return response.status(200).json(snapshot.ref);
+    });
 });
