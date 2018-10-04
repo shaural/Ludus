@@ -84,11 +84,21 @@ app.post('/:user_id/student', async (request, response) => {
   if (!db)
     return response
       .status(404)
-      .json({ message: `user with id ${request.params.user_id} not fount` });
+      .json({ message: `user with id ${request.params.user_id} not found` });
 
+  const { name } = request.body;
+  if (!name)
+    return response
+      .status(400)
+      .json({ message: 'You may not have an empty name' });
   let resp = {};
   await db
-    .push({})
+    .push({
+      Nickname: name,
+      Interests: [],
+      LP_Enrolled: [],
+      T_Following: []
+    })
     .once('value')
     .then(snapshot => {
       resp = {
