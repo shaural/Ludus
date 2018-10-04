@@ -36,7 +36,7 @@ app.post('/:lp_id/class', async (request, response) => {
 });
 
 app.get('/:lp_id/class', (request, response) => {
-  console.log('Ran new code');
+  //console.log('Ran new code');
   const db = admin
     .database()
     .ref(`/Learning_Paths/${request.params.lp_id}/class`);
