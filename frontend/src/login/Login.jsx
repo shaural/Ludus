@@ -31,13 +31,21 @@ export class Login extends Component {
     firebase
       .auth()
       .signInWithEmailAndPassword(uname, pwd)
+      .then(response => {
+        alert('Logged in');
+      })
+
       .catch(function(error) {
-        const errorCode = error.code;
+        // const errorCode = error.code;
         const errorMessage = error.message;
         if (error) {
           // alert(errorCode);
           alert(errorMessage);
         }
+        // else{
+        //   // alert('Logged in')
+        //   return response.status(200).json
+        // }
         // else{
         //   return response.status(200).json{
 
