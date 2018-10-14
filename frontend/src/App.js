@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 // import custom component
 import { Login } from './login';
-
+import { CheckboxContainer } from './login';
 class App extends Component {
   render() {
     return (
@@ -18,6 +18,7 @@ class App extends Component {
 
         {/* This is how you render a custom component */}
         <Login />
+        <CheckboxContainer />
       </div>
     );
   }
