@@ -57,6 +57,33 @@ app.patch('/:class_id', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+// Get all learning paths associated with a student
+app.get('/:user_id/LearningPaths', async (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}`);
+  let out = [];
+  let LearningPaths = db.child('LP_Enrolled');
+  for (let val of LearningPaths) {
+    out.push(val);
+  }
+
+  if (!db)
+    return response.status(404).json({
+      message: `No learning paths for this user!`
+    });
+  return db
+    .then(() =>
+      response.status(200).json({
+        out
+      })
+    )
+    .catch(err =>
+      response.status(400).json({
+        message: 'Something went wrong getting the learning paths',
+        err
+      })
+    );
+});
+
 app.delete('/:class_id', async (request, response) => {
   const db = admin.database().ref(`/Classes/${request.params.class_id}`);
   if (!db)
