@@ -60,30 +60,27 @@ app.patch('/:class_id', async (request, response) => {
 // Get all learning paths associated with a student
 app.get('/:user_id/LearningPaths', async (request, response) => {
   const db = admin.database().ref(`/Users/${request.params.user_id}`);
-  let out = [];
-  let LearningPaths = db.child('LP_Enrolled');
-  for (let val of LearningPaths) {
-    out.push(val);
-  }
-
+  let out = db.child('LP_Enrolled');
   if (!db)
     return response.status(404).json({
       message: `No learning paths for this user!`
     });
-  return db
-    .then(() =>
-      response.status(200).json({
-        out
-      })
-    )
-    .catch(err =>
-      response.status(400).json({
-        message: 'Something went wrong getting the learning paths',
-        err
-      })
-    );
-});
+  console.log(out);
 
+  try {
+    let out2 = db.once('value').then(snapshot => {
+      resp = {
+        id: snapshot.key,
+        class: { ...snapshot.val() }
+      };
+    });
+    return response.status(200).json(out2);
+  } catch (e) {
+    response.status(400).json({
+      message: 'Something went wrong getting the learning paths'
+    });
+  }
+});
 app.delete('/:class_id', async (request, response) => {
   const db = admin.database().ref(`/Classes/${request.params.class_id}`);
   if (!db)
