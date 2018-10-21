@@ -77,6 +77,6 @@ typings/
 
 #API Keys
 key.json
-
+conf.json
 
 # End of https://www.gitignore.io/api/node
