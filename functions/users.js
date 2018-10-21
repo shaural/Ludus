@@ -93,6 +93,30 @@ app.post('/:user_id/student', async (request, response) => {
   return response.status(200).json();
 });
 
+// Get all learning paths associated with a student
+app.get('/:user_id/student/learningPaths', async (request, response) => {
+  console.log('Executed get all lps function');
+  const db = admin
+    .database()
+    .ref(`/Users/`)
+    .child(request.params.user_id);
+  let out = db.child('Student').child('LP_Enrolled').val;
+  console.log(out);
+  if (!db || !out) return response.status(404).json({});
+
+  try {
+    return response
+      .status(status)(200)
+      .json('Got Learning paths', out);
+  } catch (e) {
+    console.log('Error: ', e.error);
+    response.status(400).json({
+      e,
+      message: 'Something went wrong getting the learning paths'
+    });
+  }
+});
+
 // GET method (for all records)
 app.get('/', (request, response) => {
   const userRef = admin.database().ref('/Users');
