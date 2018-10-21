@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from '../logo.svg';
 import { Login } from './Login';
 class LoginPage extends Component {
   render() {

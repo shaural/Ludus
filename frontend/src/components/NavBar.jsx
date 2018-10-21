@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, Nav, NavItem, MenuItem, NavDropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 class NavBar extends Component {
   render() {
@@ -7,7 +8,7 @@ class NavBar extends Component {
       <Navbar fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#"> Ludus </a>
+            <Link to="/">Ludus</Link>
           </Navbar.Brand>
         </Navbar.Header>
         {/* <Navbar.Collapse> */}

@@ -12,12 +12,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {/* This is how you render a custom component */}
         Working Navigation: &nbsp;
         <Link to="/">Home</Link> &nbsp;
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
-        <Link to="/tclasslist">Your Classes</Link> &nbsp;
+        <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
         {/* probably want to check if you're logged in or not for the home page */}
         <Switch>
@@ -25,7 +24,42 @@ class App extends Component {
           {/* <Route path="/" component={Dash} /> */}
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
-          <Route path="/tclasslist" component={ClasslistPage} />
+          <Route path="/profile" component={IllegalPath} /*placeholder*/ />
+          <Route
+            path="/password-recovery"
+            component={IllegalPath} /*placeholder*/
+          />
+          <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
+          <Route
+            path="/student-classlist"
+            component={IllegalPath} /*placeholder*/
+          />
+          <Route
+            path="/student-lplist"
+            component={IllegalPath} /*placeholder*/
+          />
+          <Route path="/teacher-dash" component={IllegalPath} /*placeholder*/ />
+          <Route
+            path="/teacher-class-create"
+            component={IllegalPath} /*placeholder*/
+          />
+          <Route
+            path="/teacher-class-edit"
+            component={IllegalPath} /*placeholder*/
+          />
+          <Route path="/teacher-classlist" component={ClasslistPage} />
+          <Route
+            path="/teacher-lplist"
+            component={IllegalPath} /*placeholder*/
+          />
+          <Route
+            path="/teacher-lp-create"
+            component={IllegalPath} /*placeholder*/
+          />
+          <Route
+            path="/teacher-lp-edit"
+            component={IllegalPath} /*placeholder*/
+          />
           <Route component={IllegalPath} />
         </Switch>
       </div>

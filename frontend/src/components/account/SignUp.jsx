@@ -4,40 +4,57 @@ var querystring = require('querystring');
 const Axios = require('axios');
 
 class SignUpForm extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { displayName: '', email: '', password: '', dob: '' };
+    this.submitForm = this.submitForm.bind(this);
+  }
+
   render() {
     return (
       <form className="SignUpForm">
         Display Name:&nbsp;
-        <input type="text" id="displayname" />
+        <input
+          type="text"
+          onChange={event => this.setState({ displayName: event.target.value })}
+        />
         <br /> <br />
         Email:&nbsp;
         {'\t\t'}
-        <input type="text" id="email" />
+        <input
+          type="text"
+          onChange={event => this.setState({ email: event.target.value })}
+        />
         <br /> <br />
         Password:&nbsp;
-        <input type="password" id="password" />
+        <input
+          type="password"
+          onChange={event => this.setState({ password: event.target.value })}
+        />
         <br /> <br />
         {/*Confirm Password:&nbsp;*/}
         {/*<input id="passwordconfirm" /><br />*/}
         Date of Birth:&nbsp;
-        <input type="date" id="dob" />
+        <input
+          type="date"
+          onChange={event => this.setState({ dob: event.target.value })}
+        />
         <br /> <br />
-        <input type="submit" id="submitbutton" onClick={this.submitForm} />
+        <input type="button" id="submitbutton" onClick={this.submitForm} />
       </form>
     );
   }
 
   submitForm() {
     const requestBody = {
-      name: document.getElementById('displayname').value,
-      password: document.getElementById('password').value,
-      email: document.getElementById('email').value,
-      dob: document.getElementById('dob').value
+      name: this.state.displayName,
+      password: this.state.password,
+      email: this.state.email,
+      dob: this.state.dob
     };
     const config = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     };
-
     Axios.post(
       'https://us-central1-ludusfire.cloudfunctions.net/users/',
       querystring.stringify(requestBody),
@@ -49,7 +66,6 @@ class SignUpForm extends Component {
       .catch(function(error) {
         console.log(error);
       });
-
     return false;
   }
 }
