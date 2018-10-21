@@ -92,7 +92,7 @@ app.post('/:user_id/student', async (request, response) => {
 });
 
 // Get all learning paths associated with a student
-app.get('/users/:user_id/LearningPaths', async (request, response) => {
+app.get('/:user_id/student/learningPaths', async (request, response) => {
   const db = admin.database().ref(`/users/${request.params.user_id}`);
   let out = db.child('LP_Enrolled');
   // console.log(out);
