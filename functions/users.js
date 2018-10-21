@@ -93,9 +93,13 @@ app.post('/:user_id/student', async (request, response) => {
 
 // Get all learning paths associated with a student
 app.get('/:user_id/student/learningPaths', async (request, response) => {
-  const db = admin.database().ref(`/users/${request.params.user_id}`);
-  let out = db.child('LP_Enrolled');
-  // console.log(out);
+  console.log('Executed get all lps function');
+  const db = admin
+    .database()
+    .ref(`/Users/`)
+    .child(request.params.user_id);
+  let out = db.child('Student').child('LP_Enrolled').val;
+  console.log(out);
   if (!db || !out) return response.status(404).json({});
 
   try {
