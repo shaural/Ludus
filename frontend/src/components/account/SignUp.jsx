@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './SignUp.css';
+var querystring = require('querystring');
 const Axios = require('axios');
 
 class SignUpForm extends Component {
@@ -27,14 +28,21 @@ class SignUpForm extends Component {
   }
 
   submitForm() {
-    Axios.post('https://us-central1-ludusfire.cloudfunctions.net/users/', {
-      data: {
-        name: document.getElementById('displayname').value,
-        password: document.getElementById('password').value,
-        email: document.getElementById('email').value,
-        dob: document.getElementById('dob').value
-      }
-    })
+    const requestBody = {
+      name: document.getElementById('displayname').value,
+      password: document.getElementById('password').value,
+      email: document.getElementById('email').value,
+      dob: document.getElementById('dob').value
+    };
+    const config = {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    };
+
+    Axios.post(
+      'https://us-central1-ludusfire.cloudfunctions.net/users/',
+      querystring.stringify(requestBody),
+      config
+    )
       .then(function(response) {
         console.log(response);
       })
@@ -42,7 +50,7 @@ class SignUpForm extends Component {
         console.log(error);
       });
 
-    return;
+    return false;
   }
 }
 

@@ -26,14 +26,16 @@ app.post('/', async (request, response) => {
     return response.status(400).json({
       message: 'You may not have an empty name'
     });
-  }
-  //this will be obselete with HTML forms
-  // placeholder for testing purposes
-  else if (!dob.toString().length) {
+  } else if (!dob.toString().length) {
+    //this will be obselete with HTML forms
+    // placeholder for testing purposes
     return response.status(400).json({
       message: 'Please enter your age'
     });
   } else {
+    //firebase user creation
+
+    //firebase database entry creation
     let resp = {};
     await db
       .push({
@@ -186,14 +188,14 @@ app.patch('/:user_id/teacher', (request, response) => {
 // shen282 Update Student API
 app.patch('/:user_id/student', (request, response) => {
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
-   if(!db)
-     return response.status(404).json({
-       message: 'user with id ${request.params.user_id} not found'
-     });
-  
+  if (!db)
+    return response.status(404).json({
+      message: 'user with id ${request.params.user_id} not found'
+    });
+
   const { name } = request.body; //const { name, LP, teachers }
   let updates = {};
-  if(name) updates['nickName'] = name;
+  if (name) updates['nickName'] = name;
   // how are we going to handle containing student specific information on lp's enrolled in, array?
   // firebase update can't append to array, only replace with a larger one
   // if(LP) updates['LP_Enrolled'] = ( `${request.params.user_id}_lp_enrolled` - old array, LP - pass in new array )?
