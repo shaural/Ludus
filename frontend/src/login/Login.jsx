@@ -1,6 +1,7 @@
+/*
 import React, { Component } from 'react';
 import conf from '../conf.js';
-import 'firebase-auth';
+import 'firebase/auth';
 import firebase from 'firebase';
 import {
   FormGroup,
@@ -85,8 +86,9 @@ export class Login extends Component {
           Enter
         </Button>
         <FormControl.Feedback />
-        {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
+        {/!* <HelpBlock>Validation is based on string length.</HelpBlock> *!/}
       </Form>
     );
   }
 }
+*/

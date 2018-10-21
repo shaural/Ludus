@@ -30,6 +30,8 @@
     "husky": "^1.0.0-rc.15",
     "lint-staged": "^7.3.0",
     "prettier": "^1.14.3"
+  },
+  "dependencies": {
+    "start": "^5.1.0"
   }
-  
 }
