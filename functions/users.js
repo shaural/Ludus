@@ -91,6 +91,40 @@ app.post('/:user_id/student', async (request, response) => {
   return response.status(200).json();
 });
 
+// Get all learning paths associated with a student
+app.get('/:user_id/student/learningPaths', async (request, response) => {
+  // console.log('Executed get all lps function');
+  const db = admin
+    .database()
+    .ref(`/Users/`)
+    .child(request.params.user_id);
+  if (!db)
+    return response.status(404).json({
+      message: 'Unable to make reference to database'
+    });
+  // VERY IMPORTANT ASSUMPTION:
+  // This function assums that each Student object has a child named
+  // "LP_Enrolled" and that each instance of a learning path is contained as a child of LP_Enrolled
+  // if this assumption is broken, the function WILL crash
+  db.child('Student')
+    .child('LP_Enrolled')
+    .orderByValue()
+    .on('value', function(snapshot) {
+      const out = [];
+      out.push(snapshot.val());
+      try {
+        return response
+          .status(200)
+          .json({ message: 'Got Learning paths', out });
+      } catch (e) {
+        response.status(400).json({
+          e,
+          message: 'Something went wrong getting the learning paths'
+        });
+      }
+    });
+});
+
 // GET method (for all records)
 app.get('/', (request, response) => {
   const userRef = admin.database().ref('/Users');
@@ -186,14 +220,14 @@ app.patch('/:user_id/teacher', (request, response) => {
 // shen282 Update Student API
 app.patch('/:user_id/student', (request, response) => {
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
-   if(!db)
-     return response.status(404).json({
-       message: 'user with id ${request.params.user_id} not found'
-     });
-  
+  if (!db)
+    return response.status(404).json({
+      message: 'user with id ${request.params.user_id} not found'
+    });
+
   const { name } = request.body; //const { name, LP, teachers }
   let updates = {};
-  if(name) updates['nickName'] = name;
+  if (name) updates['nickName'] = name;
   // how are we going to handle containing student specific information on lp's enrolled in, array?
   // firebase update can't append to array, only replace with a larger one
   // if(LP) updates['LP_Enrolled'] = ( `${request.params.user_id}_lp_enrolled` - old array, LP - pass in new array )?
