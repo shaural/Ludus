@@ -80,35 +80,45 @@ app.delete('/:class_id', async (request, response) => {
 
 // Class information API
 app.get('/:class_id/info', async (request, response) => {
-  console.log('Entered class info');
-  const db = admin.database().ref(`/Classes/${request.params.class_id}`);
-  console.log(request.params.class_id);
-  console.log(db.toString);
+  //  console.log('Entered class info');
+  // const db = admin
+  // .database()
+  // .ref(`/Classes/`)
+  // .child(request.params.class_id);
+  const db = admin.database().ref(`/Classes/ ${request.params.class_id}`);
+  let cid = request.params.class_id;
+  //console.log(request.params.class_id);
+  // console.log(db.toString);
   if (!db)
     return response.status(404).json({
       message: `class with id ${request.params.id} not found`
     });
-  let name = db.child('Name').val;
-  console.log(db.child('Name'));
-  let teacher = db.child('Owner').val;
-  let learningPath = db.child('LearningPath').val;
-  let contentType = db.child('Content-Type').val;
-  let Ratings = db.child('Ratings').val;
+  const out = [];
+  console.log(
+    db
+      .child('Classes')
+      .child(cid)
+      .child('Content-Type').key
+  );
+  db.child('Classes')
+    .child(cid)
+    .orderByKey()
+    .on('value', function(snapshot) {
+      snapshot.forEach(function(data) {
+        out.push(console.log(data.val()));
+      });
 
-  console.log(name, teacher, learningPath, contentType, Ratings);
-
-  try {
-    return response.status(200).json({
-      name,
-      teacher,
-      learningPath,
-      contentType,
-      Ratings
+      try {
+        return response.status(200).json({
+          out
+        });
+      } catch (e) {
+        return response.status(404).json({
+          message: 'There was a fatal error getting the class data'
+        });
+      }
     });
-  } catch (e) {
-    return response.status(404).json({
-      message: 'There was a fatal error getting the class data'
-    });
-  }
+  // console.log(db.child("Classes").child(cid).val)
+  console.log(out);
 });
 exports.route = app;
