@@ -7,49 +7,6 @@ import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
 import IllegalPath from './components/IllegalPath';
 
-//from tutorial
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-  withRouter
-} from 'react-router-dom';
-
-// commented out because CheckBox wasn't working on the page...don't delete
-// import { CheckboxContainer } from './login';
-/* Don't really know what's going on with the Reset and fakeAuth components so just commenting for now so that it will compile on my end
-const AuthExample = () => (
-  <Router>
-    <div>
-      <ul>
-        <li>
-          <Link to="/reset">Public Page</Link>
-        </li>
-      </ul>
-      <PrivateRoute path="/reset" component={Reset} />
-    </div>
-  </Router>
-);
-
-const PrivateRoute = ({ component: Component, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) =>
-      fakeAuth.isAuthenticated ? (
-        <Component {...props} />
-      ) : (
-        <Redirect
-          to={{
-            pathname: '/login',
-            state: { from: props.location }
-          }}
-        />
-      )}
-  />
-);
-*/
 class App extends Component {
   render() {
     return (
@@ -116,7 +73,6 @@ class App extends Component {
         {/* This is how you render a custom component */}
         {/*}
         <Login />
-        {/* <CheckboxContainer /> */}
       </div>
     );
   }
