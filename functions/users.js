@@ -26,14 +26,16 @@ app.post('/', async (request, response) => {
     return response.status(400).json({
       message: 'You may not have an empty name'
     });
-  }
-  //this will be obselete with HTML forms
-  // placeholder for testing purposes
-  else if (!dob.toString().length) {
+  } else if (!dob.toString().length) {
+    //this will be obselete with HTML forms
+    // placeholder for testing purposes
     return response.status(400).json({
       message: 'Please enter your age'
     });
   } else {
+    //firebase user creation
+
+    //firebase database entry creation
     let resp = {};
     await db
       .push({

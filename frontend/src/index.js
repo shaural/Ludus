@@ -4,16 +4,13 @@ import './index.css';
 import App from './App';
 // import 'bootstrap/dist/css/bootstrap.css';
 // import 'bootstrap/dist/css/bootstrap-theme.css';
-import Classlist from './components/class/Classlist';
-import ClasslistHeader from './components/class/ClasslistHeader';
-import SignUp from './components/account/SignUp';
-import NavBar from './components/NavBar';
+import { BrowserRouter } from 'react-router-dom';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
-  <div>
-    <NavBar /> <App /> <SignUp /> <ClasslistHeader /> <Classlist />
-  </div>,
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
   document.getElementById('root')
 );
 
