@@ -96,10 +96,15 @@ app.get('/:class_id/info', async (request, response) => {
     });
   var out = {};
   db.once('value').then(function(snapshot) {
-    out[snapshot.key] = snapshot.val();
+    out = snapshot.val();
+    if (out == null) {
+      return response.status(404).json({
+        message: 'This class ID does not exist'
+      });
+    }
     try {
       return response.status(200).json({
-        out
+        ...out
       });
     } catch (e) {
       return response.status(404).json({
