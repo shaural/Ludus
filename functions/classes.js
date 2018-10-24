@@ -80,45 +80,32 @@ app.delete('/:class_id', async (request, response) => {
 
 // Class information API
 app.get('/:class_id/info', async (request, response) => {
-  //  console.log('Entered class info');
-  // const db = admin
-  // .database()
-  // .ref(`/Classes/`)
-  // .child(request.params.class_id);
-  const db = admin.database().ref(`/Classes/ ${request.params.class_id}`);
-  let cid = request.params.class_id;
-  //console.log(request.params.class_id);
-  // console.log(db.toString);
+  //IMPORTANT ASSUMPTION
+  //Each class is represented by an id with all attributes and fields
+  //such as Content-Type, Ratings, etc as children
+
+  //function will return a map [to frontend], so it will be traversable with a for each loop
+
+  const db = admin
+    .database()
+    .ref(`/Classes/`)
+    .child(request.params.class_id);
   if (!db)
     return response.status(404).json({
       message: `class with id ${request.params.id} not found`
     });
-  const out = [];
-  console.log(
-    db
-      .child('Classes')
-      .child(cid)
-      .child('Content-Type').key
-  );
-  db.child('Classes')
-    .child(cid)
-    .orderByKey()
-    .on('value', function(snapshot) {
-      snapshot.forEach(function(data) {
-        out.push(console.log(data.val()));
+  var out = {};
+  db.once('value').then(function(snapshot) {
+    out[snapshot.key] = snapshot.val();
+    try {
+      return response.status(200).json({
+        out
       });
-
-      try {
-        return response.status(200).json({
-          out
-        });
-      } catch (e) {
-        return response.status(404).json({
-          message: 'There was a fatal error getting the class data'
-        });
-      }
-    });
-  // console.log(db.child("Classes").child(cid).val)
-  console.log(out);
+    } catch (e) {
+      return response.status(404).json({
+        message: 'There was a fatal error getting the class data'
+      });
+    }
+  });
 });
 exports.route = app;

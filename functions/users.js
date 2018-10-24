@@ -105,7 +105,7 @@ app.get('/:user_id/student/learningPaths', async (request, response) => {
   // VERY IMPORTANT ASSUMPTION:
   // This function assums that each Student object has a child named
   // "LP_Enrolled" and that each instance of a learning path is contained as a child of LP_Enrolled
-  // if this assumption is broken, the function WILL crash
+  // if this assumption is broken, the function will likely crash or return null values
   db.child('Student')
     .child('LP_Enrolled')
     .orderByValue()
