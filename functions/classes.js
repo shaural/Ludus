@@ -80,12 +80,6 @@ app.delete('/:class_id', async (request, response) => {
 
 // Class information API
 app.get('/:class_id/info', async (request, response) => {
-  //IMPORTANT ASSUMPTION
-  //Each class is represented by an id with all attributes and fields
-  //such as Content-Type, Ratings, etc as children
-
-  //function will return a map [to frontend], so it will be traversable with a for each loop
-
   const db = admin
     .database()
     .ref(`/Classes/`)
