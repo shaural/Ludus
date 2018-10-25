@@ -195,7 +195,7 @@ app.delete('/:user_id', async (request, response) => {
     .catch(function(error) {
       console.log('Error deleting user:', error);
       return response.status(400).json({
-         message: `Error, Could not delete user with id ${
+        message: `Error, Could not delete user with id ${
           request.params.user_id
         }`
       });
@@ -281,8 +281,14 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
 // Mark class as complete for user, input: user_is, learning_path_id, class_id (I think we still need an enroll class for student function)
 // Enrolled = 0, completed = 1
 app.patch('/:user_id/:lp_id/:class_id', async (request, response) => {
-  const db = admin.database().ref(`/Users/${request.params.user_id}/Student/lp_enrolled/${request.params.lp_id}/${request.params.class_id}`);
-  if(db) {
+  const db = admin
+    .database()
+    .ref(
+      `/Users/${request.params.user_id}/Student/lp_enrolled/${
+        request.params.lp_id
+      }/${request.params.class_id}`
+    );
+  if (db) {
     // To verify if enrolled or already completed
     // db.once('value').then(function(snapshot) {
     //   let enrolledStatus = snapshot.val();
@@ -294,13 +300,12 @@ app.patch('/:user_id/:lp_id/:class_id', async (request, response) => {
     //   }
     // });
     db.set(1);
-    return response.status(200).json({message: `Class marked as complete.`});
+    return response.status(200).json({ message: `Class marked as complete.` });
   } else {
     return response
       .status(404)
       .json({ message: `User with id ${request.params.user_id} not found` });
   }
 });
-
 
 exports.route = app;
