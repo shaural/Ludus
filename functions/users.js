@@ -35,6 +35,12 @@ app.post('/', async (request, response) => {
     });
   } else {
     let resp = {};
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(name, password)
+      .catch(function(error) {
+        alert(error);
+      });
     await db
       .push({
         Name: name,
