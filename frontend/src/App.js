@@ -16,6 +16,7 @@ class App extends Component {
           <div>
             <div>
               <Route path="/passwordreset" component={PasswordReset} exact />
+              <Route path="/" component={Login} exact />
             </div>
 
             <header className="App-header">
