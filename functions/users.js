@@ -286,21 +286,41 @@ app.patch('/:user_id/:lp_id/:class_id', async (request, response) => {
     .ref(
       `/Users/${request.params.user_id}/Student/lp_enrolled/${
         request.params.lp_id
-      }/${request.params.class_id}`
+      }`
+      // }/${request.params.class_id}`
     );
-  if (db) {
+    if (db) {
+    let enrolledflg = 999; // 0: not enrolled, 1: enrolled+completed, 2: enrolled (not completed)
     // To verify if enrolled or already completed
-    // db.once('value').then(function(snapshot) {
-    //   let enrolledStatus = snapshot.val();
-    //   system.log(enrolledStatus);
-    //   if (enrolledStatus == 1) {
-    //     return response.status(400).json({message: `Student already completed this class.`});
-    //   } else if (enrolledStatus != 0) {
-    //     return response.status(400).json({message: `Student is not enrolled in this class.`});
-    //   }
-    // });
-    db.set(1);
-    return response.status(200).json({ message: `Class marked as complete.` });
+    await db.once('value').then(function(snapshot) {
+      if(snapshot.hasChild(`${request.params.class_id}`)){
+        const enrolledStatus = snapshot.child(`${request.params.class_id}`).val();
+        if (enrolledStatus == 1) {
+          // Already marked as completed
+          enrolledflg = 1;      
+        } else {
+          enrolledflg = 2;
+          db.child(`${request.params.class_id}`).set(1);
+        }
+      } else {
+        // since class not in user => user not enrolled
+        enrolledflg = 0;
+      }
+    });
+    if(enrolledflg == 0) {
+      // student not enrolled in class (or lp)
+      return response.status(200).json({ message: `Student not enrolled in class: ${request.params.class_id} of learning path ${request.params.lp_id}.` });
+    } else if(enrolledflg == 1){
+      // student already completed class
+      return response.status(200).json({ message: `Student already complted class: ${request.params.class_id} of learning path ${request.params.lp_id}.` });
+    } else if(enrolledflg == 2) {
+      return response.status(200).json({ message: `Class marked completed.` });
+    } else {
+      return response
+      .status(404)
+      .json({ message: `Error for confirming enrollement.` });
+    }
+    
   } else {
     return response
       .status(404)
