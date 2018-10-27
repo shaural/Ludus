@@ -6,6 +6,7 @@ import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
 import IllegalPath from './components/IllegalPath';
+import { Route, Link, Switch } from 'react-router-dom';
 
 class App extends Component {
   render() {
@@ -61,18 +62,6 @@ class App extends Component {
           />
           <Route component={IllegalPath} />
         </Switch>
-        {/*
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to Ludus</h1>
-        </header>
-        <p className="App-intro">
-          Please enter your username and password to begin
-        </p>
-  
-        {/* This is how you render a custom component */}
-        {/*}
-        <Login />
       </div>
     );
   }
