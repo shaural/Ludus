@@ -6,6 +6,7 @@ import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
 import IllegalPath from './components/IllegalPath';
+import { Route, Link } from 'react-router-dom';
 
 class App extends Component {
   render() {
