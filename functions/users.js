@@ -309,22 +309,18 @@ app.patch('/:user_id/:lp_id/:class_id', async (request, response) => {
     });
     if (enrolledflg == 0) {
       // student not enrolled in class (or lp)
-      return response
-        .status(200)
-        .json({
-          message: `Student not enrolled in class: ${
-            request.params.class_id
-          } of learning path ${request.params.lp_id}.`
-        });
+      return response.status(200).json({
+        message: `Student not enrolled in class: ${
+          request.params.class_id
+        } of learning path ${request.params.lp_id}.`
+      });
     } else if (enrolledflg == 1) {
       // student already completed class
-      return response
-        .status(200)
-        .json({
-          message: `Student already complted class: ${
-            request.params.class_id
-          } of learning path ${request.params.lp_id}.`
-        });
+      return response.status(200).json({
+        message: `Student already complted class: ${
+          request.params.class_id
+        } of learning path ${request.params.lp_id}.`
+      });
     } else if (enrolledflg == 2) {
       return response.status(200).json({ message: `Class marked completed.` });
     } else {
