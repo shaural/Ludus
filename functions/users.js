@@ -97,40 +97,6 @@ app.post('/:user_id/student', async (request, response) => {
   return response.status(200).json();
 });
 
-//call this from frontend to handle password reset
-app.get('/:user_id/resetpassword', async (request, response) => {
-  const user = firebase.auth().currentUser;
-  const uid = request.params.user_id;
-  if (user) {
-    const db = admin
-      .database()
-      .ref(`/Users/`)
-      .child(uid)
-      .child('Password')
-      .on('value')
-      .then(function(snapshot) {
-        const email = snapshot.val();
-        firebase
-          .auth()
-          .sendPasswordResetEmail(email)
-          .then(function() {
-            return response.status(200).json({
-              message: 'Password reset email sent, please check your inbox.'
-            });
-          })
-          .catch(function(error) {
-            return response.status(404).json({
-              message: 'Something went wrong during password reset.'
-            });
-          });
-      });
-  } else {
-    return response.status(200).json({
-      message: 'You are not signed in'
-    });
-  }
-});
-
 // Get all learning paths associated with a student
 app.get('/:user_id/student/learningPaths', async (request, response) => {
   // console.log('Executed get all lps function');
