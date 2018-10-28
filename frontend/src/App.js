@@ -8,7 +8,8 @@ import ClasslistPage from './components/class/ClasslistPage';
 import LpPage from './components/learningpath/LpPage';
 import ProfilePage from './components/userProfile/ProfilePage';
 import IllegalPath from './components/IllegalPath';
-import {Route, Link, Switch } from 'react-router-dom';
+import { Route, Link, Switch } from 'react-router-dom';
+
 
 class App extends Component {
   render() {
@@ -66,7 +67,6 @@ class App extends Component {
           />
           <Route component={IllegalPath} />
         </Switch>
-
       </div>
     );
   }
