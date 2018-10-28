@@ -280,82 +280,105 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
 
 // Mark class as complete for user, input: user_is, learning_path_id, class_id (I think we still need an enroll class for student function)
 // Enrolled = 0, completed = 1
-app.patch('/:user_id/student/learning_path/:lp_id/:class_id', async (request, response) => {
-  const db = admin.database().ref(
-    `/Users/${request.params.user_id}/Student/LP_Enrolled/${
-      request.params.lp_id
-    }`
-    // }/${request.params.class_id}`
-  );
-  if (db) {
-    let enrolledflg = 999; // 0: not enrolled, 1: enrolled+completed, 2: enrolled (not completed)
-    // To verify if enrolled or already completed
-    await db.once('value').then(function(snapshot) {
-      if (snapshot.hasChild(`${request.params.class_id}`)) {
-        const enrolledStatus = snapshot
-          .child(`${request.params.class_id}`)
-          .val();
-        if (enrolledStatus == 1) {
-          // Already marked as completed
-          enrolledflg = 1;
+app.patch(
+  '/:user_id/student/learning_path/:lp_id/:class_id',
+  async (request, response) => {
+    const db = admin.database().ref(
+      `/Users/${request.params.user_id}/Student/LP_Enrolled/${
+        request.params.lp_id
+      }`
+      // }/${request.params.class_id}`
+    );
+    if (db) {
+      let enrolledflg = 999; // 0: not enrolled, 1: enrolled+completed, 2: enrolled (not completed)
+      // To verify if enrolled or already completed
+      await db.once('value').then(function(snapshot) {
+        if (snapshot.hasChild(`${request.params.class_id}`)) {
+          const enrolledStatus = snapshot
+            .child(`${request.params.class_id}`)
+            .val();
+          if (enrolledStatus == 1) {
+            // Already marked as completed
+            enrolledflg = 1;
+          } else {
+            enrolledflg = 2;
+            db.child(`${request.params.class_id}`).set(1);
+          }
         } else {
-          enrolledflg = 2;
-          db.child(`${request.params.class_id}`).set(1);
+          // since class not in user => user not enrolled
+          enrolledflg = 0;
         }
+      });
+      if (enrolledflg == 0) {
+        // student not enrolled in class (or lp)
+        return response.status(200).json({
+          message: `Student not enrolled in class: ${
+            request.params.class_id
+          } of learning path ${request.params.lp_id}.`
+        });
+      } else if (enrolledflg == 1) {
+        // student already completed class
+        return response.status(200).json({
+          message: `Student already complted class: ${
+            request.params.class_id
+          } of learning path ${request.params.lp_id}.`
+        });
+      } else if (enrolledflg == 2) {
+        // Class successfully marked as complete (value = 1 in db)
+        // Check if completed all classes in lp --> should copy all classes of lp when enrolled (with val = 0)
+        return response
+          .status(200)
+          .json({ message: `Class marked completed.` });
       } else {
-        // since class not in user => user not enrolled
-        enrolledflg = 0;
+        return response
+          .status(404)
+          .json({ message: `Error for confirming enrollement.` });
       }
-    });
-    if (enrolledflg == 0) {
-      // student not enrolled in class (or lp)
-      return response.status(200).json({
-        message: `Student not enrolled in class: ${
-          request.params.class_id
-        } of learning path ${request.params.lp_id}.`
-      });
-    } else if (enrolledflg == 1) {
-      // student already completed class
-      return response.status(200).json({
-        message: `Student already complted class: ${
-          request.params.class_id
-        } of learning path ${request.params.lp_id}.`
-      });
-    } else if (enrolledflg == 2) {
-      // Class successfully marked as complete (value = 1 in db)
-      // Check if completed all classes in lp --> should copy all classes of lp when enrolled (with val = 0)
-      return response.status(200).json({ message: `Class marked completed.` });
     } else {
       return response
         .status(404)
-        .json({ message: `Error for confirming enrollement.` });
+        .json({ message: `User with id ${request.params.user_id} not found` });
     }
-  } else {
-    return response
-      .status(404)
-      .json({ message: `User with id ${request.params.user_id} not found` });
   }
-});
+);
 
 // Endpoint to enroll a student into a lp
 // --> Fetch all classes from lp and mark them as enrolled (value = 0)
-app.post('/:user_id/student/learning_path/:lp_id', async (request, response) => {
-  const userRef = admin.database().ref(`/Users/${request.params.user_id}/Student/LP_Enrolled/${request.params.lp_id}`);
-  const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}/Class`);
-  // get classes of lp: lp_id
-  var updates = {};
-  if(lpRef) {
-    await lpRef.once('value').then(function(snapshot) {
-      snapshot.forEach(function(childSnapshot) {
-        updates[childSnapshot.child("Class_Id").val()] = 0;
+app.post(
+  '/:user_id/student/learning_path/:lp_id',
+  async (request, response) => {
+    const userRef = admin
+      .database()
+      .ref(
+        `/Users/${request.params.user_id}/Student/LP_Enrolled/${
+          request.params.lp_id
+        }`
+      );
+    const lpRef = admin
+      .database()
+      .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+    // get classes of lp: lp_id
+    var updates = {};
+    if (lpRef) {
+      await lpRef.once('value').then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          updates[childSnapshot.child('Class_Id').val()] = 0;
+        });
       });
-    });
-    userRef.update(updates);
-    return response.status(200)
-    .json({ message: `User with id ${request.params.user_id} has been enrolled in lp: ${request.params.lp_id}.` });;
-  } else {
-    return response.status(404).json({message:"Could not find learning path in database"});
+      userRef.update(updates);
+      return response
+        .status(200)
+        .json({
+          message: `User with id ${
+            request.params.user_id
+          } has been enrolled in lp: ${request.params.lp_id}.`
+        });
+    } else {
+      return response
+        .status(404)
+        .json({ message: 'Could not find learning path in database' });
+    }
   }
-});
+);
 
 exports.route = app;
