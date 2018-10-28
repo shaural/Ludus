@@ -1,14 +1,19 @@
-const admin = require('./utils').firebaseAdmin;
+const { firebaseAdmin, ref_has_child } = require('./utils');
+const admin = firebaseAdmin;
 
 const app = require('express')();
-
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
 app.post('/', async (request, response) => {
   const db = admin.database().ref('/Users');
-
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
   const { name, password, email, dob } = request.body;
-
+  if (!name || !password || !email || !dob)
+    return response.status(400).json({ message: 'malformed request' });
   //basic validation tests
   if (!email.toString().includes('@')) {
     return response.status(400).json({
@@ -58,6 +63,17 @@ app.post('/', async (request, response) => {
 
 // https://example.com/api/accounts/12345/teacher
 app.post('/:user_id/teacher', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
+
+  const found = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
   if (!db)
     return response
@@ -73,6 +89,8 @@ app.post('/:user_id/teacher', async (request, response) => {
 });
 
 app.post('/:user_id/student', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response
@@ -96,6 +114,26 @@ app.post('/:user_id/student', async (request, response) => {
 // Get all learning paths associated with a student
 app.get('/:user_id/student/learningPaths', async (request, response) => {
   // console.log('Executed get all lps function');
+
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Student'
+  );
+  if (!found_student)
+    return response
+      .status(404)
+      .json({
+        message: `user with id ${request.params.user_id} is not a student`
+      });
+
   const db = admin
     .database()
     .ref(`/Users/`)
@@ -145,6 +183,15 @@ app.get('/:user_id', (request, response) => {
 // Update user
 app.patch('/:user_id', async (request, response) => {
   const uid = request.params.user_id;
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
+
+  const found = await ref_has_child(admin.database().ref('/Users'), uid);
+  if (!found)
+    return response
+      .status(404)
+      .json({ message: `user with id ${uid} not found` });
+
   const { name, password, email, dob } = request.body;
   const userRef = admin
     .database()
@@ -204,6 +251,8 @@ app.delete('/:user_id', async (request, response) => {
 
 // shen282 Update Teacher API
 app.patch('/:user_id/teacher', (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
   if (!db)
     return response.status(404).json({
@@ -220,11 +269,17 @@ app.patch('/:user_id/teacher', (request, response) => {
 });
 
 // shen282 Update Student API
-app.patch('/:user_id/student', (request, response) => {
+app.patch('/:user_id/student', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
+  const found = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response.status(404).json({
-      message: 'user with id ${request.params.user_id} not found'
+      message: `user with id ${request.params.user_id} not found`
     });
 
   const { name } = request.body; //const { name, LP, teachers }
@@ -237,7 +292,60 @@ app.patch('/:user_id/student', (request, response) => {
   return response.status(200);
 });
 
+app.get('/:user_id/student/following', (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const t_ref = db.child(`T_Following`);
+  t_ref.once('value', snapshot => response.status(200).json(snapshot.val()));
+});
+
+app.post('/:user_id/student/following', async (request, response) => {
+  if (!request.body.teachers.length)
+    return response
+      .status(400)
+      .json({ message: 'need to send at least one teacher ID' });
+
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`, 'Student')
+  );
+  if (!found_student)
+    return response
+      .status(404)
+      .json({
+        message: `user with id ${request.params.user_id} is not a student`
+      });
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const t_ref = db.child(`T_Following`);
+  await t_ref.push(
+    request.body.teachers.map(e => Object.assign({ id: e }, {}))
+  );
+  return response.status(200);
+});
+
+app.delete('/:user_id/student/following/:teacher_id', (request, response) => {
+  // TODO
+});
+
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
   // TODO: verify that user_id is valid
   // const validate_input = (topic, name) =>
   //   (topic && topic.toString().length) &&
