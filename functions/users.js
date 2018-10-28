@@ -280,9 +280,9 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
 
 // Mark class as complete for user, input: user_is, learning_path_id, class_id (I think we still need an enroll class for student function)
 // Enrolled = 0, completed = 1
-app.patch('/:user_id/:lp_id/:class_id', async (request, response) => {
+app.patch('/:user_id/student/learning_path/:lp_id/:class_id', async (request, response) => {
   const db = admin.database().ref(
-    `/Users/${request.params.user_id}/Student/lp_enrolled/${
+    `/Users/${request.params.user_id}/Student/LP_Enrolled/${
       request.params.lp_id
     }`
     // }/${request.params.class_id}`
@@ -322,6 +322,8 @@ app.patch('/:user_id/:lp_id/:class_id', async (request, response) => {
         } of learning path ${request.params.lp_id}.`
       });
     } else if (enrolledflg == 2) {
+      // Class successfully marked as complete (value = 1 in db)
+      // Check if completed all classes in lp --> should copy all classes of lp when enrolled (with val = 0)
       return response.status(200).json({ message: `Class marked completed.` });
     } else {
       return response
@@ -332,6 +334,27 @@ app.patch('/:user_id/:lp_id/:class_id', async (request, response) => {
     return response
       .status(404)
       .json({ message: `User with id ${request.params.user_id} not found` });
+  }
+});
+
+// Endpoint to enroll a student into a lp
+// --> Fetch all classes from lp and mark them as enrolled (value = 0)
+app.post('/:user_id/student/learning_path/:lp_id', async (request, response) => {
+  const userRef = admin.database().ref(`/Users/${request.params.user_id}/Student/LP_Enrolled/${request.params.lp_id}`);
+  const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+  // get classes of lp: lp_id
+  var updates = {};
+  if(lpRef) {
+    await lpRef.once('value').then(function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        updates[childSnapshot.child("Class_Id").val()] = 0;
+      });
+    });
+    userRef.update(updates);
+    return response.status(200)
+    .json({ message: `User with id ${request.params.user_id} has been enrolled in lp: ${request.params.lp_id}.` });;
+  } else {
+    return response.status(404).json({message:"Could not find learning path in database"});
   }
 });
 
