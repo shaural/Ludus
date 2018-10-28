@@ -58,20 +58,27 @@ app.patch('/:class_id', async (request, response) => {
 });
 
 app.delete('/:teacher_id/:class_id', async (request, response) => {
-  const db = admin.database.ref(`/Users/${request.params.teacher_id}`);
+  // console.log(request.params.teacher_id)
+  // console.log(request.params.class_id)
+  const db = admin.database().ref(`/Users/${request.params.teacher_id}`);
   if (!db)
     return response.status(404).json({
       message: `User does not exist`
     });
-  const teacherName = '';
-  const classOwner = '';
-  db.child('Name')
-    .once('value')
-    .then(function(snapshot) {
-      //must check that this teacher owns the class
-      teacherName = snapshot.val();
+  var teacherName;
+  var classOwner;
+  try {
+    db.child('Name')
+      .once('value')
+      .then(function(snapshot) {
+        teacherName = snapshot.val();
+      });
+  } catch (e) {
+    return response.status(404).json({
+      message: "An error occurred getting the teacher's name"
     });
-  const classref = admin.database.ref(`/Classes/${request.params.class_id}`);
+  }
+  const classref = admin.database().ref(`/Classes/${request.params.class_id}`);
   if (!classref) {
     return response.status(404).json({
       message:
@@ -91,8 +98,7 @@ app.delete('/:teacher_id/:class_id', async (request, response) => {
       message: 'There was an error getting the class owner name'
     });
   }
-
-  if (teacherName != classOwner) {
+  if (teacherName != classOwner || (!teacherName || !classOwner)) {
     return response.status(403).json({
       message: "You can't delete a class that you do not own!"
     });
