@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './Class.css';
+var querystring = require('querystring');
+const Axios = require('axios');
 
 class Class extends Component {
   render() {
@@ -8,7 +10,19 @@ class Class extends Component {
 
   fetchData(ClassID) {
     //TODO: API Call for info on the class from database
-    //axios.get('https://us-central1-ludusfire.cloudfunctions.net/classes/', { params: this.props.classID }).then( function(response){ name, lpath, ctype, rating } = response.body;} );
+    const requestBody = {
+      params: this.props.classID
+    };
+    const config = {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    };
+    Axios.get(
+      'https://us-central1-ludusfire.cloudfunctions.net/classes/info/',
+      querystring.stringify(requestBody),
+      config
+    ).then(function(response) {
+      console.log(response);
+    });
     return (
       <container>
         <span className="ClassInfo">

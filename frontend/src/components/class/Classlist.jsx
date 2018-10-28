@@ -13,10 +13,10 @@ class Classlist extends Component {
     let classes = [];
 
     //for (let i = 0; i < classIDList.length; i++) {
-    for (let i = 0; i < 17; i++) {
+    for (let i = 0; i < 1; i++) {
       classes.push(
         <div className="ClassObject">
-          {<Class classID={i /* classIDList[i] */} />}
+          {<Class classID={'-LNzxFQ8ZVt3igdnFl7e' /* classIDList[i] */} />}
           <span className="Highlight">
             {<ClassEditButton classID={i /* classIDList[i] */} />} &nbsp;{' '}
             {<ClassRemoveButton classID={i /* classIDList[i] */} />}
