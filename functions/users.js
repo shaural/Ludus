@@ -7,54 +7,25 @@ app.use(require('cors')({ origin: true }));
 app.post('/', async (request, response) => {
   const db = admin.database().ref('/Users');
 
-  const { name, password, email, dob } = request.body;
+  const { name, email, dob } = request.body;
 
-  //basic validation tests
-  if (!email.toString().includes('@')) {
-    return response.status(400).json({
-      message: 'Invalid email, please try again'
+  //firebase database entry creation
+  let resp = {};
+  await db
+    .push({
+      Name: name,
+      Email: email,
+      DoB: dob
+    })
+    .once('value')
+    .then(snapshot => {
+      resp = {
+        id: snapshot.key,
+        user: { ...snapshot.val() }
+      };
     });
-  } else if (!password.toString().length) {
-    return response.status(400).json({
-      message: 'Empty passwords are not allowed, please try again'
-    });
-  } else if (password.toString().length < 10) {
-    return response.status(400).json({
-      message: 'Minimum password length: 10 characters, please try again'
-    });
-  } else if (!name.toString().length) {
-    return response.status(400).json({
-      message: 'You may not have an empty name'
-    });
-  } else if (!dob.toString().length) {
-    //this will be obselete with HTML forms
-    // placeholder for testing purposes
-    return response.status(400).json({
-      message: 'Please enter your age'
-    });
-  } else {
-    //firebase user creation
-    admin.auth().createUserWithEmailAndPassword(email, password);
 
-    //firebase database entry creation
-    let resp = {};
-    await db
-      .push({
-        Name: name,
-        Password: password,
-        Email: email,
-        DoB: dob
-      })
-      .once('value')
-      .then(snapshot => {
-        resp = {
-          id: snapshot.key,
-          user: { ...snapshot.val() }
-        };
-      });
-
-    return response.status(200).json(resp);
-  }
+  return response.status(200).json(resp);
 });
 
 // https://example.com/api/accounts/12345/teacher

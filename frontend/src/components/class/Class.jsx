@@ -10,19 +10,18 @@ class Class extends Component {
 
   fetchData(ClassID) {
     //TODO: API Call for info on the class from database
-    const requestBody = {
-      params: this.props.classID
-    };
-    const config = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    };
+
     Axios.get(
-      'https://us-central1-ludusfire.cloudfunctions.net/classes/info/',
-      querystring.stringify(requestBody),
-      config
-    ).then(function(response) {
-      console.log(response);
-    });
+      `https://us-central1-ludusfire.cloudfunctions.net/classes/${
+        this.props.classID
+      }/info/`
+    )
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
     return (
       <container>
         <span className="ClassInfo">

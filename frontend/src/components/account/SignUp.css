@@ -1,5 +1,6 @@
 .SignUpForm {
   overflow: hidden;
+  text-align: right;
   position: center;
   display: block;
   width: auto;
@@ -7,8 +8,28 @@
   height: auto;
   padding: 10px;
   margin: auto;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem !important;
+}
+
+.inLine {
+  display: inline-block;
+  margin-right: 33%;
+  align-items: center;
+}
+
+.inLinedob {
+  display: inline-block;
+  margin-right: 33%;
+  align-items: center;
+  width: 23%;
+}
+.centered {
+  display: fixed;
+  margin-right: 35%;
+  width: 20%;
+  font-size: 20;
+  align-items: center;
 }
