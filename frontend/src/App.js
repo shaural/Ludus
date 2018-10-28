@@ -5,6 +5,7 @@ import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
+import LearningPathCreatePage from './components/learningpath/LearningPathCreatePage';
 import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ class App extends Component {
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
+        <Link to="/teacher-lp-create">Create LP</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
         {/* probably want to check if you're logged in or not for the home page */}
         <Switch>
@@ -54,7 +56,7 @@ class App extends Component {
           />
           <Route
             path="/teacher-lp-create"
-            component={IllegalPath} /*placeholder*/
+            component={LearningPathCreatePage} /*placeholder*/
           />
           <Route
             path="/teacher-lp-edit"

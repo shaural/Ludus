@@ -40,7 +40,12 @@ class SignUpForm extends Component {
           onChange={event => this.setState({ dob: event.target.value })}
         />
         <br /> <br />
-        <input type="button" id="submitbutton" onClick={this.submitForm} />
+        <input
+          type="button"
+          id="submitbutton"
+          value="Submit"
+          onClick={this.submitForm}
+        />
       </form>
     );
   }
@@ -66,6 +71,7 @@ class SignUpForm extends Component {
       .catch(function(error) {
         console.log(error);
       });
+
     return false;
   }
 }
