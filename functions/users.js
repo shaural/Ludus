@@ -366,13 +366,11 @@ app.post(
         });
       });
       userRef.update(updates);
-      return response
-        .status(200)
-        .json({
-          message: `User with id ${
-            request.params.user_id
-          } has been enrolled in lp: ${request.params.lp_id}.`
-        });
+      return response.status(200).json({
+        message: `User with id ${
+          request.params.user_id
+        } has been enrolled in lp: ${request.params.lp_id}.`
+      });
     } else {
       return response
         .status(404)
