@@ -34,6 +34,7 @@ app.post('/', async (request, response) => {
     });
   } else {
     //firebase user creation
+    admin.auth().createUserWithEmailAndPassword(email, password);
 
     //firebase database entry creation
     let resp = {};
