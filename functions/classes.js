@@ -78,4 +78,33 @@ app.delete('/:class_id', async (request, response) => {
     );
 });
 
+// Class information API
+app.get('/:class_id/info', async (request, response) => {
+  const db = admin
+    .database()
+    .ref(`/Classes/`)
+    .child(request.params.class_id);
+  if (!db)
+    return response.status(404).json({
+      message: `class with id ${request.params.id} not found`
+    });
+  var out = {};
+  db.once('value').then(function(snapshot) {
+    out = snapshot.val();
+    if (!out) {
+      return response.status(404).json({
+        message: 'This class ID does not exist'
+      });
+    }
+    try {
+      return response.status(200).json({
+        ...out
+      });
+    } catch (e) {
+      return response.status(404).json({
+        message: 'There was a fatal error getting the class data'
+      });
+    }
+  });
+});
 exports.route = app;
