@@ -5,7 +5,10 @@ import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
+import LpPage from './components/learningpath/LpPage';
+import ProfilePage from './components/userProfile/ProfilePage';
 import IllegalPath from './components/IllegalPath';
+import {Route, Link, Switch } from 'react-router-dom';
 
 class App extends Component {
   render() {
@@ -16,6 +19,8 @@ class App extends Component {
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
+        <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
+        <Link to="/profile">User Profile</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
         {/* probably want to check if you're logged in or not for the home page */}
         <Switch>
@@ -23,7 +28,7 @@ class App extends Component {
           {/* <Route path="/" component={Dash} /> */}
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
-          <Route path="/profile" component={IllegalPath} /*placeholder*/ />
+          <Route path="/profile" component={ProfilePage} /*placeholder*/ />
           <Route
             path="/password-recovery"
             component={IllegalPath} /*placeholder*/
@@ -49,7 +54,7 @@ class App extends Component {
           <Route path="/teacher-classlist" component={ClasslistPage} />
           <Route
             path="/teacher-lplist"
-            component={IllegalPath} /*placeholder*/
+            component={LpPage} /*placeholder*/
           />
           <Route
             path="/teacher-lp-create"
@@ -61,18 +66,7 @@ class App extends Component {
           />
           <Route component={IllegalPath} />
         </Switch>
-        {/*
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to Ludus</h1>
-        </header>
-        <p className="App-intro">
-          Please enter your username and password to begin
-        </p>
-  
-        {/* This is how you render a custom component */}
-        {/*}
-        <Login />
+
       </div>
     );
   }
