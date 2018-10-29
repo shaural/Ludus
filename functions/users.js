@@ -334,7 +334,7 @@ app.patch(
             }`
           );
         let checkCompletionFlag = true;
-        await lpRef.on('value').then(function(snapshot) {
+        await lpRef.once('value').then(function(snapshot) {
           snapshot.forEach(function(childSnapshot) {
             if (childSnapshot.val() == 0) {
               checkCompletionFlag = false;
@@ -343,13 +343,19 @@ app.patch(
           if (checkCompletionFlag) {
             // lp has been competed
             lpRef.update({
-              LP_Status: 'Completed'
+              LP_Status: "Completed"
             });
           }
         });
-        return response
-          .status(200)
-          .json({ message: `Class marked completed.` });
+        if(checkCompletionFlag) {
+          return response
+            .status(200)
+            .json({message: `Class marked completed. Congratulations! You have completed all classes in this learning path.`})
+        }else {
+          return response
+            .status(200)
+            .json({ message: `Class marked completed.` });
+        }
       } else {
         return response
           .status(404)
@@ -380,7 +386,7 @@ app.post(
       .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
     // get classes of lp: lp_id
     var updates = {};
-    updates['LP_Status'] = 'Enrolled';
+    updates['LP_Status'] = "Enrolled";
     if (lpRef) {
       await lpRef.once('value').then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
