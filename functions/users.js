@@ -327,7 +327,7 @@ app.patch(
             request.params.class_id
           } of learning path ${request.params.lp_id}.`
         });
-      } else if (enrolledflg && !(completedflg)) {
+      } else if (enrolledflg && !completedflg) {
         // Class successfully marked as complete (value = 1 in db)
         // Check if completed all classes in lp --> should copy all classes of lp when enrolled (with val = 0)
         const lpRef = admin
