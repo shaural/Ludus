@@ -290,7 +290,8 @@ app.patch(
       // }/${request.params.class_id}`
     );
     if (db) {
-      let enrolledflg = 999; // 0: not enrolled, 1: enrolled+completed, 2: enrolled (not completed)
+      let enrolledflg = false; // 0: not enrolled, 1: enrolled+completed, 2: enrolled (not completed)
+      let completedflg = false;
       // To verify if enrolled or already completed
       await db.once('value').then(function(snapshot) {
         if (snapshot.hasChild(`${request.params.class_id}`)) {
@@ -299,31 +300,34 @@ app.patch(
             .val();
           if (enrolledStatus == 1) {
             // Already marked as completed
-            enrolledflg = 1;
+            completedflg = true;
+            enrolledflg = true; // implied from completed status
           } else {
-            enrolledflg = 2;
+            enrolledflg = true;
+            completedflg = false;
             db.child(`${request.params.class_id}`).set(1);
           }
         } else {
           // since class not in user => user not enrolled
-          enrolledflg = 0;
+          enrolledflg = false;
+          completedflg = false; // implied from enrollement
         }
       });
-      if (enrolledflg == 0) {
+      if (!enrolledflg) {
         // student not enrolled in class (or lp)
         return response.status(400).json({
           message: `Student not enrolled in class: ${
             request.params.class_id
           } of learning path ${request.params.lp_id}.`
         });
-      } else if (enrolledflg == 1) {
+      } else if (completedflg) {
         // student already completed class
         return response.status(400).json({
           message: `Student already complted class: ${
             request.params.class_id
           } of learning path ${request.params.lp_id}.`
         });
-      } else if (enrolledflg == 2) {
+      } else if (enrolledflg && !(completedflg)) {
         // Class successfully marked as complete (value = 1 in db)
         // Check if completed all classes in lp --> should copy all classes of lp when enrolled (with val = 0)
         const lpRef = admin
@@ -333,21 +337,21 @@ app.patch(
               request.params.lp_id
             }`
           );
-        let checkCompletionFlag = true;
+        let checkLPCompletionFlag = true;
         await lpRef.once('value').then(function(snapshot) {
           snapshot.forEach(function(childSnapshot) {
             if (childSnapshot.val() == 0) {
-              checkCompletionFlag = false;
+              checkLPCompletionFlag = false;
             }
           });
-          if (checkCompletionFlag) {
+          if (checkLPCompletionFlag) {
             // lp has been competed
             lpRef.update({
               LP_Status: 'Completed'
             });
           }
         });
-        if (checkCompletionFlag) {
+        if (checkLPCompletionFlag) {
           return response.status(200).json({
             message: `Class marked completed. Congratulations! You have completed all classes in this learning path.`
           });
