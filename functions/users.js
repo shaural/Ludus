@@ -376,13 +376,11 @@ app.post(
   async (request, response) => {
     const userRef = admin
       .database()
-      .ref(
-        `/Users/${request.params.user_id}/Student/LP_Enrolled/`
-      );
+      .ref(`/Users/${request.params.user_id}/Student/LP_Enrolled/`);
     const lpRef = admin
       .database()
       .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
-    
+
     // check if lp exists
 
     // get classes of lp: lp_id
@@ -391,27 +389,29 @@ app.post(
     let lpExists = false;
     if (lpRef) {
       await lpRef.once('value').then(function(snapshot) {
-        if(snapshot.exists()) {
+        if (snapshot.exists()) {
           lpExists = true;
         }
         snapshot.forEach(function(childSnapshot) {
           updates[childSnapshot.child('Class_Id').val()] = 0;
         });
       });
-      if(!lpExists) {
+      if (!lpExists) {
         // learning path does not exist
         return response.status(400).json({
-          message: `The learning path: ${request.params.lp_id} does not exist in database.`
+          message: `The learning path: ${
+            request.params.lp_id
+          } does not exist in database.`
         });
       }
       let lpEnrolled = false;
-      if(userRef){
+      if (userRef) {
         await userRef.once('value').then(function(snapshot) {
-          if(snapshot.hasChild(`${request.params.lp_id}`)){
+          if (snapshot.hasChild(`${request.params.lp_id}`)) {
             lpEnrolled = true;
           }
         });
-        if(lpEnrolled){
+        if (lpEnrolled) {
           // already enrolled in lp
           return response.status(400).json({
             message: `User with id ${
@@ -427,9 +427,7 @@ app.post(
         });
       }
       return response.status(404).json({
-        message: `User with id ${
-          request.params.user_id
-        } could not be verified.`
+        message: `User with id ${request.params.user_id} could not be verified.`
       });
     } else {
       return response
