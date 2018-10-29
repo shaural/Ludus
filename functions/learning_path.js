@@ -50,6 +50,7 @@ app.get('/:lp_id/class', (request, response) => {
   }
 });
 
+// delete learning path with id lp_id
 app.delete('/:lp_id', async (request, response) => {
   const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
   if (!lpRef)
@@ -73,6 +74,77 @@ app.delete('/:lp_id', async (request, response) => {
         }`
       });
     });
+});
+
+app.post('/', async (request, response) => {
+  const db = admin.database().ref('/Learing_Paths');
+
+  const { name, owner, topic } = request.body;
+
+  //DO I NEED TO CHECK IF OWNER IS A TEACHER?
+  if (!name.toString().length) {
+    return response.status(400).json({
+      message: 'You may not have an empty name'
+    });
+  } else if (!Owner.toString().length) {
+    return response.status(400).json({
+      message: 'Please enter your age'
+    });
+  } else {
+    let resp = {};
+    await db
+      .push({
+        Name: name,
+        Owner: owner,
+        Topic: topic,
+      })
+      .once('value')
+      .then(snapshot => {
+        resp = {
+          id: snapshot.key,
+          learning_path: { ...snapshot.val() }
+        };
+      });
+
+    return response.status(200).json(resp);
+  }
+});
+
+// https://example.com/api/accounts/12345/teacher
+app.post('/:user_id/teacher', async (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const { bio } = request.body;
+
+  await db.set({
+    Bio: bio || ''
+  });
+  return response.status(200).json();
+});
+
+app.post('/:user_id/student', async (request, response) => {
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const { name } = request.body;
+  if (!name)
+    return response
+      .status(400)
+      .json({ message: 'You may not have an empty name' });
+  await db.set({
+    Nickname: name,
+    Interests: [],
+    LP_Enrolled: [],
+    T_Following: []
+  });
+  return response.status(200).json();
 });
 
 exports.route = app;
