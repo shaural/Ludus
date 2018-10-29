@@ -348,11 +348,9 @@ app.patch(
           }
         });
         if (checkCompletionFlag) {
-          return response
-            .status(200)
-            .json({
-              message: `Class marked completed. Congratulations! You have completed all classes in this learning path.`
-            });
+          return response.status(200).json({
+            message: `Class marked completed. Congratulations! You have completed all classes in this learning path.`
+          });
         } else {
           return response
             .status(200)
