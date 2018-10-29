@@ -56,7 +56,9 @@ app.delete('/:lp_id', async (request, response) => {
   if (!lpRef)
     return response
       .status(404)
-      .json({ message: `Learning path with id ${request.params.lp_id} not found` });
+      .json({
+        message: `Learning path with id ${request.params.lp_id} not found`
+      });
 
   //remove from db (no need to check if exists since if it doesn't then wont remove anything)
   lpRef
@@ -64,7 +66,9 @@ app.delete('/:lp_id', async (request, response) => {
     .then(function() {
       return response
         .status(200)
-        .json({ message: `Learning path with id ${request.params.lp_id} deleted.` });
+        .json({
+          message: `Learning path with id ${request.params.lp_id} deleted.`
+        });
     })
     .catch(function(error) {
       console.log('Error deleting learning path:', error);
