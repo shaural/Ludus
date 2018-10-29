@@ -56,15 +56,15 @@ app.delete('/:lp_id', async (request, response) => {
   if (!lpRef)
     return response
       .status(404)
-      .json({ message: `lp with id ${request.params.lp_id} not found` });
+      .json({ message: `Learning path with id ${request.params.lp_id} not found` });
 
-  //remove from db
+  //remove from db (no need to check if exists since if it doesn't then wont remove anything)
   lpRef
     .remove()
     .then(function() {
       return response
         .status(200)
-        .json({ message: `User with id ${request.params.user_id} deleted.` });
+        .json({ message: `Learning path with id ${request.params.lp_id} deleted.` });
     })
     .catch(function(error) {
       console.log('Error deleting learning path:', error);
@@ -77,7 +77,7 @@ app.delete('/:lp_id', async (request, response) => {
 });
 
 app.post('/', async (request, response) => {
-  const db = admin.database().ref('/Learing_Paths');
+  const db = admin.database().ref('/Learning_Paths');
 
   const { name, owner, topic } = request.body;
 
@@ -86,7 +86,7 @@ app.post('/', async (request, response) => {
     return response.status(400).json({
       message: 'You may not have an empty name'
     });
-  } else if (!Owner.toString().length) {
+  } else if (!owner.toString().length) {
     return response.status(400).json({
       message: 'Please enter your age'
     });
@@ -96,7 +96,7 @@ app.post('/', async (request, response) => {
       .push({
         Name: name,
         Owner: owner,
-        Topic: topic,
+        Topic: topic
       })
       .once('value')
       .then(snapshot => {
@@ -108,43 +108,6 @@ app.post('/', async (request, response) => {
 
     return response.status(200).json(resp);
   }
-});
-
-// https://example.com/api/accounts/12345/teacher
-app.post('/:user_id/teacher', async (request, response) => {
-  const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
-  if (!db)
-    return response
-      .status(404)
-      .json({ message: `user with id ${request.params.user_id} not found` });
-
-  const { bio } = request.body;
-
-  await db.set({
-    Bio: bio || ''
-  });
-  return response.status(200).json();
-});
-
-app.post('/:user_id/student', async (request, response) => {
-  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
-  if (!db)
-    return response
-      .status(404)
-      .json({ message: `user with id ${request.params.user_id} not found` });
-
-  const { name } = request.body;
-  if (!name)
-    return response
-      .status(400)
-      .json({ message: 'You may not have an empty name' });
-  await db.set({
-    Nickname: name,
-    Interests: [],
-    LP_Enrolled: [],
-    T_Following: []
-  });
-  return response.status(200).json();
 });
 
 exports.route = app;
