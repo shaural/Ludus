@@ -378,9 +378,7 @@ app.patch(
 app.post(
   '/:user_id/student/learning_path/:lp_id',
   async (request, response) => {
-    const userRef = admin
-      .database()
-      .ref(`/Users/${request.params.user_id}`);
+    const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
     const lpRef = admin
       .database()
       .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
@@ -410,14 +408,16 @@ app.post(
       let userExists = false;
       if (userRef) {
         await userRef.once('value').then(function(snapshot) {
-          if(snapshot.exists()) {
+          if (snapshot.exists()) {
             userExists = true;
           }
-          if (snapshot.hasChild(`/Student/LP_Enrolled/${request.params.lp_id}`)) {
+          if (
+            snapshot.hasChild(`/Student/LP_Enrolled/${request.params.lp_id}`)
+          ) {
             lpEnrolled = true;
           }
         });
-        if(!userExists){
+        if (!userExists) {
           // user does not exists in db
           return response.status(400).json({
             message: `User with id ${
@@ -433,7 +433,9 @@ app.post(
             } is already enrolled in learning path: ${request.params.lp_id}.`
           });
         }
-        userRef.child(`/Student/LP_Enrolled/${request.params.lp_id}`).update(updates);
+        userRef
+          .child(`/Student/LP_Enrolled/${request.params.lp_id}`)
+          .update(updates);
         return response.status(200).json({
           message: `User with id ${
             request.params.user_id
