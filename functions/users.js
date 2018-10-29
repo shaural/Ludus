@@ -326,6 +326,21 @@ app.patch(
       } else if (enrolledflg == 2) {
         // Class successfully marked as complete (value = 1 in db)
         // Check if completed all classes in lp --> should copy all classes of lp when enrolled (with val = 0)
+        const lpRef = admin.database().ref(`/Users/${request.params.user_id}/Student/LP_Enrolled/${request.params.lp_id}`);
+        let checkCompletionFlag = true;
+        await lpRef.on('value').then(function(snapshot) {
+          snapshot.forEach(function(childSnapshot) {
+            if(childSnapshot.val() == 0){
+              checkCompletionFlag = false;
+            }
+          });
+          if(checkCompletionFlag){
+            // lp has been competed
+            lpRef.update({
+              LP_Status: "Completed"
+            });
+          }
+        });
         return response
           .status(200)
           .json({ message: `Class marked completed.` });
@@ -359,6 +374,7 @@ app.post(
       .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
     // get classes of lp: lp_id
     var updates = {};
+    updates["LP_Status"] = "Enrolled";
     if (lpRef) {
       await lpRef.once('value').then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
