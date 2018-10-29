@@ -50,4 +50,29 @@ app.get('/:lp_id/class', (request, response) => {
   }
 });
 
+app.delete('/:lp_id', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
+  if (!lpRef)
+    return response
+      .status(404)
+      .json({ message: `lp with id ${request.params.lp_id} not found` });
+
+  //remove from db
+  lpRef
+    .remove()
+    .then(function() {
+      return response
+        .status(200)
+        .json({ message: `User with id ${request.params.user_id} deleted.` });
+    })
+    .catch(function(error) {
+      console.log('Error deleting learning path:', error);
+      return response.status(400).json({
+        message: `Error, Could not delete learning path with id ${
+          request.params.lp_id
+        }`
+      });
+    });
+});
+
 exports.route = app;
