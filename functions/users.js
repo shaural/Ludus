@@ -311,14 +311,14 @@ app.patch(
       });
       if (enrolledflg == 0) {
         // student not enrolled in class (or lp)
-        return response.status(200).json({
+        return response.status(400).json({
           message: `Student not enrolled in class: ${
             request.params.class_id
           } of learning path ${request.params.lp_id}.`
         });
       } else if (enrolledflg == 1) {
         // student already completed class
-        return response.status(200).json({
+        return response.status(400).json({
           message: `Student already complted class: ${
             request.params.class_id
           } of learning path ${request.params.lp_id}.`
@@ -377,27 +377,59 @@ app.post(
     const userRef = admin
       .database()
       .ref(
-        `/Users/${request.params.user_id}/Student/LP_Enrolled/${
-          request.params.lp_id
-        }`
+        `/Users/${request.params.user_id}/Student/LP_Enrolled/`
       );
     const lpRef = admin
       .database()
       .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+    
+    // check if lp exists
+
     // get classes of lp: lp_id
     var updates = {};
     updates['LP_Status'] = 'Enrolled';
+    let lpExists = false;
     if (lpRef) {
       await lpRef.once('value').then(function(snapshot) {
+        if(snapshot.exists()) {
+          lpExists = true;
+        }
         snapshot.forEach(function(childSnapshot) {
           updates[childSnapshot.child('Class_Id').val()] = 0;
         });
       });
-      userRef.update(updates);
-      return response.status(200).json({
+      if(!lpExists) {
+        // learning path does not exist
+        return response.status(400).json({
+          message: `The learning path: ${request.params.lp_id} does not exist in database.`
+        });
+      }
+      let lpEnrolled = false;
+      if(userRef){
+        await userRef.once('value').then(function(snapshot) {
+          if(snapshot.hasChild(`${request.params.lp_id}`)){
+            lpEnrolled = true;
+          }
+        });
+        if(lpEnrolled){
+          // already enrolled in lp
+          return response.status(400).json({
+            message: `User with id ${
+              request.params.user_id
+            } is already enrolled in learning path: ${request.params.lp_id}.`
+          });
+        }
+        userRef.child(`${request.params.lp_id}`).update(updates);
+        return response.status(200).json({
+          message: `User with id ${
+            request.params.user_id
+          } has been enrolled in lp: ${request.params.lp_id}.`
+        });
+      }
+      return response.status(404).json({
         message: `User with id ${
           request.params.user_id
-        } has been enrolled in lp: ${request.params.lp_id}.`
+        } could not be verified.`
       });
     } else {
       return response
