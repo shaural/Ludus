@@ -16,12 +16,13 @@ export class EditLP extends Component {
     super(props, context);
     this.valChange = this.valChange.bind(this);
     this.submitData = this.submitData.bind(this);
+    this.discardChanges = this.discardChanges.bind(this);
     this.state = {
       //TODO: Fill these variables with values from the db
       name: '',
       topic: '',
       owner: '',
-      classList: '',
+      classList: [],
       initialInput: []
     };
   }
@@ -35,12 +36,24 @@ export class EditLP extends Component {
     this.setState({ name: initialInput['Name'].value });
     this.setState({ topic: initialInput['Topic'].value });
     this.setState({ owner: initialInput['Owner'].value });
+
+    //not sure about this one
+    this.setState({ classList: initialInput['Class'].value });
   }
 
   valChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
-  submitData() {}
+  submitData() {
+    //TODO: Call the correct endpoint
+    // Axios.update
+  }
+  discardChanges() {
+    this.setState({ name: '' });
+    this.setState({ topic: '' });
+    this.setState({ owner: '' });
+    this.setState({ classList: [] });
+  }
 
   render() {
     this.init();
@@ -74,6 +87,16 @@ export class EditLP extends Component {
             onChange={this.valChange}
           />
         </FormGroup>
+        <Button>
+          bsStyle="primary" onClick=
+          {this.submitData}
+          Save changes
+        </Button>
+        <Button>
+          {' '}
+          bsStyle="primary" onClick ={this.discardChanges}
+          Discard Changes
+        </Button>
       </Form>
     );
   }
