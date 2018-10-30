@@ -133,9 +133,8 @@ app.post('/', async (request, response) => {
   }
 });
 
-// Implement GET next class, Body: current_class: Name of current class
+// Implement GET next class from index, current_index: index of current class
 app.get('/:lp_id/nextClassByIndex/:current_index', (request, response) => {
-  //console.log('Ran new code');
   const db = admin
     .database()
     .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
@@ -146,19 +145,15 @@ app.get('/:lp_id/nextClassByIndex/:current_index', (request, response) => {
   } else {
     db.orderByKey().once('value', function(snapshot) {
       if (snapshot.exists()) {
-        console.log(snapshot.val());
         let indexReched = false;
         let classFound = false;
         if (snapshot.hasChild(request.params.current_index)) {
           snapshot.forEach(function(childSnapshot) {
-            console.log('Child:');
-            console.log(childSnapshot.val());
             if (indexReched) {
               classFound = true;
               return response.status(200).json(childSnapshot.val());
             }
             if (childSnapshot.key == request.params.current_index) {
-              console.log('Index reched!');
               indexReched = true;
             }
           });
