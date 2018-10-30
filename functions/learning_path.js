@@ -35,35 +35,44 @@ app.post('/:lp_id/class', async (request, response) => {
 
     if (indexExists) {
       return response.status(400).json({
-        message: `Learning path already contains class at index ${index}. Please use PATCH method instead.`
+        message: `Learning path already contains class at index ${index}. Please use PATCH method instead.` // TODO create patch endpoint
       });
     }
-    await db
-      .set({
-        index: class_id
-      })
-      .once('value')
-      .then(snapshot => {
-        resp = snapshot.val();
-      });
+    db.child(index).set(class_id);
   } catch (e) {
-    return response.status(400).json({ message: 'malformed request' });
+    return response
+      .status(400)
+      .json({ message: `malformed request... exception: ${e}` });
   }
-  return response.status(200).json(resp);
+  return response
+    .status(200)
+    .json({
+      message: `Class: ${class_id} has been added to learning path with id: ${
+        request.params.lp_id
+      } at index: ${index}`
+    });
 });
 
 app.get('/:lp_id/classes', (request, response) => {
   //console.log('Ran new code');
-  const db = admin
-    .database()
-    .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
+  const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
   if (!db)
     return response
       .status(404)
-      .json({ message: ` ${request.params.lp_id} does not have any classes` });
+      .json({ message: `${request.params.lp_id} does not have any classes` });
   else {
     db.once('value', function(snapshot) {
-      return response.status(200).json(snapshot.val());
+      if (snapshot.hasChild('Classes')) {
+        return response.status(200).json(snapshot.child('Classes').val());
+      } else {
+        return response
+          .status(400)
+          .json({
+            message: `Learning path with id: ${
+              request.params.lp_id
+            } does not exist or does not have any classes.`
+          });
+      }
     });
   }
 });
@@ -127,5 +136,7 @@ app.post('/', async (request, response) => {
     return response.status(200).json(resp);
   }
 });
+
+// Implement GET next class
 
 exports.route = app;
