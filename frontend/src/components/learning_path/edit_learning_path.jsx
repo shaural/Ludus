@@ -21,8 +21,20 @@ export class EditLP extends Component {
       name: '',
       topic: '',
       owner: '',
-      classList: ''
+      classList: '',
+      initialInput: []
     };
+  }
+  init() {
+    Axios.get(
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${lp_id}`
+    ).then(res => {
+      this.setState({ initialInput: res.data });
+    });
+    console.log(res.data);
+    this.setState({ name: initialInput['Name'].value });
+    this.setState({ topic: initialInput['Topic'].value });
+    this.setState({ owner: initialInput['Owner'].value });
   }
 
   valChange(e) {
@@ -31,6 +43,38 @@ export class EditLP extends Component {
   submitData() {}
 
   render() {
-    return <Form horizontal>></Form>;
+    this.init();
+    //TODO: Add support for adding classes
+    return (
+      <Form horizontal>
+        >
+        <FormGroup name="Edit learning path info">
+          <ControlLabel>Owner: </ControlLabel>
+          <FormControl
+            type="text"
+            name="Owner"
+            value={this.state.value}
+            placeholder="Enter text"
+            onChange={this.valChange}
+          />
+          <ControlLabel>Topic: </ControlLabel>
+          <FormControl
+            type="text"
+            name="Topic"
+            value={this.state.value}
+            placeholder="Enter text"
+            onChange={this.valChange}
+          />
+          <ControlLabel>Owner: </ControlLabel>
+          <FormControl
+            type="text"
+            name="Owner"
+            value={this.state.value}
+            placeholder="Enter text"
+            onChange={this.valChange}
+          />
+        </FormGroup>
+      </Form>
+    );
   }
 }
