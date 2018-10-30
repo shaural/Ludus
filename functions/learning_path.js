@@ -68,4 +68,64 @@ app.get('/:lp_id/classes', (request, response) => {
   }
 });
 
+// delete learning path with id lp_id
+app.delete('/:lp_id', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
+  if (!lpRef)
+    return response.status(404).json({
+      message: `Learning path with id ${request.params.lp_id} not found`
+    });
+
+  //remove from db (no need to check if exists since if it doesn't then wont remove anything)
+  lpRef
+    .remove()
+    .then(function() {
+      return response.status(200).json({
+        message: `Learning path with id ${request.params.lp_id} deleted.`
+      });
+    })
+    .catch(function(error) {
+      console.log('Error deleting learning path:', error);
+      return response.status(400).json({
+        message: `Error, Could not delete learning path with id ${
+          request.params.lp_id
+        }`
+      });
+    });
+});
+
+app.post('/', async (request, response) => {
+  const db = admin.database().ref('/Learning_Paths');
+
+  const { name, owner, topic } = request.body;
+
+  //DO I NEED TO CHECK IF OWNER IS A TEACHER?
+  if (!name.toString().length) {
+    return response.status(400).json({
+      message: 'You may not have an empty name'
+    });
+  } else if (!owner.toString().length) {
+    return response.status(400).json({
+      message: 'Please enter your age'
+    });
+  } else {
+    let resp = {};
+    await db
+      .push({
+        Name: name,
+        Owner: owner,
+        Topic: topic
+      })
+      .once('value')
+      .then(snapshot => {
+        resp = {
+          id: snapshot.key,
+          learning_path: { ...snapshot.val() }
+        };
+      });
+
+    return response.status(200).json(resp);
+  }
+});
+
 exports.route = app;
