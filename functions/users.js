@@ -33,16 +33,8 @@ app.post('/', async (request, response) => {
       message: 'Please enter your age'
     });
   } else {
-    //firebase user creation
-
     //firebase database entry creation
     let resp = {};
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(name, password)
-      .catch(function(error) {
-        alert(error);
-      });
     await db
       .push({
         Name: name,
@@ -244,11 +236,6 @@ app.patch('/:user_id/student', (request, response) => {
 });
 
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
-  // TODO: verify that user_id is valid
-  // const validate_input = (topic, name) =>
-  //   (topic && topic.toString().length) &&
-  //   (name && name.toString().length);
-
   const {
     topic,
     name,
