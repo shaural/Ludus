@@ -50,6 +50,7 @@ app.get('/:lp_id/class', (request, response) => {
   }
 });
 
+// START CODE FOR LP SEARCH
 // GET learning paths for a teacher -> from owner attribute in lp
 app.get('/teacher/:user_id', (request, response) => {
   const lpRef = admin.database().ref(`/Learning_Paths`);
@@ -60,4 +61,56 @@ app.get('/teacher/:user_id', (request, response) => {
       return response.status(200).json(snapshot.val());
     });
 });
+
+// This endpoint basically makes previous one invalid since you can just put the user_id of teacher as owner=user_id. (But made it as John specifically asked for it)
+// GET all lps matching query vars: Name, Topic, Owner (to get all leave empty)
+app.get('/search', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  let name = request.query.name || '';
+  let owner = request.query.owner || '';
+  let topic = request.query.topic || '';
+  let valsExist = true;
+  if (name.length == 0 && owner.length == 0 && topic.length == 0) {
+    valsExist = false;
+  }
+  var resp = [];
+  await lpRef.once('value', function(snapshot) {
+    if (Object.keys(request.query).length > 0 && valsExist) {
+      snapshot.forEach(function(childSnapshot) {
+        if (
+          name &&
+          childSnapshot
+            .child('Name')
+            .val()
+            .toLowerCase()
+            .indexOf(name.toLowerCase()) != -1
+        ) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        } else if (
+          topic &&
+          childSnapshot
+            .child('Topic')
+            .val()
+            .toLowerCase()
+            .indexOf(topic.toLowerCase()) != -1
+        ) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        } else if (
+          owner &&
+          childSnapshot
+            .child('Owner')
+            .val()
+            .toLowerCase()
+            .indexOf(owner.toLowerCase()) != -1
+        ) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        }
+      });
+    } else {
+      resp = snapshot.val();
+    }
+  });
+  return response.status(200).json(resp);
+});
+
 exports.route = app;
