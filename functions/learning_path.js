@@ -50,4 +50,14 @@ app.get('/:lp_id/class', (request, response) => {
   }
 });
 
+// GET learning paths for a teacher -> from owner attribute in lp
+app.get('/teacher/:user_id', (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  lpRef
+    .orderByChild('Owner')
+    .equalTo(request.params.user_id)
+    .once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
+});
 exports.route = app;
