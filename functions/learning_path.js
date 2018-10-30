@@ -34,11 +34,9 @@ app.post('/:lp_id/class', async (request, response) => {
     });
 
     if (indexExists) {
-      return response
-        .status(400)
-        .json({
-          message: `Learning path already contains class at index ${index}. Please use PATCH method instead.`
-        });
+      return response.status(400).json({
+        message: `Learning path already contains class at index ${index}. Please use PATCH method instead.`
+      });
     }
     await db
       .set({
