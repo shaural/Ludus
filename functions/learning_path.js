@@ -8,9 +8,9 @@ app.post('/:lp_id/class', async (request, response) => {
   const db = admin
     .database()
     .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
-  
+
   const { index, class_id } = request.body;
-  if(index < 0) {
+  if (index < 0) {
     // invalid (assuming index starting with 0)
     return response.status(400).json({
       message: `Invalid index.`
@@ -27,15 +27,18 @@ app.post('/:lp_id/class', async (request, response) => {
   try {
     // check if index already taken (need to use PATCH instead)
     let indexExists = false;
-    await db
-      .once('value').then(snapshot => {
-        if(snapshot.hasChild(index)){
-          indexExists = true;
-        }
-      });
-    
-    if(indexExists) {
-      return response.status(400).json({ message: `Learning path already contains class at index ${index}. Please use PATCH method instead.` });
+    await db.once('value').then(snapshot => {
+      if (snapshot.hasChild(index)) {
+        indexExists = true;
+      }
+    });
+
+    if (indexExists) {
+      return response
+        .status(400)
+        .json({
+          message: `Learning path already contains class at index ${index}. Please use PATCH method instead.`
+        });
     }
     await db
       .set({
