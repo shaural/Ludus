@@ -44,13 +44,11 @@ app.post('/:lp_id/class', async (request, response) => {
       .status(400)
       .json({ message: `malformed request... exception: ${e}` });
   }
-  return response
-    .status(200)
-    .json({
-      message: `Class: ${class_id} has been added to learning path with id: ${
-        request.params.lp_id
-      } at index: ${index}`
-    });
+  return response.status(200).json({
+    message: `Class: ${class_id} has been added to learning path with id: ${
+      request.params.lp_id
+    } at index: ${index}`
+  });
 });
 
 app.get('/:lp_id/classes', (request, response) => {
@@ -65,13 +63,11 @@ app.get('/:lp_id/classes', (request, response) => {
       if (snapshot.hasChild('Classes')) {
         return response.status(200).json(snapshot.child('Classes').val());
       } else {
-        return response
-          .status(400)
-          .json({
-            message: `Learning path with id: ${
-              request.params.lp_id
-            } does not exist or does not have any classes.`
-          });
+        return response.status(400).json({
+          message: `Learning path with id: ${
+            request.params.lp_id
+          } does not exist or does not have any classes.`
+        });
       }
     });
   }
@@ -137,6 +133,60 @@ app.post('/', async (request, response) => {
   }
 });
 
-// Implement GET next class
+// Implement GET next class, Body: current_class: Name of current class
+app.get('/:lp_id/nextClassByIndex/:current_index', (request, response) => {
+  //console.log('Ran new code');
+  const db = admin
+    .database()
+    .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
+  if (!db) {
+    return response
+      .status(404)
+      .json({ message: `${request.params.lp_id} does not have any classes` });
+  } else {
+    db.orderByKey().once('value', function(snapshot) {
+      if (snapshot.exists()) {
+        console.log(snapshot.val());
+        let indexReched = false;
+        let classFound = false;
+        if (snapshot.hasChild(request.params.current_index)) {
+          snapshot.forEach(function(childSnapshot) {
+            console.log('Child:');
+            console.log(childSnapshot.val());
+            if (indexReched) {
+              classFound = true;
+              return response.status(200).json(childSnapshot.val());
+            }
+            if (childSnapshot.key == request.params.current_index) {
+              console.log('Index reched!');
+              indexReched = true;
+            }
+          });
+          if (indexReched && !classFound) {
+            // last -> no more next class
+            return response.status(400).json({
+              message: `Learning path with id: ${
+                request.params.lp_id
+              } does not does not have any more classes (after index: ${
+                request.params.current_index
+              }).`
+            });
+          }
+        } else {
+          // current_index does not exist (no class there)
+          return response
+            .status(400)
+            .json({ message: 'Invalid current index' });
+        }
+      } else {
+        return response.status(400).json({
+          message: `Learning path with id: ${
+            request.params.lp_id
+          } does not exist.`
+        });
+      }
+    });
+  }
+});
 
 exports.route = app;
