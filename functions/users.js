@@ -1,5 +1,4 @@
 const admin = require('./utils').firebaseAdmin;
-const firebase = require('firebase');
 const app = require('express')();
 
 app.use(require('cors')({ origin: true }));
