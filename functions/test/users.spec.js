@@ -13,7 +13,7 @@ describe('testing users', function() {
     server = require('../users').route;
   });
 
-  this.timeout(5000);
+  //this.timeout(5000);
 
   describe('top-level user', function() {
     var test_user_id;
@@ -103,6 +103,7 @@ describe('testing users', function() {
     });
   });
   describe(`student`, () => {
+    const learning_path_id = '-LNWF1Itj0gydp4gt02V';
     var test_user_id;
     before(function() {
       test_user_id = _test_user_id;
@@ -126,6 +127,11 @@ describe('testing users', function() {
       request(server)
         .get('/invalid_user/student/learningPaths/')
         .expect(404, done);
+    });
+    it("can get a student's learning paths", function(done) {
+      request(server)
+        .get(`/${test_user_id}/student/learningPaths`)
+        .expect(200, done);
     });
   });
 });
