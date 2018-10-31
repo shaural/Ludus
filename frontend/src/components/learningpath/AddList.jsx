@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Class from '../class/Class';
-import ClassRemoveButton from '../class/ClassRemoveButton';
 import '../class/Classlist.css';
 
 class AddList extends Component {

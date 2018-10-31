@@ -7,7 +7,7 @@ var querystring = require('querystring');
 export default class LearningPathCreate extends Component {
   constructor(props) {
     super(props);
-    this.state = { show: false, classes: ['0'] };
+    this.state = { name: '', topic: '', classes: ['0'] };
   }
 
   showModal = () => {
@@ -21,6 +21,20 @@ export default class LearningPathCreate extends Component {
   render() {
     return (
       <div>
+        Learning Path Name:&nbsp;
+        <input
+          className="inLine"
+          type="text"
+          onChange={event => this.setState({ name: event.target.value })}
+        />
+        <br /> <br />
+        Topic:&nbsp;
+        {'\t\t'}
+        <input
+          className="inLine"
+          type="text"
+          onChange={event => this.setState({ topic: event.target.value })}
+        />
         <div className="lpcontainer">
           {' '}
           <CreationList
@@ -53,19 +67,21 @@ export default class LearningPathCreate extends Component {
   };
 
   submitLP() {
+    /*
     if (!this.state.classes) {
       alert('No Classes in LP!');
-    }
+    }*/
     const requestBody = {
-      name: this.state.displayName,
-      email: this.state.email,
-      dob: this.state.dob
+      name: this.state.name,
+      topic: this.state.topic
     };
     const config = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     };
     Axios.post(
-      'https://us-central1-ludusfire.cloudfunctions.net/users/',
+      `https://us-central1-ludusfire.cloudfunctions.net/${
+        this.state.name /*userid*/
+      }/teacher/learningPath`,
       querystring.stringify(requestBody),
       config
     )
@@ -75,7 +91,7 @@ export default class LearningPathCreate extends Component {
       .catch(function(error) {
         console.log(error);
       });
-    alert('Successfully Signed Up!');
+    alert('Published Learning Path!');
 
     return false;
   }
