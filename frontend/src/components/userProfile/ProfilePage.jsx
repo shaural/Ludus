@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Header from './Header';
+//import NotificationList from './NotificationList';
 import UserInfoContainer from './UserInfoContainer';
 import LpInfoContainer from './LpInfoContainer';
 import NavBar from '../NavBar';

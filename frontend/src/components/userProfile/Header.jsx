@@ -5,7 +5,29 @@ import NotificationList from './NotificationList';
 import profilePic from './profilePic.jpg';
 import './header.css';
 
+const Axios =require('axios');
+
 class Header extends Component {
+constructor(props) {
+  super(props);
+  this.state = {
+    Name: 'nametest',
+    Email: 'emailtest',
+    DoB: 'dobtest',
+    data: []
+  }
+}
+
+componentDidMount() {
+  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/-LNVWR9kD2dvN8GLGFYE/`)
+  .then(({ data }) => {
+    this.setState({
+      Name: data.Name,
+      Email: data.Email,
+      DoB: data.DoB
+    });
+  })
+}
   render() {
     return <div>{this.fetchData(this.props.userID)}</div>;
   }
@@ -20,7 +42,7 @@ class Header extends Component {
               <img class="image" src={profilePic}/>
           </span>
           <div className="nameText">
-            {"Sample Name"}
+            {this.state.Name}
           </div>
           <div className="followerBtn">
           {<FollowBtn />}
