@@ -10,9 +10,6 @@ import {
   Button
 } from 'react-bootstrap';
 firebase.initializeApp(conf);
-
-// TODO: Uncomment this library to implement password hashing
-// const bcrypt = require('bcrypt');
 export class Login extends Component {
   constructor(props, context) {
     super(props, context);
@@ -25,7 +22,6 @@ export class Login extends Component {
   }
 
   submitData() {
-    // let hash = bcrypt.hashSync(this.password, 10);
     let uname = this.state.username;
     let pwd = this.state.password;
     firebase
@@ -34,23 +30,12 @@ export class Login extends Component {
       .then(response => {
         alert('Logged in');
       })
-
       .catch(function(error) {
         // const errorCode = error.code;
         const errorMessage = error.message;
         if (error) {
-          // alert(errorCode);
           alert(errorMessage);
         }
-        // else{
-        //   // alert('Logged in')
-        //   return response.status(200).json
-        // }
-        // else{
-        //   return response.status(200).json{
-
-        //   }
-        // }
       });
   }
 

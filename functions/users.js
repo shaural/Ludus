@@ -1,6 +1,5 @@
 const { firebaseAdmin, ref_has_child } = require('./utils');
 const admin = firebaseAdmin;
-
 const app = require('express')();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -38,8 +37,6 @@ app.post('/', async (request, response) => {
       message: 'Please enter your age'
     });
   } else {
-    //firebase user creation
-
     //firebase database entry creation
     let resp = {};
     await db
@@ -128,11 +125,9 @@ app.get('/:user_id/student/learningPaths', async (request, response) => {
     'Student'
   );
   if (!found_student)
-    return response
-      .status(404)
-      .json({
-        message: `user with id ${request.params.user_id} is not a student`
-      });
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
 
   const db = admin
     .database()
@@ -321,11 +316,9 @@ app.post('/:user_id/student/following', async (request, response) => {
     admin.database().ref(`/Users/${request.params.user_id}`, 'Student')
   );
   if (!found_student)
-    return response
-      .status(404)
-      .json({
-        message: `user with id ${request.params.user_id} is not a student`
-      });
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
 
   if (!db)
