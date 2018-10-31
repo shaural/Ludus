@@ -69,14 +69,29 @@ app.get('/search', async (request, response) => {
   let name = request.query.name || '';
   let owner = request.query.owner || '';
   let topic = request.query.topic || '';
-  let valsExist = true;
-  if (name.length == 0 && owner.length == 0 && topic.length == 0) {
-    valsExist = false;
+  let valsExist = false;
+  let nameExists = true;
+  let ownerExists = true;
+  let topicExists = true;
+  if (name.length == 0) {
+    nameExists = false;
+  }
+  if (owner.length == 0) {
+    ownerExists = false;
+  }
+  if (topic.length == 0) {
+    topicExists = false;
+  }
+  if (nameExists || ownerExists || topicExists) {
+    valsExist = true;
   }
   var resp = [];
   await lpRef.once('value', function(snapshot) {
-    if (Object.keys(request.query).length > 0 && valsExist) {
+    if (valsExist) {
       snapshot.forEach(function(childSnapshot) {
+        let nflg = false;
+        let oflg = false;
+        let tflg = false;
         if (
           name &&
           childSnapshot
@@ -85,8 +100,9 @@ app.get('/search', async (request, response) => {
             .toLowerCase()
             .indexOf(name.toLowerCase()) != -1
         ) {
-          resp.push([childSnapshot.key, childSnapshot.val()]);
-        } else if (
+          nflg = true;
+        }
+        if (
           topic &&
           childSnapshot
             .child('Topic')
@@ -94,8 +110,9 @@ app.get('/search', async (request, response) => {
             .toLowerCase()
             .indexOf(topic.toLowerCase()) != -1
         ) {
-          resp.push([childSnapshot.key, childSnapshot.val()]);
-        } else if (
+          tflg = true;
+        }
+        if (
           owner &&
           childSnapshot
             .child('Owner')
@@ -103,6 +120,22 @@ app.get('/search', async (request, response) => {
             .toLowerCase()
             .indexOf(owner.toLowerCase()) != -1
         ) {
+          oflg = true;
+        }
+        // check if all arguments sent are matched
+        let nameCheck = true;
+        let ownerCheck = true;
+        let topicCheck = true;
+        if (nameExists && !nflg) {
+          nameCheck = false;
+        }
+        if (ownerExists && !oflg) {
+          ownerCheck = false;
+        }
+        if (topicExists && !tflg) {
+          topicCheck = false;
+        }
+        if (nameCheck && ownerCheck && topicCheck) {
           resp.push([childSnapshot.key, childSnapshot.val()]);
         }
       });
