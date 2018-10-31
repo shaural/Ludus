@@ -287,18 +287,20 @@ app.patch('/:user_id/student', async (request, response) => {
   return response.status(200);
 });
 
-app.get('/:user_id/student/following', (request, response) => {
+app.get('/:user_id/student/following', async (request, response) => {
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response
       .status(404)
       .json({ message: `user with id ${request.params.user_id} not found` });
   const t_ref = db.child(`T_Following`);
-  t_ref.once('value', snapshot => response.status(200).json(snapshot.val()));
+  let rtn = [];
+  await t_ref.once('value', snapshot => (rtn = snapshot.val()));
+  response.status(200).json(rtn);
 });
 
 app.post('/:user_id/student/following', async (request, response) => {
-  if (!request.body.teachers.length)
+  if (!request.body || !request.body.teachers || !request.body.teachers.length)
     return response
       .status(400)
       .json({ message: 'need to send at least one teacher ID' });
@@ -313,28 +315,80 @@ app.post('/:user_id/student/following', async (request, response) => {
       .json({ message: `user with id ${request.params.user_id} not found` });
 
   const found_student = await ref_has_child(
-    admin.database().ref(`/Users/${request.params.user_id}`, 'Student')
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Student'
   );
   if (!found_student)
     return response.status(404).json({
       message: `user with id ${request.params.user_id} is not a student`
     });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
-
   if (!db)
     return response
       .status(404)
       .json({ message: `user with id ${request.params.user_id} not found` });
-  const t_ref = db.child(`T_Following`);
-  await t_ref.push(
-    request.body.teachers.map(e => Object.assign({ id: e }, {}))
-  );
-  return response.status(200);
+
+  const found_arr = await ref_has_child(db, 'T_Following');
+  // const objs = request.body.teachers.map(e => Object.assign({ id: e }, {}));
+  let ids = [];
+  if (found_arr) {
+    await db
+      .child('T_Following')
+      .once('value', snapshot => ids.push(snapshot.val()));
+  }
+  // merge and deduplicate
+  ids = [...new Set([...ids, ...request.body.teachers])];
+  console.log('going');
+  try {
+    await db.child('T_Following').set(ids);
+  } catch (err) {
+    return response.status(500).json(err);
+  }
+  console.log('done');
+  return response.status(200).json({});
 });
 
-app.delete('/:user_id/student/following/:teacher_id', (request, response) => {
-  // TODO
-});
+app.delete(
+  '/:user_id/student/following/:teacher_id',
+  async (request, response) => {
+    const found_user = await ref_has_child(
+      admin.database().ref('/Users'),
+      request.params.user_id
+    );
+
+    if (!found_user)
+      return response
+        .status(404)
+        .json({ message: `user with id ${request.params.user_id} not found` });
+
+    const found_student = await ref_has_child(
+      admin.database().ref(`/Users/${request.params.user_id}`),
+      'Student'
+    );
+    if (!found_student)
+      return response
+        .status(404)
+        .json({
+          message: `user with id ${request.params.user_id} is not a student`
+        });
+
+    const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+    if (!db) return response.status(404).json({}); // not found somehow
+
+    const t_ref = db.child('T_Following');
+    let ids = [];
+    await t_ref.once('value', snapshot => {
+      ids = snapshot.val();
+    });
+    ids = ids.filter(e => e != request.params.teacher_id);
+    try {
+      await t_ref.set(ids);
+    } catch (err) {
+      return response.status(500).json(err);
+    }
+    return response.status(200).json({});
+  }
+);
 
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
   if (!request.body)
