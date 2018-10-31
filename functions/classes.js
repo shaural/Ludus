@@ -173,10 +173,15 @@ app.get('/search', async (request, response) => {
         ) {
           oflg = true;
         }
-        if(tagExists) {
+        if (tagExists) {
           //loop through tags to see if match
-          childSnapshot.child("Tags").forEach(function(tagSnap) {
-            if(tagSnap.val().toLowerCase().indexOf(tag.toLowerCase()) != -1) {
+          childSnapshot.child('Tags').forEach(function(tagSnap) {
+            if (
+              tagSnap
+                .val()
+                .toLowerCase()
+                .indexOf(tag.toLowerCase()) != -1
+            ) {
               tflg = true;
             }
           });
