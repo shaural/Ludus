@@ -6,6 +6,7 @@ import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
 import IllegalPath from './components/IllegalPath';
+import EditLP from './components/learning_path/edit_learning_path';
 import { Route, Link, Switch } from 'react-router-dom';
 
 class App extends Component {
@@ -18,6 +19,15 @@ class App extends Component {
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
+        <Link
+          to={{
+            pathname: '/LPEdit',
+            state: { name: 'John Doe', topic: 'Juggling', owner: 'Jack Smith' }
+          }}
+        >
+          Edit learning_path
+        </Link>{' '}
+        &nbsp;
         {/* probably want to check if you're logged in or not for the home page */}
         <Switch>
           <Route exact path="/" component={HomePage} />
@@ -29,6 +39,11 @@ class App extends Component {
             path="/password-recovery"
             component={IllegalPath} /*placeholder*/
           />
+          <Route>
+            path="/LPEdit" component=
+            {EditLP}
+          </Route>
+
           <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/student-classlist"
