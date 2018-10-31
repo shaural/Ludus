@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 // import custom component
+
+import { PasswordReset } from './passwordreset/PasswordReset';
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
@@ -8,8 +10,7 @@ import ClasslistPage from './components/class/ClasslistPage';
 import LpPage from './components/learningpath/LpPage';
 import ProfilePage from './components/userProfile/ProfilePage';
 import IllegalPath from './components/IllegalPath';
-import { Route, Link, Switch } from 'react-router-dom';
-
+import { Route, Link, Switch } from 'react-router-dom'
 
 class App extends Component {
   render() {
@@ -23,7 +24,7 @@ class App extends Component {
         <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
         <Link to="/profile">User Profile</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
-        {/* probably want to check if you're logged in or not for the home page */}
+        {/* probably want to check if you're logged in or not for the home page? */}
         <Switch>
           <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
@@ -32,7 +33,7 @@ class App extends Component {
           <Route path="/profile" component={ProfilePage} /*placeholder*/ />
           <Route
             path="/password-recovery"
-            component={IllegalPath} /*placeholder*/
+            component={PasswordReset} /*placeholder*/
           />
           <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
           <Route
