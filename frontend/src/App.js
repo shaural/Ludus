@@ -66,7 +66,6 @@ class App extends Component {
           />
           <Route component={IllegalPath} />
         </Switch>
-
       </div>
     );
   }
