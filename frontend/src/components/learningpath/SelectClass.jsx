@@ -1,21 +1,14 @@
 import React, { Component } from 'react';
 import ClassFilter from '../class/ClassFilter';
-import ClassMasterList from '../class/ClassMasterList';
+import AddList from './AddList';
 
-export default class AddClassDialog extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      result: ''
-    };
-  }
-
+export default class SelectClass extends Component {
   render() {
     return (
       <div>
         <ClassFilter /> <br />
         <br />
-        <ClassMasterList />
+        <AddList />
       </div>
     );
   }

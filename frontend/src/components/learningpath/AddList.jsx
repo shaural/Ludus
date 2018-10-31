@@ -3,23 +3,22 @@ import Class from '../class/Class';
 import ClassRemoveButton from '../class/ClassRemoveButton';
 import '../class/Classlist.css';
 
-class CreationList extends Component {
+class AddList extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
   createClasslist = () => {
-    //let classIDList = []
+    let classIDList = ['1234', '1234'];
     //waiting on API call for classIDs
     //axios.get('https://us-central1-ludusfire.cloudfunctions.net/classes/', { params: /*produce userID from somewhere*/ }).then( function(response){});
 
-    let classlist = this.props.classIDs;
     var classes = [];
-    for (let id in classlist) {
+    for (let id in classIDList) {
       <div className="ClassObject">
-        {<Class classID={id} />}
-        <span className="Highlight">{<ClassRemoveButton classID={id} />}</span>
+        {<Class classID={id /*id*/} />}
+        <span className="Highlight">{<button value={id} />}</span>
       </div>;
     }
 
@@ -31,4 +30,4 @@ class CreationList extends Component {
   }
 }
 
-export default CreationList;
+export default AddList;

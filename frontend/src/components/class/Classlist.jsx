@@ -19,7 +19,7 @@ class Classlist extends Component {
           {<Class classID={'-LNzxFQ8ZVt3igdnFl7e' /* classIDList[i] */} />}
           <span className="Highlight">
             {<ClassEditButton classID={i /* classIDList[i] */} />} &nbsp;{' '}
-            {<ClassRemoveButton classID={i /* classIDList[i] */} />}
+            {/*<ClassDeleteButton classID={i /* classIDList[i] } />*/}
           </span>
         </div>
       );
