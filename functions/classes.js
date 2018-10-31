@@ -107,4 +107,55 @@ app.get('/:class_id/info', async (request, response) => {
     }
   });
 });
+
+// Code for Class Search by: name, owner, content_type
+app.get('/search', async (request, response) => {
+  const classRef = admin.database().ref(`/Classes`);
+  let name = request.query.name || '';
+  let owner = request.query.owner || '';
+  let content_type = request.query.content_type || '';
+  let valsExist = true;
+  if (name.length == 0 && owner.length == 0 && content_type.length == 0) {
+    valsExist = false;
+  }
+  var resp = [];
+  await classRef.once('value', function(snapshot) {
+    if (Object.keys(request.query).length > 0 && valsExist) {
+      snapshot.forEach(function(childSnapshot) {
+        if (
+          name &&
+          childSnapshot
+            .child('Name')
+            .val()
+            .toLowerCase()
+            .indexOf(name.toLowerCase()) != -1
+        ) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        } else if (
+          content_type &&
+          childSnapshot
+            .child('Content_Type')
+            .val()
+            .toLowerCase()
+            .indexOf(topic.toLowerCase()) != -1
+        ) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        } else if (
+          owner &&
+          childSnapshot
+            .child('Owner')
+            .val()
+            .toLowerCase()
+            .indexOf(owner.toLowerCase()) != -1
+        ) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        }
+      });
+    } else {
+      resp = snapshot.val();
+    }
+  });
+  return response.status(200).json(resp);
+});
+
 exports.route = app;
