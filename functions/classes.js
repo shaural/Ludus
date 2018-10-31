@@ -108,15 +108,17 @@ app.get('/:class_id/info', async (request, response) => {
   });
 });
 
-// Code for Class Search by: name, owner, content_type
+// Code for Class Search by: name, owner, content_type, Tags
 app.get('/search', async (request, response) => {
   const classRef = admin.database().ref(`/Classes`);
   let name = request.query.name || '';
   let owner = request.query.owner || '';
   let content_type = request.query.content_type || '';
+  let tag = request.query.tag || '';
   let nameExists = true;
   let ownerExists = true;
   let ctExists = true;
+  let tagExists = true;
   let valsExist = false;
   if (name.length == 0) {
     nameExists = false;
@@ -127,7 +129,10 @@ app.get('/search', async (request, response) => {
   if (content_type.length == 0) {
     ctExists = false;
   }
-  if (ctExists || nameExists || ownerExists) {
+  if (tag.length == 0) {
+    tagExists = false;
+  }
+  if (ctExists || nameExists || ownerExists || tagExists) {
     valsExist = true;
   }
   var resp = [];
@@ -137,6 +142,7 @@ app.get('/search', async (request, response) => {
         let nflg = false;
         let oflg = false;
         let cflg = false;
+        let tflg = false;
         if (
           name &&
           childSnapshot
@@ -167,10 +173,19 @@ app.get('/search', async (request, response) => {
         ) {
           oflg = true;
         }
+        if(tagExists) {
+          //loop through tags to see if match
+          childSnapshot.child("Tags").forEach(function(tagSnap) {
+            if(tagSnap.val().toLowerCase().indexOf(tag.toLowerCase()) != -1) {
+              tflg = true;
+            }
+          });
+        }
         // check if all arguments sent are matched
         let nameCheck = true;
         let ownerCheck = true;
         let ctCheck = true;
+        let tagCheck = true;
         if (nameExists && !nflg) {
           nameCheck = false;
         }
@@ -180,7 +195,10 @@ app.get('/search', async (request, response) => {
         if (ctExists && !cflg) {
           ctCheck = false;
         }
-        if (nameCheck && ownerCheck && ctCheck) {
+        if (tagExists && !tflg) {
+          tagCheck = false;
+        }
+        if (nameCheck && ownerCheck && ctCheck && tagCheck) {
           resp.push([childSnapshot.key, childSnapshot.val()]);
         }
       });
