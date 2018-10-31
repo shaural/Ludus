@@ -50,4 +50,100 @@ app.get('/:lp_id/class', (request, response) => {
   }
 });
 
+// START CODE FOR LP SEARCH
+// GET learning paths for a teacher -> from owner attribute in lp
+app.get('/teacher/:user_id', (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  lpRef
+    .orderByChild('Owner')
+    .equalTo(request.params.user_id)
+    .once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
+});
+
+// This endpoint basically makes previous one invalid since you can just put the user_id of teacher as owner=user_id. (But made it as John specifically asked for it)
+// GET all lps matching query vars: Name, Topic, Owner (to get all leave empty)
+app.get('/search', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  let name = request.query.name || '';
+  let owner = request.query.owner || '';
+  let topic = request.query.topic || '';
+  let valsExist = false;
+  let nameExists = true;
+  let ownerExists = true;
+  let topicExists = true;
+  if (name.length == 0) {
+    nameExists = false;
+  }
+  if (owner.length == 0) {
+    ownerExists = false;
+  }
+  if (topic.length == 0) {
+    topicExists = false;
+  }
+  if (nameExists || ownerExists || topicExists) {
+    valsExist = true;
+  }
+  var resp = [];
+  await lpRef.once('value', function(snapshot) {
+    if (valsExist) {
+      snapshot.forEach(function(childSnapshot) {
+        let nflg = false;
+        let oflg = false;
+        let tflg = false;
+        if (
+          name &&
+          childSnapshot
+            .child('Name')
+            .val()
+            .toLowerCase()
+            .indexOf(name.toLowerCase()) != -1
+        ) {
+          nflg = true;
+        }
+        if (
+          topic &&
+          childSnapshot
+            .child('Topic')
+            .val()
+            .toLowerCase()
+            .indexOf(topic.toLowerCase()) != -1
+        ) {
+          tflg = true;
+        }
+        if (
+          owner &&
+          childSnapshot
+            .child('Owner')
+            .val()
+            .toLowerCase()
+            .indexOf(owner.toLowerCase()) != -1
+        ) {
+          oflg = true;
+        }
+        // check if all arguments sent are matched
+        let nameCheck = true;
+        let ownerCheck = true;
+        let topicCheck = true;
+        if (nameExists && !nflg) {
+          nameCheck = false;
+        }
+        if (ownerExists && !oflg) {
+          ownerCheck = false;
+        }
+        if (topicExists && !tflg) {
+          topicCheck = false;
+        }
+        if (nameCheck && ownerCheck && topicCheck) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        }
+      });
+    } else {
+      resp = snapshot.val();
+    }
+  });
+  return response.status(200).json(resp);
+});
+
 exports.route = app;
