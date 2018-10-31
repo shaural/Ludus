@@ -18,10 +18,9 @@ export class EditLP extends Component {
     this.submitData = this.submitData.bind(this);
     this.discardChanges = this.discardChanges.bind(this);
     this.state = {
-      //TODO: Fill these variables with values from the db
-      name: '',
-      topic: '',
-      owner: '',
+      name: props.name,
+      topic: props.topic,
+      owner: props.owner,
       classList: [],
       initialInput: []
     };
