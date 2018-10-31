@@ -118,13 +118,13 @@ app.get('/search', async (request, response) => {
   let ownerExists = true;
   let ctExists = true;
   let valsExist = false;
-  if(name.length == 0) {
+  if (name.length == 0) {
     nameExists = false;
   }
-  if(owner.length == 0) {
+  if (owner.length == 0) {
     ownerExists = false;
   }
-  if(content_type.length == 0) {
+  if (content_type.length == 0) {
     ctExists = false;
   }
   if (ctExists || nameExists || ownerExists) {
@@ -171,16 +171,16 @@ app.get('/search', async (request, response) => {
         let nameCheck = true;
         let ownerCheck = true;
         let ctCheck = true;
-        if(nameExists && !nflg) {
+        if (nameExists && !nflg) {
           nameCheck = false;
         }
-        if(ownerExists && !oflg) {
+        if (ownerExists && !oflg) {
           ownerCheck = false;
         }
-        if(ctExists && !cflg) {
+        if (ctExists && !cflg) {
           ctCheck = false;
         }
-        if(nameCheck && ownerCheck && ctCheck) {
+        if (nameCheck && ownerCheck && ctCheck) {
           resp.push([childSnapshot.key, childSnapshot.val()]);
         }
       });
