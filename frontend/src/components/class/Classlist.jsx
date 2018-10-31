@@ -3,23 +3,43 @@ import Class from './Class';
 import ClassRemoveButton from './ClassRemoveButton';
 import ClassEditButton from './ClassEditButton';
 import './Classlist.css';
+const Axios = require('axios');
+var querystring = require('querystring');
 
 class Classlist extends Component {
   createClasslist = () => {
-    //let classIDList = []
+    let classIDList = [];
     //waiting on API call for classIDs
-    //axios.get('https://us-central1-ludusfire.cloudfunctions.net/classes/', { params: /*produce userID from somewhere*/ }).then( function(response){});
+    const requestBody = {
+      userID: '-LNVWR9kD2dvN8GLGFYE'
+    };
+    const config = {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    };
+    Axios.get(
+      'https://us-central1-ludusfire.cloudfunctions.net/classlist/',
+      querystring.stringify(requestBody),
+      config
+    )
+      .then(function(response) {
+        for (let id in response) {
+          classIDList.push(id);
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
 
     let classes = [];
 
     //for (let i = 0; i < classIDList.length; i++) {
-    for (let i = 0; i < 1; i++) {
+    for (let id in classIDList) {
       classes.push(
         <div className="ClassObject">
-          {<Class classID={'-LNzxFQ8ZVt3igdnFl7e' /* classIDList[i] */} />}
+          {<Class classID={id} />}
           <span className="Highlight">
-            {<ClassEditButton classID={i /* classIDList[i] */} />} &nbsp;{' '}
-            {/*<ClassDeleteButton classID={i /* classIDList[i] } />*/}
+            {<ClassEditButton classID={id} />} &nbsp;{' '}
+            {/*<ClassRemoveButton classID={i /* classIDList[i] } />*/}
           </span>
         </div>
       );

@@ -19,7 +19,10 @@ class CreationList extends Component {
     for (let id in classlist) {
       <div className="ClassObject">
         {<Class classID={id} />}
-        <span className="Highlight">{<ClassRemoveButton classID={id} />}</span>
+        <span className="Highlight">
+          <button onClick={this.props.callback} value={id} />
+          {/*<ClassRemoveButton classID={id} />*/}
+        </span>
       </div>;
     }
 

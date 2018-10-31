@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import CreationList from './CreationList';
 import SelectClass from './SelectClass';
+const Axios = require('axios');
+var querystring = require('querystring');
 
 export default class LearningPathCreate extends Component {
-  state = { show: false, classes: [] };
+  constructor(props) {
+    super(props);
+    this.state = { show: false, classes: ['0'] };
+  }
 
   showModal = () => {
     this.setState({ show: true });
@@ -15,30 +20,64 @@ export default class LearningPathCreate extends Component {
 
   render() {
     return (
-      <div className="lpcontainer">
-        {' '}
-        <CreationList classIDs={this.state.classes} />
-        <Modal show={this.state.show} handleClose={this.hideModal}>
-          <SelectClass />
-        </Modal>
-        <button type="button" onClick={this.showModal}>
-          Add Classes...
-        </button>
+      <div>
+        <div className="lpcontainer">
+          {' '}
+          <CreationList
+            classIDs={this.state.classes}
+            callback={this.handleRemoveClass}
+          />
+          <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
+            <SelectClass callback={this.handleAddClass} />
+          </Modal>
+          <button type="button" onClick={this.showModal}>
+            Add Classes...
+          </button>
+        </div>
+        <button onClick={this.submitLP}>Publish</button>
       </div>
     );
   }
 
   //list of classes chosen so far
-  handleRemovePeople(e) {
-    var array = [...this.state.classes, e.target.value];
+  handleAddClass = event => {
+    var array = [...this.state.classes, event.target.value];
     this.setState({ classes: array });
-  }
+  };
 
-  handleRemovePeople(e) {
+  handleRemoveClass = event => {
     var array = [...this.state.classes];
-    var index = array.indexOf(e.target.value);
+    var index = array.indexOf(event.target.value);
     array.splice(index, 1);
     this.setState({ classes: array });
+  };
+
+  submitLP() {
+    if (!this.state.classes) {
+      alert('No Classes in LP!');
+    }
+    const requestBody = {
+      name: this.state.displayName,
+      email: this.state.email,
+      dob: this.state.dob
+    };
+    const config = {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    };
+    Axios.post(
+      'https://us-central1-ludusfire.cloudfunctions.net/users/',
+      querystring.stringify(requestBody),
+      config
+    )
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+    alert('Successfully Signed Up!');
+
+    return false;
   }
 }
 //list of classes to choose from

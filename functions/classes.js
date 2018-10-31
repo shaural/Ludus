@@ -78,6 +78,17 @@ app.delete('/:class_id', async (request, response) => {
     );
 });
 
+//Get class by owner
+app.get('/classlist/:user_id', (request, response) => {
+  const classRef = admin.database().ref(`/Classes`);
+  classRef
+    .orderByChild('Owner')
+    .equalTo(request.params.user_id)
+    .once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
+});
+
 // Class information API
 app.get('/:class_id/info', async (request, response) => {
   const db = admin
