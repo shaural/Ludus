@@ -123,15 +123,102 @@ describe('testing users', function() {
         .expect(200)
         .end(endfn(done));
     });
-    it('can validate student before showing learning paths', function(done) {
-      request(server)
-        .get('/invalid_user/student/learningPaths/')
-        .expect(404, done);
+    describe('learning paths', function() {
+      it('can validate student before showing learning paths', function(done) {
+        request(server)
+          .get('/invalid_user/student/learningPaths/')
+          .expect(404, done);
+      });
+      it("can get a student's learning paths", function(done) {
+        request(server)
+          .get(`/${test_user_id}/student/learningPaths`)
+          .expect(200, done);
+      });
     });
-    it("can get a student's learning paths", function(done) {
-      request(server)
-        .get(`/${test_user_id}/student/learningPaths`)
-        .expect(200, done);
+    describe('following teachers', function() {
+      it('can validate the user', function(done) {
+        request(server)
+          .get(`/invalid_user123/student/following`)
+          .expect(404, done);
+      });
+      it('can validate that the user is a student', function(done) {
+        var user_without_student_record = '-LPA_wZA8qnGSjuq3-AU';
+        request(server)
+          .get(`/${user_without_student_record}/student/following`)
+          .expect(404, done);
+      });
+      it('can validate the data', function(done) {
+        request(server)
+          .post(`/${test_user_id}/student/following`)
+          .send({})
+          .expect(400, done);
+      });
+      it('can add a list of teachers to follow', function(done) {
+        var list_of_teachers = [
+          '-LNVWR9kD2dvN8GLGFYE',
+          '-LNwt_flj5DQWhQ1L88s',
+          '-LO-X6FYioiLm9rq36HE'
+        ];
+        request(server)
+          .post(`/${test_user_id}/student/following`)
+          .send({ teachers: list_of_teachers })
+          .expect(200)
+          .then(() => {
+            request(server)
+              .get(`/${test_user_id}/student/following`)
+              .expect(response => {
+                expect(response.body.teachers).to.eql(list_of_teachers);
+              })
+              .expect(200, done);
+          });
+      });
+      it('can add an overlapping list of teachers without duplicate values', function(done) {
+        var overlapping_list_of_teachers = [
+          '-LO-X6FYioiLm9rq36HE',
+          '-LPwc066TGCh4T0sjx4A'
+        ];
+        var expected_unique_list_of_teachers = [
+          '-LNVWR9kD2dvN8GLGFYE',
+          '-LNwt_flj5DQWhQ1L88s',
+          '-LO-X6FYioiLm9rq36HE',
+          '-LPwc066TGCh4T0sjx4A'
+        ];
+        request(server)
+          .post(`/${test_user_id}/student/following`)
+          .send({ teachers: overlapping_list_of_teachers })
+          .expect(200)
+          .then(() => {
+            request(server)
+              .get(`/${test_user_id}/student/following`)
+              .expect(response =>
+                expect(response.body.teachers).to.eql(
+                  expected_unique_list_of_teachers
+                )
+              )
+              .expect(200, done);
+          });
+      });
+      it('can delete a specific teacher from the list', function(done) {
+        var teacher_to_delete = '-LNVWR9kD2dvN8GLGFYE';
+        var expected_final_list_of_teachers = [
+          '-LNwt_flj5DQWhQ1L88s',
+          '-LO-X6FYioiLm9rq36HE',
+          '-LPwc066TGCh4T0sjx4A'
+        ];
+        request(server)
+          .delete(`/${test_user_id}/student/following/${teacher_to_delete}`)
+          .expect(200)
+          .then(() => {
+            request(server)
+              .get(`/${test_user_id}/student/following`)
+              .expect(response =>
+                expect(response.body.teachers).to.eql(
+                  expected_final_list_of_teachers
+                )
+              )
+              .expect(200, done);
+          });
+      });
     });
   });
 });
