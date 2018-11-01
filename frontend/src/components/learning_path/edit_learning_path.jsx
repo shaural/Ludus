@@ -7,9 +7,6 @@ import {
   FormControl,
   Button
 } from 'react-bootstrap';
-var querystring = require('querystring');
-const Axios = require('axios');
-
 export class EditLP extends Component {
   constructor(props, context) {
     super(props, context);
@@ -40,11 +37,9 @@ export class EditLP extends Component {
   }
 
   render() {
-    alert('Entered render');
     //TODO: Add support for adding classes
     return (
       <Form horizontal>
-        >
         <FormGroup name="Edit learning path info">
           <ControlLabel>Owner: </ControlLabel>
           <FormControl
@@ -71,14 +66,10 @@ export class EditLP extends Component {
             onChange={this.valChange}
           />
         </FormGroup>
-        <Button>
-          bsStyle="primary" onClick=
-          {this.submitData}
+        <Button bsStyle="primary" onClick={this.submitData}>
           Save changes
         </Button>
-        <Button>
-          {' '}
-          bsStyle="primary" onClick ={this.discardChanges}
+        <Button bsStyle="primary" onClick={this.discardChanges}>
           Discard Changes
         </Button>
       </Form>

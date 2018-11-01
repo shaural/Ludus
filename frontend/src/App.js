@@ -30,6 +30,7 @@ class App extends Component {
         &nbsp;
         {/* probably want to check if you're logged in or not for the home page */}
         <Switch>
+          <Route exact path="/LPEdit" component={EditLP} />
           <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
           <Route path="/login" component={LoginPage} />
@@ -39,10 +40,6 @@ class App extends Component {
             path="/password-recovery"
             component={IllegalPath} /*placeholder*/
           />
-          <Route>
-            path="/LPEdit" component=
-            {EditLP}
-          </Route>
 
           <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
           <Route
