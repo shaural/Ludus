@@ -76,7 +76,10 @@ class SignUpForm extends Component {
   }
 
   submitForm() {
-    if (!this.state.email.toString().includes('@')) {
+    if (
+      !this.state.email.toString().includes('@') &&
+      !this.state.email.toString().includes('.')
+    ) {
       alert('Invalid email, please try again');
     } else if (!this.state.password.toString().length) {
       alert('Empty passwords are not allowed, please try again');
@@ -109,7 +112,7 @@ class SignUpForm extends Component {
           console.log(response);
         })
         .catch(function(error) {
-          console.log(error);
+          alert(error);
         });
       alert('Successfully Signed Up!');
     }

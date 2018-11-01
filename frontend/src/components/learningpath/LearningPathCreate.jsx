@@ -8,6 +8,7 @@ export default class LearningPathCreate extends Component {
   constructor(props) {
     super(props);
     this.state = { name: '', topic: '', classes: ['0'] };
+    this.submitLP = this.submitLP.bind(this);
   }
 
   showModal = () => {
@@ -80,7 +81,7 @@ export default class LearningPathCreate extends Component {
     };
     Axios.post(
       `https://us-central1-ludusfire.cloudfunctions.net/${
-        this.state.name /*userid*/
+        this.props.userID /*userid*/
       }/teacher/learningPath`,
       querystring.stringify(requestBody),
       config

@@ -5,10 +5,10 @@ const Axios = require('axios');
 
 class Class extends Component {
   render() {
-    return <div>{this.fetchData(this.props.classID)}</div>;
+    return <div>{this.fetchData()}</div>;
   }
 
-  fetchData(ClassID) {
+  fetchData() {
     //TODO: API Call for info on the class from database
 
     Axios.get(
