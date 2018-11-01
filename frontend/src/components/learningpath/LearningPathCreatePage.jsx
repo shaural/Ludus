@@ -9,7 +9,7 @@ export default class LearningPathCreatePage extends Component {
       <main>
         <NavBar />
         <h1>Create a Learning Path</h1>
-        <LearningPathCreate />
+        <LearningPathCreate userID={this.props.userID} />
       </main>
     );
   }
