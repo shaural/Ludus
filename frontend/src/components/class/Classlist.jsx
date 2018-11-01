@@ -24,12 +24,20 @@ class Classlist extends Component {
         </div>
       );
     }
-
     return classes;
   };
 
   render() {
-    return <div className="Classlist">{this.createClasslist()}</div>;
+    return (
+      <div className="Classlist">
+        {this.createClasslist()}
+        <input
+          type="button"
+          id="submitbutton"
+          value={'debug, userID:' + this.props.userID}
+        />
+      </div>
+    );
   }
 }
 
