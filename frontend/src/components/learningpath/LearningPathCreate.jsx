@@ -81,7 +81,7 @@ export default class LearningPathCreate extends Component {
     };
     Axios.post(
       `https://us-central1-ludusfire.cloudfunctions.net/${
-        this.props.userID /*userid*/
+        this.props.userID
       }/teacher/learningPath`,
       querystring.stringify(requestBody),
       config

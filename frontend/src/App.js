@@ -10,6 +10,7 @@ import ClasslistPage from './components/class/ClasslistPage';
 import LearningPathCreatePage from './components/learningpath/LearningPathCreatePage';
 import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
+import ClassSearchPage from './components/class/ClassSearchPage';
 
 class App extends Component {
   constructor(props) {
@@ -27,6 +28,7 @@ class App extends Component {
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
+        <Link to="/class-search">Search Classes</Link> &nbsp;
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp; userID:&nbsp;
@@ -47,6 +49,7 @@ class App extends Component {
             path="/password-recovery"
             component={PasswordReset} /*placeholder*/
           />
+          <Route path="/class-search" component={ClassSearchPage} />
 
           {/*requires userID*/}
           <Route path="/profile" component={IllegalPath} /*placeholder*/ />

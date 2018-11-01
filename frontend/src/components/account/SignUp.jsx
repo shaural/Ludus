@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import conf from '../../conf.js';
-//import 'firebase-auth';
 import firebase from 'firebase';
 import './SignUp.css';
 var querystring = require('querystring');
@@ -87,14 +85,11 @@ class SignUpForm extends Component {
       alert('Minimum password length: 10 characters, please try again');
     } else if (!this.state.displayName.toString().length) {
       alert('You may not have an empty name');
-    } else if (this.state.password != this.state.confirm) {
+    } else if (this.state.password !== this.state.confirm) {
       alert("Passwords don't match");
     } else if (!this.state.dob.toString().length) {
       alert('Please enter your age');
     } else {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.state.email, this.state.dob);
       const requestBody = {
         name: this.state.displayName,
         email: this.state.email,
@@ -108,8 +103,14 @@ class SignUpForm extends Component {
         querystring.stringify(requestBody),
         config
       )
-        .then(function(response) {
+        .then(response => {
           console.log(response);
+          firebase
+            .auth()
+            .createUserWithEmailAndPassword(
+              this.state.email,
+              this.state.password
+            );
         })
         .catch(function(error) {
           alert(error);

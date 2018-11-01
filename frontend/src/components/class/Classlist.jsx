@@ -4,38 +4,37 @@ import ClassRemoveButton from './ClassRemoveButton';
 import ClassEditButton from './ClassEditButton';
 import './Classlist.css';
 const Axios = require('axios');
-var querystring = require('querystring');
 
 class Classlist extends Component {
-  createClasslist = () => {
-    let classIDList = [];
+  constructor(props) {
+    super(props);
+    this.state = { classIDList: [] };
+  }
+  /*-LNVWR9kD2dvN8GLGFYE*/
+  componentDidMount = () => {
+    if (!this.props.userID) return;
     //waiting on API call for classIDs
-    const requestBody = {
-      userID: '-LNVWR9kD2dvN8GLGFYE'
-    };
-    const config = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    };
     Axios.get(
-      'https://us-central1-ludusfire.cloudfunctions.net/classlist/',
-      querystring.stringify(requestBody),
-      config
+      `https://us-central1-ludusfire.cloudfunctions.net/classes/classlist/${
+        this.props.userID
+      }`
     )
-      .then(function(response) {
-        for (let id in response) {
-          classIDList.push(id);
-        }
+      /*Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/classes/search/?owner=${this.props.userID}`)*/
+      .then(response => {
+        console.log(response);
+        this.setState({ classIDList: response.data });
       })
       .catch(function(error) {
         console.log(error);
       });
-
+    return;
+  };
+  createClasslist = () => {
     let classes = [];
-
-    //for (let i = 0; i < classIDList.length; i++) {
-    for (let id in classIDList) {
+    for (let id in this.state.classIDList) {
+      console.log(id);
       classes.push(
-        <div className="ClassObject">
+        <div className="ClassObject" key={id}>
           {<Class classID={id} />}
           <span className="Highlight">
             {<ClassEditButton classID={id} />} &nbsp;{' '}
