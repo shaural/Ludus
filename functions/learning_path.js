@@ -115,7 +115,10 @@ app.post('/', async (request, response) => {
 
 // body: name, owner, topic
 app.patch('/:lp_id', async (request, response) => {
-  const db = admin.database().ref('/Learning_Paths').child(request.params.lp_id);
+  const db = admin
+    .database()
+    .ref('/Learning_Paths')
+    .child(request.params.lp_id);
 
   const { name, owner, topic } = request.body;
 
@@ -138,9 +141,10 @@ app.patch('/:lp_id', async (request, response) => {
   } else {
     return response
       .status(404)
-      .json({ message: `Learning Path with id ${request.params.lp_id} not found` });
+      .json({
+        message: `Learning Path with id ${request.params.lp_id} not found`
+      });
   }
 });
-
 
 exports.route = app;
