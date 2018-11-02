@@ -3,7 +3,8 @@ import Class from '../class/Class';
 
 class CreationList extends Component {
   handleRemoveButton = e => {
-    this.props.callback(e.target.value);
+    let s = e.target.value;
+    this.props.callback(s);
   };
 
   createClasslist = () => {

@@ -81,7 +81,9 @@ class SignUpForm extends Component {
   };
 
   handleClick = e => {
-    this.props.callback(e.target.value);
+    let s = e.target.value;
+    console.log(s);
+    this.props.callback(s);
   };
   render() {
     return (

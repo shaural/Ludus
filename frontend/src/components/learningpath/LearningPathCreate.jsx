@@ -8,9 +8,9 @@ export default class LearningPathCreate extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: this.props.name,
-      topic: this.props.topic,
-      classes: this.props.classIDs
+      name: '',
+      topic: '',
+      classes: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
@@ -64,15 +64,20 @@ export default class LearningPathCreate extends Component {
 
   //list of classes chosen so far
   handleAddClass(event) {
-    if (this.state.classes.indexOf(event) !== -1) {
-      alert('That class is already in the learning path!');
-      return;
+    console.log(event);
+    if (!this.state.classes);
+    else {
+      if (this.state.classes.indexOf(event) !== -1) {
+        alert('That class is already in the learning path!');
+        return;
+      }
     }
     var array = [...this.state.classes, event];
     this.setState({ classes: array });
   }
 
   handleRemoveClass(event) {
+    console.log(event);
     var array = [...this.state.classes];
     var index = array.indexOf(event);
     array.splice(index, 1);
@@ -120,6 +125,7 @@ const Modal = ({ handleClose, show, children }) => {
       <section className="modal-main">
         {children}
         <button onClick={handleClose}>Back</button>
+        <br />
       </section>
     </div>
   );
