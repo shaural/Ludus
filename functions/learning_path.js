@@ -124,7 +124,7 @@ app.patch('/:lp_id', async (request, response) => {
 
   let resp;
   var updates = {};
-  if (db) {
+  if (db.exists()) {
     if (name) {
       updates['Name'] = name;
     }
