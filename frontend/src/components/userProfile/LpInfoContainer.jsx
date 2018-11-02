@@ -33,10 +33,12 @@ class LpInfoContainer extends Component {
     //Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/{uid}/`) getting logged in state in progress
     .then(({ data }) => {
       console.log(data)
+    if(data.Student.T_Following) {
       this.setState({
         T_Following: data.Student.T_Following.length,
         data: data
       });
+    }
     })
   }
 

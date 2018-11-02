@@ -68,13 +68,6 @@ componentDidMount() {
           </div>
           <div className="UnfollowerBtn">
           {<UnfollowBtn />}
-          <Link to="/following">Following</Link> &nbsp;
-          <Route
-            path="/following"
-            render={props => (
-              <TeacherFollowingList {...props} userID={this.props.userID} />
-            )}
-          />
           </div>
           <div className="notifications">
             {<NotificationList />}

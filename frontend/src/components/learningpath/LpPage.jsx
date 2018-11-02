@@ -29,6 +29,7 @@ class LpPage extends Component {
 			 })
 	  });
 	}
+
 	createLpPage = () => {
 		//let lpIDList = []
 		//TODO: Call API for lpIDs
@@ -36,6 +37,7 @@ class LpPage extends Component {
 		var y = this.state.length;
 		//for (let i = 0; i < lpIDList.length; i++) {
 		for (let i = 0; i < y; i++) {
+
 
 			learningPaths.push(
 				<div className="lpObject">
