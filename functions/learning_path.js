@@ -81,14 +81,17 @@ app.post('/', async (request, response) => {
 
   const { name, owner, topic } = request.body;
 
-  //DO I NEED TO CHECK IF OWNER IS A TEACHER?
-  if (!name.toString().length) {
+  if (!name) {
     return response.status(400).json({
       message: 'You may not have an empty name'
     });
-  } else if (!owner.toString().length) {
+  } else if (!owner) {
     return response.status(400).json({
-      message: 'Please enter your age'
+      message: 'you may not have an empty owner'
+    });
+  } else if (!topic) {
+    return response.status(400).json({
+      message: 'you may not have an empty topic'
     });
   } else {
     let resp = {};
@@ -109,5 +112,35 @@ app.post('/', async (request, response) => {
     return response.status(200).json(resp);
   }
 });
+
+// body: name, owner, topic
+app.patch('/:lp_id', async (request, response) => {
+  const db = admin.database().ref('/Learning_Paths').child(request.params.lp_id);
+
+  const { name, owner, topic } = request.body;
+
+  let resp;
+  var updates = {};
+  if (db) {
+    if (name) {
+      updates['Name'] = name;
+    }
+    if (owner) {
+      updates['Owner'] = owner;
+    }
+    if (topic) {
+      updates['Topic'] = topic;
+    }
+    db.update(updates);
+    db.once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
+  } else {
+    return response
+      .status(404)
+      .json({ message: `Learning Path with id ${request.params.lp_id} not found` });
+  }
+});
+
 
 exports.route = app;
