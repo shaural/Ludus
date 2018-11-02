@@ -143,6 +143,8 @@ app.patch('/:lp_id', async (request, response) => {
       message: `Learning Path with id ${request.params.lp_id} not found`
     });
   }
+});
+
 // START CODE FOR LP SEARCH
 // GET learning paths for a teacher -> from owner attribute in lp
 app.get('/teacher/:user_id', (request, response) => {
