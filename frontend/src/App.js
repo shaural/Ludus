@@ -36,9 +36,7 @@ class App extends Component {
         <Link to="/class-search">Search Classes</Link> &nbsp;
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
-
         <Link to="garbage">404</Link> &nbsp;
-
         <Link
           to={{
             pathname: '/LPEdit',
@@ -49,7 +47,6 @@ class App extends Component {
         </Link>{' '}
         &nbsp;
         {/* probably want to check if you're logged in or not for the home page */}
-
         <Link to="garbage">404</Link> &nbsp; userID:&nbsp;
         <input
           className="inLine"
@@ -57,7 +54,6 @@ class App extends Component {
           onChange={event => this.setState({ userID: event.target.value })}
         />
         {/* probably want to check if you're logged in or not for the home page? */}
-
         <Switch>
           <Route exact path="/LPEdit" component={EditLP} />
           <Route exact path="/" component={HomePage} />
@@ -69,7 +65,6 @@ class App extends Component {
             path="/password-recovery"
             component={PasswordReset} /*placeholder*/
           />
-
 
           {/*requires userID*/}
           <Route
@@ -118,8 +113,10 @@ class App extends Component {
           />
           <Route
             path="/teacher-lplist"
-            render={props => (
-              <LpPage {...props} userID={this.state.userID} />
+            render={props => <LpPage {...props} userID={this.state.userID} />}
+          />
+
+          <Route
             path="/teacher-lp-create"
             render={props => (
               <LearningPathCreatePage {...props} userID={this.state.userID} />
