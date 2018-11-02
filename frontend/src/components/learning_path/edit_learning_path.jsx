@@ -14,11 +14,12 @@ export class EditLP extends Component {
     this.submitData = this.submitData.bind(this);
     this.discardChanges = this.discardChanges.bind(this);
     this.state = {
-      name: props.name,
-      topic: props.topic,
-      owner: props.owner
+      name: props.location.state.name,
+      topic: props.location.state.topic,
+      owner: props.location.state.owner
       // classList: []
     };
+    // alert("Name: "+ props.location.state.topic)
   }
 
   valChange(e) {
@@ -30,10 +31,16 @@ export class EditLP extends Component {
     alert('Need to add endpoint to submit data');
   }
   discardChanges() {
-    this.setState({ name: '' });
-    this.setState({ topic: '' });
-    this.setState({ owner: '' });
-    // this.setState({ classList: [] });
+    this.setState({ name: '', topic: '', owner: '' });
+
+    alert('Discard changes');
+    /*leftover code from render()
+
+    <Button bsStyle="primary" onClick={this.discardChanges}>
+          Discard Changes
+        </Button>
+      </Form>
+      */
   }
 
   render() {
@@ -45,7 +52,7 @@ export class EditLP extends Component {
           <FormControl
             type="text"
             name="Owner"
-            value={this.state.value}
+            defaultValue={this.state.name}
             placeholder="Enter text"
             onChange={this.valChange}
           />
@@ -53,24 +60,21 @@ export class EditLP extends Component {
           <FormControl
             type="text"
             name="Topic"
-            value={this.state.value}
+            defaultValue={this.state.topic}
             placeholder="Enter text"
             onChange={this.valChange}
           />
-          <ControlLabel>Owner: </ControlLabel>
+          <ControlLabel>Name: </ControlLabel>
           <FormControl
             type="text"
             name="Owner"
-            value={this.state.value}
+            defaultValue={this.state.name}
             placeholder="Enter text"
             onChange={this.valChange}
           />
         </FormGroup>
         <Button bsStyle="primary" onClick={this.submitData}>
           Save changes
-        </Button>
-        <Button bsStyle="primary" onClick={this.discardChanges}>
-          Discard Changes
         </Button>
       </Form>
     );
