@@ -543,7 +543,6 @@ app.post(
           lpExists = true;
         }
         snapshot.forEach(function(childSnapshot) {
-          console.log(childSnapshot.val());
           updates[childSnapshot.val()] = 0;
         });
       });
