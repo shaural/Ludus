@@ -83,8 +83,9 @@ class App extends Component {
           />
           <Route
             path="/teacher-lplist"
-            component={LpPage} /*placeholder*/
-          />
+            render={props => (
+              <LpPage {...props} userID={this.state.userID} />
+            )}
           />
           <Route
             path="/teacher-lp-edit"

@@ -12,30 +12,33 @@ class LpPage extends Component {
 	constructor(props){
 	  super(props);
 	  this.state = {
-	    length: 10,
+			length: 3,
+			LearningPath: '',
 	    data: []
 	  }
 	}
 
 	componentDidMount() {
-	  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/-LNVWR9kD2dvN8GLGFYE/student/learningPaths/`)
+	  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${this.props.userID}`)
 	  .then(({ data }) => {
 			console.log(data);
 	    this.setState({
-	      length: data.out.length
-	    });
-	  })
+					length: data.length,
+					data: data
+			 })
+	  });
 	}
 	createLpPage = () => {
 		//let lpIDList = []
 		//TODO: Call API for lpIDs
 		let learningPaths = [];
-
+		var y = this.state.length;
 		//for (let i = 0; i < lpIDList.length; i++) {
-		for (let i = 0; i < this.state.length; i++) {
+		for (let i = 0; i < y; i++) {
+
 			learningPaths.push(
 				<div className="lpObject">
-					{<Lp LearningPathID={i /* lpIDList[i] */} />}
+					{<Lp LearningPathID={this.state.data} i={i} />}
 					<span className="Placeholder">
 						{<LpEditBtn />} <text> </text> {<LpDeleteBtn />}
 					</span>

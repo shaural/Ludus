@@ -7,12 +7,16 @@ class Lp extends Component {
 	}
 
 	fetchData(LearningPathID) {
+		var index = this.props.i;
+		var obj = JSON.parse(JSON.stringify(this.props.LearningPathID));
+		console.log(index)
+		console.log(obj[index]);
 		//TODO: API Call for info on the lp from database
 		return (
 			<container>
 				<span className="lpInfo">
 					<span>
-						{/*Placeholder values for now*/ 'LearningPath'} "LearningPath Name here"
+						{'LearningPath'}
 					</span>
           <div>Class 1: {'Example Class Name'} </div>
           <div>Class 2: {'Example Class Name'} </div>
