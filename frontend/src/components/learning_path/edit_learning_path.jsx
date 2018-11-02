@@ -19,8 +19,7 @@ export class EditLP extends Component {
     this.state = {
       lpid: props.location.state.lpid,
       name: props.location.state.name,
-      topic: props.location.state.topic,
-      owner: props.location.state.owner
+      topic: props.location.state.topic
     };
   }
 
@@ -30,18 +29,28 @@ export class EditLP extends Component {
   submitData() {
     //TODO: Call the correct endpoint
     //alert('Need to add endpoint to submit data');
+    var data = JSON.stringify({
+      topic: this.state.topic,
+      name: this.state.name
+    });
     try {
       Axios.patch(
         `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${
           this.state.lpid
-        }`
+        }`,
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       ).then(alert('Saved changes'));
     } catch (e) {
       alert('An error occurred saving changes :/');
     }
   }
   discardChanges() {
-    this.setState({ name: '', topic: '', owner: '' });
+    this.setState({ name: '', topic: '' });
 
     alert('Discarded changes');
     /*leftover code from render()
@@ -71,14 +80,6 @@ export class EditLP extends Component {
             type="text"
             name="Topic"
             defaultValue={this.state.topic}
-            placeholder="Enter text"
-            onChange={this.valChange}
-          />
-          <ControlLabel>Name: </ControlLabel>
-          <FormControl
-            type="text"
-            name="Owner"
-            defaultValue={this.state.name}
             placeholder="Enter text"
             onChange={this.valChange}
           />

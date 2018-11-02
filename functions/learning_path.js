@@ -115,6 +115,7 @@ app.patch('/:lp_id', async (request, response) => {
     admin.database().ref(`/Learning_Paths`),
     request.params.lp_id
   );
+
   let resp;
   var updates = {};
   if (found_user) {
