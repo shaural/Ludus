@@ -36,7 +36,6 @@ class SignUpForm extends Component {
       if (multi) query += '&';
       query += 'tag=' + this.state.tag;
     }
-    console.log(query);
     Axios.get(
       `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
     )

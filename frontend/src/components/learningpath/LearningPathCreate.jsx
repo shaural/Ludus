@@ -33,7 +33,6 @@ export default class LearningPathCreate extends Component {
           className="inLine"
           type="text"
           onChange={event => this.setState({ name: event.target.value })}
-          value={this.state.name}
         />
         <br /> <br />
         Topic:&nbsp;
@@ -42,7 +41,6 @@ export default class LearningPathCreate extends Component {
           className="inLine"
           type="text"
           onChange={event => this.setState({ topic: event.target.value })}
-          value={this.state.topic}
         />
         <div className="lpcontainer">
           {' '}
@@ -64,13 +62,17 @@ export default class LearningPathCreate extends Component {
 
   //list of classes chosen so far
   handleAddClass(event) {
-    var array = [...this.state.classes, event.target.value];
+    if (this.state.classes.indexOf(event) !== -1) {
+      alert('That class is already in the learning path!');
+      return;
+    }
+    var array = [...this.state.classes, event];
     this.setState({ classes: array });
   }
 
   handleRemoveClass(event) {
     var array = [...this.state.classes];
-    var index = array.indexOf(event.target.value);
+    var index = array.indexOf(event);
     array.splice(index, 1);
     this.setState({ classes: array });
   }
@@ -83,7 +85,7 @@ export default class LearningPathCreate extends Component {
     const requestBody = {
       name: this.state.name,
       topic: this.state.topic,
-      Classlist: this.state.classes
+      ClassList: this.state.classes
     };
     const config = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
@@ -115,7 +117,6 @@ const Modal = ({ handleClose, show, children }) => {
     <div className={showHideClassName}>
       <section className="modal-main">
         {children}
-        <button onClick={handleClose}>Add</button>{' '}
         <button onClick={handleClose}>Back</button>
       </section>
     </div>
