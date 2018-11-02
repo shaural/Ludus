@@ -11,8 +11,8 @@ import LpPage from './components/learningpath/LpPage';
 import ProfilePage from './components/userProfile/ProfilePage';
 import LearningPathCreatePage from './components/learningpath/LearningPathCreatePage';
 import IllegalPath from './components/IllegalPath';
-import EditLP from './components/learning_path/edit_learning_path';
 import { Route, Link, Switch } from 'react-router-dom';
+import EditLP from './components/learning_path/edit_learning_path';
 import ClassSearchPage from './components/class/ClassSearchPage';
 
 class App extends Component {
