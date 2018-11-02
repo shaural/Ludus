@@ -531,7 +531,7 @@ app.post(
     const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
     const lpRef = admin
       .database()
-      .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+      .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
 
     // get classes of lp: lp_id
     var updates = {};
@@ -543,7 +543,7 @@ app.post(
           lpExists = true;
         }
         snapshot.forEach(function(childSnapshot) {
-          updates[childSnapshot.child('Class_Id').val()] = 0;
+          updates[childSnapshot.val()] = 0;
         });
       });
       if (!lpExists) {
