@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
 // import custom component
+
+import { PasswordReset } from './passwordreset/PasswordReset';
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
@@ -18,7 +20,9 @@ class App extends Component {
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
+        <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
+
         <Link
           to={{
             pathname: '/LPEdit',
@@ -38,7 +42,7 @@ class App extends Component {
           <Route path="/profile" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/password-recovery"
-            component={IllegalPath} /*placeholder*/
+            component={PasswordReset} /*placeholder*/
           />
 
           <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
