@@ -139,11 +139,9 @@ app.patch('/:lp_id', async (request, response) => {
       return response.status(200).json(snapshot.val());
     });
   } else {
-    return response
-      .status(404)
-      .json({
-        message: `Learning Path with id ${request.params.lp_id} not found`
-      });
+    return response.status(404).json({
+      message: `Learning Path with id ${request.params.lp_id} not found`
+    });
   }
 });
 
