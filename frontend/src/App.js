@@ -40,7 +40,12 @@ class App extends Component {
         <Link
           to={{
             pathname: '/LPEdit',
-            state: { name: 'John Doe', topic: 'Juggling', owner: 'Jack Smith' }
+            state: {
+              lpid: '-LNWF1Itj0gydp4gt02V',
+              name: 'John Doe',
+              topic: 'Juggling',
+              owner: 'Jack Smith'
+            }
           }}
         >
           Edit learning_path

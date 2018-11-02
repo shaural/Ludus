@@ -7,6 +7,9 @@ import {
   FormControl,
   Button
 } from 'react-bootstrap';
+import Axios from 'axios';
+import { request } from 'https';
+// import { prependOnceListener } from 'cluster';
 export class EditLP extends Component {
   constructor(props, context) {
     super(props, context);
@@ -14,6 +17,7 @@ export class EditLP extends Component {
     this.submitData = this.submitData.bind(this);
     this.discardChanges = this.discardChanges.bind(this);
     this.state = {
+      lpid: props.location.state.lpid,
       name: props.location.state.name,
       topic: props.location.state.topic,
       owner: props.location.state.owner
@@ -25,7 +29,16 @@ export class EditLP extends Component {
   }
   submitData() {
     //TODO: Call the correct endpoint
-    alert('Need to add endpoint to submit data');
+    //alert('Need to add endpoint to submit data');
+    try {
+      Axios.patch(
+        `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${
+          this.state.lpid
+        }`
+      ).then(alert('Saved changes'));
+    } catch (e) {
+      alert('An error occurred saving changes :/');
+    }
   }
   discardChanges() {
     this.setState({ name: '', topic: '', owner: '' });
