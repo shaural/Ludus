@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Class from './Class';
 import ClassAddButton from './ClassAddButton';
 import './Forms.css';
-import './ClassList.css';
+import './Classlist.css';
 const Axios = require('axios');
 
 class ClassList extends Component {
@@ -88,27 +88,28 @@ class ClassList extends Component {
           id="submitbutton"
           value={'debug, userID:' + this.props.userID}
         />
-      <div>
-        <h1>My Classes</h1>
-        <form className="FilterBar">
-          <br />
-          Filter by name:&nbsp;
-          <input
-            className="filterText"
-            type="text"
-            onChange={event => this.setState({ name: event.target.value })}
-          />
-          <input
-            type="button"
-            id="submitbutton"
-            value="Go"
-            onClick={this.createClasslist}
-          />{' '}
-          &nbsp;
-          <ClassAddButton />
-        </form>
-        <br /> <br />
-        <div className="ClassForm">{this.submitSearch()}</div>
+        <div>
+          <h1>My Classes</h1>
+          <form className="FilterBar">
+            <br />
+            Filter by name:&nbsp;
+            <input
+              className="filterText"
+              type="text"
+              onChange={event => this.setState({ name: event.target.value })}
+            />
+            <input
+              type="button"
+              id="submitbutton"
+              value="Go"
+              onClick={this.createClasslist}
+            />{' '}
+            &nbsp;
+            <ClassAddButton />
+          </form>
+          <br /> <br />
+          <div className="ClassForm">{this.submitSearch()}</div>
+        </div>
       </div>
     );
   }
