@@ -182,6 +182,7 @@ app.get('/search', async (request, response) => {
         let tflg = false;
         if (
           name &&
+          childSnapshot.hasChild('Name') &&
           childSnapshot
             .child('Name')
             .val()
@@ -192,6 +193,7 @@ app.get('/search', async (request, response) => {
         }
         if (
           topic &&
+          childSnapshot.hasChild('Topic') &&
           childSnapshot
             .child('Topic')
             .val()
@@ -202,6 +204,7 @@ app.get('/search', async (request, response) => {
         }
         if (
           owner &&
+          childSnapshot.hasChild('Owner') &&
           childSnapshot
             .child('Owner')
             .val()
