@@ -7,6 +7,8 @@ import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
+import LpPage from './components/learningpath/LpPage';
+import ProfilePage from './components/userProfile/ProfilePage';
 import LearningPathCreatePage from './components/learningpath/LearningPathCreatePage';
 import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
@@ -28,6 +30,8 @@ class App extends Component {
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
+        <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
+        <Link to="/profile">User Profile</Link> &nbsp;
         <Link to="/class-search">Search Classes</Link> &nbsp;
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
@@ -41,13 +45,19 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
-
           {/*does not require userID*/}
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
           <Route
             path="/password-recovery"
             component={PasswordReset} /*placeholder*/
+          />
+          {/*requires userID*/}
+          <Route
+            path="/profile"
+            render={props => (
+              <ProfilePage {...props} userID={this.state.userID} />
+            )}
           />
           <Route path="/class-search" component={ClassSearchPage} />
 
@@ -80,10 +90,15 @@ class App extends Component {
             )}
           />
           <Route
-            path="/teacher-lplist"
-            component={IllegalPath} /*placeholder*/
+            path="/teacher-classlist"
+            render={props => (
+              <ClasslistPage {...props} userID={this.state.userID} />
+            )}
           />
           <Route
+            path="/teacher-lplist"
+            render={props => (
+              <LpPage {...props} userID={this.state.userID} />
             path="/teacher-lp-create"
             render={props => (
               <LearningPathCreatePage {...props} userID={this.state.userID} />

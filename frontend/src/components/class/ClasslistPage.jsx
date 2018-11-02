@@ -6,8 +6,7 @@ class ClasslistPage extends Component {
   render() {
     return (
       <div>
-        <NavBar />
-        <ClassList userID={this.props.userID} />
+        <NavBar /> <ClasslistHeader /> <Classlist userID={this.props.userID} />
       </div>
     );
   }
