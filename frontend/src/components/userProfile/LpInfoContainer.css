@@ -1,0 +1,10 @@
+.borderLpInfo {
+  border: solid;
+  border-width: 10px;
+  border-radius: 20%;
+  position: relative;
+  top: -500px;
+  left: 600px;
+  width: 500px;
+  height: 500px;
+}

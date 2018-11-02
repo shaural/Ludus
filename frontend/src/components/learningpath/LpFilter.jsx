@@ -1,23 +1,24 @@
 import React, { Component } from 'react';
-import './Forms.css';
 
-class ClassFilter extends Component {
+class LpFilter extends Component {
   constructor(props) {
     super(props);
-    this.state = { key: '' };
+    this.state = {
+      topic: ''
+    };
   }
-
   render() {
     return (
       /*TODO: Implementation*/
       <form className="FilterBar">
         <input
-          onChange={event => this.setState({ key: event.target.value })}
-          value="Filter classes"
+          className="inLine"
+          type="text"
+          onChange={event => this.setState({ topic: event.target.value })}
         />
       </form>
     );
   }
 }
 
-export default ClassFilter;
+export default LpFilter;
