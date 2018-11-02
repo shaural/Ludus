@@ -81,13 +81,6 @@ class ClassList extends Component {
 
   render() {
     return (
-      <div className="Classlist">
-        {this.createClasslist()}
-        <input
-          type="button"
-          id="submitbutton"
-          value={'debug, userID:' + this.props.userID}
-        />
         <div>
           <h1>My Classes</h1>
           <form className="FilterBar">
@@ -110,7 +103,6 @@ class ClassList extends Component {
           <br /> <br />
           <div className="ClassForm">{this.submitSearch()}</div>
         </div>
-      </div>
     );
   }
 }
