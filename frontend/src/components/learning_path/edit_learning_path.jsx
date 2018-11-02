@@ -17,9 +17,7 @@ export class EditLP extends Component {
       name: props.location.state.name,
       topic: props.location.state.topic,
       owner: props.location.state.owner
-      // classList: []
     };
-    // alert("Name: "+ props.location.state.topic)
   }
 
   valChange(e) {
@@ -27,13 +25,12 @@ export class EditLP extends Component {
   }
   submitData() {
     //TODO: Call the correct endpoint
-    // Axios.update
     alert('Need to add endpoint to submit data');
   }
   discardChanges() {
     this.setState({ name: '', topic: '', owner: '' });
 
-    alert('Discard changes');
+    alert('Discarded changes');
     /*leftover code from render()
 
     <Button bsStyle="primary" onClick={this.discardChanges}>
