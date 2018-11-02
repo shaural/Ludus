@@ -16,7 +16,7 @@ class CreationList extends Component {
     let classlist = this.props.classIDs;
     var classes = [];
     for (let id in classlist) {
-      <div className="ClassObject">
+      <div key={id} className="ClassObject">
         {<Class classID={id} />}
         <span className="Highlight">
           <button onClick={this.props.callback} value={id} />

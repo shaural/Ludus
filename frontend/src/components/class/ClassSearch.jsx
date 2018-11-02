@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Class from './Class';
-var querystring = require('querystring');
 const Axios = require('axios');
 
 class SignUpForm extends Component {
@@ -10,52 +9,64 @@ class SignUpForm extends Component {
       name: '',
       owner: '',
       content: '',
-      tag: ''
+      tag: '',
+      classList: []
     };
+    this.submitSearch = this.submitSearch.bind(this);
   }
+
   createClasslist = () => {
-    if (!this.props.userID) return;
-    //waiting on API call for classIDs
     let query = '?';
     let multi = 0;
     if (this.state.name.toString().length) {
-      query += this.state.name;
+      query += 'name=' + this.state.name;
       multi = 1;
     }
     if (this.state.owner.toString().length) {
       if (multi) query += '&';
-      query += this.state.owner;
+      query += 'owner=' + this.state.owner;
       multi = 1;
     }
     if (this.state.content.toString().length) {
       if (multi) query += '&';
-      query += this.state.content;
+      query += 'content_type=' + this.state.content;
       multi = 1;
     }
     if (this.state.tag.toString().length) {
       if (multi) query += '&';
-      query += this.state.tag;
+      query += 'tag=' + this.state.tag;
     }
+    console.log(query);
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}}`
+      `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
     )
       .then(response => {
         console.log(response);
+        let classList = [];
+        for (let id in response.data) {
+          for (let sid in id) {
+            classList.push(response.data[id][sid]);
+          }
+        }
+        this.setState({ classIDList: classList });
       })
       .catch(function(error) {
         console.log(error);
-      });
+      })
+      .finally(this.submitSearch);
+    return;
+  };
 
+  submitSearch = () => {
+    if (this.state.classIDList === undefined || !this.state.classIDList) return;
     let classes = [];
     for (let id in this.state.classIDList) {
-      console.log(id);
       classes.push(
         <div className="ClassObject" key={id}>
-          {<Class classID={id} />}
+          {<Class classID={this.state.classIDList[id]} />}
         </div>
       );
     }
-
     return classes;
   };
 
@@ -70,31 +81,39 @@ class SignUpForm extends Component {
           <input
             className="inLine"
             type="text"
-            onChange={event => this.setState({ email: event.target.value })}
+            onChange={event => this.setState({ name: event.target.value })}
           />
           <br /> <br />
           By Owner:&nbsp;
           <input
             className="inLine"
             type="text"
-            onChange={event => this.setState({ password: event.target.value })}
+            onChange={event => this.setState({ owner: event.target.value })}
           />
           <br /> <br />
           By Content Type:&nbsp;
           <input
             className="inLine"
             type="text"
-            onChange={event => this.setState({ confirm: event.target.value })}
+            onChange={event => this.setState({ content: event.target.value })}
           />
           <br /> <br />
           By Tag:&nbsp;
           <input
             className="inLine"
             type="text"
-            onChange={event => this.setState({ confirm: event.target.value })}
+            onChange={event => this.setState({ tag: event.target.value })}
           />
           <br /> <br />
+          <input
+            className="centered"
+            type="button"
+            id="submitbutton"
+            value="Submit"
+            onClick={this.createClasslist}
+          />
         </form>
+        {this.submitSearch()}
       </div>
     );
   }

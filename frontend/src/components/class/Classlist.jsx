@@ -13,13 +13,11 @@ class Classlist extends Component {
   /*-LNVWR9kD2dvN8GLGFYE*/
   componentDidMount = () => {
     if (!this.props.userID) return;
-    //waiting on API call for classIDs
     Axios.get(
       `https://us-central1-ludusfire.cloudfunctions.net/classes/classlist/${
         this.props.userID
       }`
     )
-      /*Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/classes/search/?owner=${this.props.userID}`)*/
       .then(response => {
         console.log(response);
         this.setState({ classIDList: response.data });
@@ -32,13 +30,12 @@ class Classlist extends Component {
   createClasslist = () => {
     let classes = [];
     for (let id in this.state.classIDList) {
-      console.log(id);
       classes.push(
         <div className="ClassObject" key={id}>
           {<Class classID={id} />}
           <span className="Highlight">
             {<ClassEditButton classID={id} />} &nbsp;{' '}
-            {/*<ClassRemoveButton classID={i /* classIDList[i] } />*/}
+            {<ClassRemoveButton classID={id} />}
           </span>
         </div>
       );
