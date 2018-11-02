@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CreationList from './CreationList';
 import AddList from './AddList';
+import '../class/ClassList.css';
 const Axios = require('axios');
 var querystring = require('querystring');
 
@@ -122,11 +123,13 @@ const Modal = ({ handleClose, show, children }) => {
 
   return (
     <div className={showHideClassName}>
-      <section className="modal-main">
-        {children}
-        <button onClick={handleClose}>Back</button>
-        <br />
-      </section>
+      <div className="classForm">
+        <section className="modal-main">
+          {children}
+          <button onClick={handleClose}>Back</button>
+          <br />
+        </section>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Class from './Class';
 import ClassAddButton from './ClassAddButton';
+import ClassRemoveButton from './ClassRemoveButton';
 import './Forms.css';
 import './ClassList.css';
 const Axios = require('axios');
@@ -11,6 +12,7 @@ class ClassList extends Component {
     this.state = {
       name: '',
       owner: this.props.userID /*-LNVWR9kD2dvN8GLGFYE*/,
+      update: '',
       classList: []
     };
     this.submitSearch = this.submitSearch.bind(this);
@@ -73,6 +75,12 @@ class ClassList extends Component {
       classes.push(
         <div className="ClassObject" key={id}>
           {<Class classID={this.state.classIDList[id]} />}
+          {
+            <ClassRemoveButton
+              onClick={event => this.setState({ update: '' })}
+              classID={this.state.classIDList[id]}
+            />
+          }
         </div>
       );
     }
@@ -81,28 +89,28 @@ class ClassList extends Component {
 
   render() {
     return (
-        <div>
-          <h1>My Classes</h1>
-          <form className="FilterBar">
-            <br />
-            Filter by name:&nbsp;
-            <input
-              className="filterText"
-              type="text"
-              onChange={event => this.setState({ name: event.target.value })}
-            />
-            <input
-              type="button"
-              id="submitbutton"
-              value="Go"
-              onClick={this.createClasslist}
-            />{' '}
-            &nbsp;
-            <ClassAddButton />
-          </form>
-          <br /> <br />
-          <div className="ClassForm">{this.submitSearch()}</div>
-        </div>
+      <div>
+        <h1>My Classes</h1>
+        <form className="FilterBar">
+          <br />
+          Filter by name:&nbsp;
+          <input
+            className="filterText"
+            type="text"
+            onChange={event => this.setState({ name: event.target.value })}
+          />
+          <input
+            type="button"
+            id="submitbutton"
+            value="Go"
+            onClick={this.createClasslist}
+          />{' '}
+          &nbsp;
+          <ClassAddButton />
+        </form>
+        <br /> <br />
+        <div className="ClassForm">{this.submitSearch()}</div>
+      </div>
     );
   }
 }

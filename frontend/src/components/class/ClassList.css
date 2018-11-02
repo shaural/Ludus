@@ -25,6 +25,8 @@
   max-width: 900px;
   padding: 10px;
   margin: auto;
+  max-height: 60%;
+  overflow-y: auto;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem !important;
 }
