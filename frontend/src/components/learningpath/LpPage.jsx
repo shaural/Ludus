@@ -18,15 +18,16 @@ class LpPage extends Component {
     };
   }
 
-  async componentDidMount() {
-    await Axios.get(
+	componentDidMount() {
+    Axios.get(
       `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
         this.props.userID
       }`
     ).then(({ data }) => {
-      console.log('hi', data);
+      console.log(data);
       this.setState({
-        data
+        length: data.length,
+        data: data
       });
     });
   }
@@ -35,32 +36,18 @@ class LpPage extends Component {
     //let lpIDList = []
     //TODO: Call API for lpIDs
     let learningPaths = [];
-    var y = this.state.data;
-    console.log(y);
-    console.log('state', this.state);
-    Object.keys(this.state.data).forEach(e => {
-      console.log(this.state.data[e]);
-      learningPaths.push(
-        <div className="lpObject">
-          {<Lp LearningPathID={this.state.data[e]} />}
-          <span className="Placeholder">
-            {<LpEditBtn />} <text> </text> {<LpDeleteBtn />}
-          </span>
-        </div>
-      );
-    });
-
+    var y = this.state.length;
     //for (let i = 0; i < lpIDList.length; i++) {
-    /*for (let i =0;i<1;i++) {
+    for (let i = 0; i < y; i++) {
       learningPaths.push(
         <div className="lpObject">
-          {<Lp LearningPathID={y[i]} key={i} />}
+          {<Lp LearningPathID={this.state.data} i={i} />}
           <span className="Placeholder">
-            {<LpEditBtn />} <text> </text> {<LpDeleteBtn />}
+            {<LpEditBtn />} <text> </text> {<LpDeleteBtn lpID={this.state.data[0]}/>}
           </span>
         </div>
       );
-    }*/
+    }
 
     return learningPaths;
   };

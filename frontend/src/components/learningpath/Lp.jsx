@@ -7,36 +7,37 @@ class Lp extends Component {
   }
 
   fetchData(LearningPathID) {
-    var index = this.props.key;
-    var obj = this.props.LearningPathID;
+		var index = this.props.i;
+    var obj = this.props.LearningPathID[index];
     console.log(index);
     console.log('in child', obj);
     //TODO: API Call for info on the lp from database
     if (!obj) {
       return <text>empty</text>;
     }
-    if (this.props.LearningPathID.Classes) {
+    if (this.props.LearningPathID[index][1].Classes) {
       return (
         <container>
           <span className="lpInfo">
             <span>
-              {'LearningPath:'} {this.props.LearningPathID.Name}
+              {'LearningPath:'} {this.props.LearningPathID[index][1].Name}
             </span>
-            <div>Topic: {this.props.LearningPathID.Topic} </div>
-            <div>First Class: {this.props.LearningPathID.Classes[0]} </div>
+            <div>Topic: {this.props.LearningPathID[index][1].Topic} </div>
+            <div>
+              First Class: {this.props.LearningPathID[index][1].Classes[0]}{' '}
+            </div>
           </span>
         </container>
       );
     }
-
-    if (!this.props.LearningPathID.Classes) {
+    if (!this.props.LearningPathID[index][1].Classes) {
       return (
         <container>
           <span className="lpInfo">
             <span>
-              {'LearningPath:'} {this.props.LearningPathID.Name}
+              {'LearningPath:'} {this.props.LearningPathID[index][1].Name}
             </span>
-            <div>Topic: {this.props.LearningPathID.Topic} </div>
+            <div>Topic: {this.props.LearningPathID[index][1].Topic} </div>
             <div>First Class: {'No Classes in LP'} </div>
           </span>
         </container>
