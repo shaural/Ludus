@@ -7,7 +7,7 @@ export default class IllegalPath extends Component {
   render() {
     return (
       <div>
-        <header>404</header>
+        <h1>404</h1>
         Oops! Here's a silly, meaningless, but endearing message about how
         something went wrong.
         <br />

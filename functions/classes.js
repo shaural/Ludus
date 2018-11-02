@@ -78,6 +78,17 @@ app.delete('/:class_id', async (request, response) => {
     );
 });
 
+//Get class by owner
+app.get('/classlist/:user_id', (request, response) => {
+  const classRef = admin.database().ref(`/Classes`);
+  classRef
+    .orderByChild('Owner')
+    .equalTo(request.params.user_id)
+    .once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
+});
+
 // Class information API
 app.get('/:class_id/info', async (request, response) => {
   const db = admin
@@ -107,4 +118,111 @@ app.get('/:class_id/info', async (request, response) => {
     }
   });
 });
+
+// Code for Class Search by: name, owner, content_type, Tags
+app.get('/search', async (request, response) => {
+  const classRef = admin.database().ref(`/Classes`);
+  let name = request.query.name || '';
+  let owner = request.query.owner || '';
+  let content_type = request.query.content_type || '';
+  let tag = request.query.tag || '';
+  let nameExists = true;
+  let ownerExists = true;
+  let ctExists = true;
+  let tagExists = true;
+  let valsExist = false;
+  if (name.length == 0) {
+    nameExists = false;
+  }
+  if (owner.length == 0) {
+    ownerExists = false;
+  }
+  if (content_type.length == 0) {
+    ctExists = false;
+  }
+  if (tag.length == 0) {
+    tagExists = false;
+  }
+  if (ctExists || nameExists || ownerExists || tagExists) {
+    valsExist = true;
+  }
+  var resp = [];
+  await classRef.once('value', function(snapshot) {
+    if (valsExist) {
+      snapshot.forEach(function(childSnapshot) {
+        let nflg = false;
+        let oflg = false;
+        let cflg = false;
+        let tflg = false;
+        if (
+          name &&
+          childSnapshot
+            .child('Name')
+            .val()
+            .toLowerCase()
+            .indexOf(name.toLowerCase()) != -1
+        ) {
+          nflg = true;
+        }
+        if (
+          content_type &&
+          childSnapshot
+            .child('Content_Type')
+            .val()
+            .toLowerCase()
+            .indexOf(content_type.toLowerCase()) != -1
+        ) {
+          cflg = true;
+        }
+        if (
+          owner &&
+          childSnapshot
+            .child('Owner')
+            .val()
+            .toLowerCase()
+            .indexOf(owner.toLowerCase()) != -1
+        ) {
+          oflg = true;
+        }
+        if (tagExists) {
+          //loop through tags to see if match
+          childSnapshot.child('Tags').forEach(function(tagSnap) {
+            if (
+              tagSnap
+                .val()
+                .toLowerCase()
+                .indexOf(tag.toLowerCase()) != -1
+            ) {
+              tflg = true;
+            }
+          });
+        }
+        // check if all arguments sent are matched
+        let nameCheck = true;
+        let ownerCheck = true;
+        let ctCheck = true;
+        let tagCheck = true;
+        if (nameExists && !nflg) {
+          nameCheck = false;
+        }
+        if (ownerExists && !oflg) {
+          ownerCheck = false;
+        }
+        if (ctExists && !cflg) {
+          ctCheck = false;
+        }
+        if (tagExists && !tflg) {
+          tagCheck = false;
+        }
+        if (nameCheck && ownerCheck && ctCheck && tagCheck) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        }
+      });
+    } else {
+      resp = snapshot.val();
+    }
+  });
+  return response.status(200).json(resp);
+});
+
 exports.route = app;

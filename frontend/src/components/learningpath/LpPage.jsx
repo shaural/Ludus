@@ -18,7 +18,7 @@ class LpPage extends Component {
 	}
 
 	componentDidMount() {
-	  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/-LNVWR9kD2dvN8GLGFYE/student/learningPaths/`)
+	  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net//`)
 	  .then(({ data }) => {
 			console.log(data);
 	    this.setState({

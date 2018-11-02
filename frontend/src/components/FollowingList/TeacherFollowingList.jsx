@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-import './UserInfoContainer.css';
-<<<<<<< HEAD
-=======
+import TeacherFollowing from './TeacherFollowing';
 import conf from '../../conf.js';
 import 'firebase-auth';
 import firebase from 'firebase';
->>>>>>> e20ba76b5e4740098f83b118d0aae7db7ca444fb
 const Axios =require('axios');
 
 
 
-class UserInfoContainer extends React.Component {
+class TeacherFollowingList extends React.Component {
 constructor(props){
   super(props);
   this.state = {
@@ -20,11 +17,6 @@ constructor(props){
     data: []
   }
 }
-<<<<<<< HEAD
-
-componentDidMount() {
-  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/-LNVWR9kD2dvN8GLGFYE/`)
-=======
 
 //get Logged in State, in progress
 /*getUser(){
@@ -47,7 +39,6 @@ componentDidMount() {
   //this.getUser();
   Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/${this.props.userID}/`)
   //Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/{uid}/`) getting logged in state in progress
->>>>>>> e20ba76b5e4740098f83b118d0aae7db7ca444fb
   .then(({ data }) => {
     console.log(data);
     this.setState({
@@ -61,19 +52,9 @@ componentDidMount() {
 
   render() {
     return (
-      <container>
-        <div className="borderuserInfo">
-          {'Personal Information'}
-          <br></br><br></br>
-          <div className="userInfo">Name: {this.state.Name}</div>
-          <br></br>
-          <div className="userInfo">EMAIL: {this.state.Email}</div>
-          <br></br>
-          <div className="userInfo">DOB: {this.state.DoB}</div>
-        </div>
-      </container>
+      <text>hi</text>
     );
   }
 }
 
-export default UserInfoContainer;
+export default TeacherFollowingList;

@@ -3,6 +3,8 @@ import FollowBtn from './FollowBtn';
 import UnfollowBtn from './UnfollowBtn';
 import NotificationList from './NotificationList';
 import profilePic from './profilePic.jpg';
+import TeacherFollowingList from '../FollowingList/TeacherFollowingList'
+import { Route, Link, Switch } from 'react-router-dom';
 import './header.css';
 
 const Axios =require('axios');
@@ -12,10 +14,14 @@ constructor(props) {
   super(props);
   this.state = {
 <<<<<<< HEAD
+<<<<<<< HEAD
     Name: 'nametest',
 =======
     Name: 'database_error_fetching_name',
 >>>>>>> e20ba76b5e4740098f83b118d0aae7db7ca444fb
+=======
+    Name: 'null',
+>>>>>>> 7696a881c63a2ae99149fdab7f27156367e7849c
     Email: 'emailtest',
     DoB: 'dobtest',
     data: []
@@ -43,7 +49,7 @@ componentDidMount() {
 */
 
 componentDidMount() {
-  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/-LNVWR9kD2dvN8GLGFYE/`)
+  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/${this.props.userID}/`)
   //Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/{uid}/`) getting logged in state in progress
 >>>>>>> e20ba76b5e4740098f83b118d0aae7db7ca444fb
   .then(({ data }) => {
@@ -81,6 +87,7 @@ componentDidMount() {
           </div>
         </span>
       </container>
+
     );
   }
 }
