@@ -1,6 +1,8 @@
-const admin = require('./utils').firebaseAdmin;
+const { firebaseAdmin, ref_has_child } = require('./utils');
+const admin = firebaseAdmin;
 
 const app = require('express')();
+
 app.use(require('cors')({ origin: true }));
 
 app.post('/:lp_id/class', async (request, response) => {
@@ -34,26 +36,14 @@ app.post('/:lp_id/class', async (request, response) => {
   return response.status(200).json(resp);
 });
 
-app.get('/:lp_id/class', (request, response) => {
-  //console.log('Ran new code');
-  const db = admin
-    .database()
-    .ref(`/Learning_Paths/${request.params.lp_id}/class`);
-  if (!db)
-    return response
-      .status(404)
-      .json({ message: ` ${request.params.lp_id} does not have any classes` });
-  else {
-    db.once('value', function(snapshot) {
-      return response.status(200).json(snapshot.val());
-    });
-  }
-});
-
 // delete learning path with id lp_id
 app.delete('/:lp_id', async (request, response) => {
   const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
-  if (!lpRef)
+  const found_user = await ref_has_child(
+    admin.database().ref(`/Learning_Paths`),
+    request.params.lp_id
+  );
+  if (!found_user)
     return response.status(404).json({
       message: `Learning path with id ${request.params.lp_id} not found`
     });
@@ -121,10 +111,13 @@ app.patch('/:lp_id', async (request, response) => {
     .child(request.params.lp_id);
 
   const { name, owner, topic } = request.body;
-
+  const found_user = await ref_has_child(
+    admin.database().ref(`/Learning_Paths`),
+    request.params.lp_id
+  );
   let resp;
   var updates = {};
-  if (db.exists()) {
+  if (found_user) {
     if (name) {
       updates['Name'] = name;
     }
