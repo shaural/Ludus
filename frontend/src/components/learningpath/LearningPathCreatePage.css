@@ -1,0 +1,60 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+.modal-main {
+  position: fixed;
+  background: white;
+  width: 80%;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+
+.display-block {
+  display: block;
+}
+
+.display-none {
+  display: none;
+}
+
+.lpcontainer {
+  width: auto;
+  position: center;
+  max-width: 900px;
+  padding: 10px;
+  margin: auto;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+
+.inputs {
+  overflow: hidden;
+  text-align: right;
+  position: center;
+  display: block;
+  width: auto;
+  max-width: 900px;
+  height: auto;
+  padding: 10px;
+  margin: auto;
+  margin-bottom: 8px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+
+.long {
+  display: inline-block;
+  margin-right: 23%;
+  width: 41%;
+  align-items: center;
+}

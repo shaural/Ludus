@@ -9,8 +9,10 @@ import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
 import LpPage from './components/learningpath/LpPage';
 import ProfilePage from './components/userProfile/ProfilePage';
+import LearningPathCreatePage from './components/learningpath/LearningPathCreatePage';
 import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
+import ClassSearchPage from './components/class/ClassSearchPage';
 
 class App extends Component {
   constructor(props) {
@@ -30,6 +32,8 @@ class App extends Component {
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
         <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
         <Link to="/profile">User Profile</Link> &nbsp;
+        <Link to="/class-search">Search Classes</Link> &nbsp;
+        <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp; userID:&nbsp;
         <input
@@ -55,6 +59,10 @@ class App extends Component {
               <ProfilePage {...props} userID={this.state.userID} />
             )}
           />
+          <Route path="/class-search" component={ClassSearchPage} />
+
+          {/*requires userID*/}
+          <Route path="/profile" component={IllegalPath} /*placeholder*/ />
           <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/student-classlist"
@@ -82,9 +90,18 @@ class App extends Component {
             )}
           />
           <Route
+            path="/teacher-classlist"
+            render={props => (
+              <ClasslistPage {...props} userID={this.state.userID} />
+            )}
+          />
+          <Route
             path="/teacher-lplist"
             render={props => (
               <LpPage {...props} userID={this.state.userID} />
+            path="/teacher-lp-create"
+            render={props => (
+              <LearningPathCreatePage {...props} userID={this.state.userID} />
             )}
           />
           <Route

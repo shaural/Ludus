@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import Classlist from './Classlist';
-import ClasslistHeader from './ClasslistHeader';
+import ClassList from './ClassList';
 import NavBar from '../NavBar';
 
 class ClasslistPage extends Component {
