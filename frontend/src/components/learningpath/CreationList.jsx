@@ -4,7 +4,7 @@ import Class from '../class/Class';
 class CreationList extends Component {
   constructor(props) {
     super(props);
-    this.state = { classIDs: ['-LNzxRJDHFYaiXTz7xNE'] };
+    this.state = { classIDs: this.props.classIDs };
   }
 
   handleClick = e => {
@@ -15,6 +15,7 @@ class CreationList extends Component {
     let classlist = this.state.classIDs;
     var classes = [];
     for (let id in classlist) {
+      console.log(classlist[id]);
       classes.push(
         <div key={classlist[id]} className="ClassObject">
           {<Class classID={classlist[id]} />}

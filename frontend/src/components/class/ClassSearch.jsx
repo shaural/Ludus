@@ -109,7 +109,7 @@ class SignUpForm extends Component {
             className="centered"
             type="button"
             id="submitbutton"
-            value="Submit"
+            value="Search"
             onClick={this.createClasslist}
           />
         </form>

@@ -7,7 +7,11 @@ var querystring = require('querystring');
 export default class LearningPathCreate extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: '', topic: '', classes: ['-LNzxRJDHFYaiXTz7xNE'] };
+    this.state = {
+      name: this.props.name,
+      topic: this.props.topic,
+      classes: this.props.classIDs
+    };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
     this.submitLP = this.submitLP.bind(this);
@@ -29,6 +33,7 @@ export default class LearningPathCreate extends Component {
           className="inLine"
           type="text"
           onChange={event => this.setState({ name: event.target.value })}
+          value={this.state.name}
         />
         <br /> <br />
         Topic:&nbsp;
@@ -37,6 +42,7 @@ export default class LearningPathCreate extends Component {
           className="inLine"
           type="text"
           onChange={event => this.setState({ topic: event.target.value })}
+          value={this.state.topic}
         />
         <div className="lpcontainer">
           {' '}
