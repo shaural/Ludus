@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Class from './Class';
 const Axios = require('axios');
 
-class SignUpForm extends Component {
+class ClassSearch extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,11 +48,11 @@ class SignUpForm extends Component {
           }
         }
         this.setState({ classIDList: classList });
+        this.submitSearch();
       })
       .catch(function(error) {
         console.log(error);
-      })
-      .finally(this.submitSearch);
+      });
     return;
   };
 
@@ -60,6 +60,7 @@ class SignUpForm extends Component {
     if (this.state.classIDList === undefined || !this.state.classIDList) return;
     let classes = [];
     for (let id in this.state.classIDList) {
+      if (this.state.classIDList[id] === undefined) return;
       classes.push(
         <div className="ClassObject" key={id}>
           {<Class classID={this.state.classIDList[id]} />}
@@ -118,4 +119,4 @@ class SignUpForm extends Component {
   }
 }
 
-export default SignUpForm;
+export default ClassSearch;

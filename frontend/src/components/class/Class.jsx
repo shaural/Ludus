@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './Class.css';
-var querystring = require('querystring');
 const Axios = require('axios');
 
 class Class extends Component {

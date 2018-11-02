@@ -60,6 +60,7 @@ class SignUpForm extends Component {
     if (this.state.classIDList === undefined || !this.state.classIDList) return;
     let classes = [];
     for (let id in this.state.classIDList) {
+      if (this.state.classIDList[id] === undefined) return;
       classes.push(
         <div className="ClassObject" key={id}>
           {<Class classID={this.state.classIDList[id]} />}

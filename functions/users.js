@@ -9,8 +9,8 @@ app.use(require('cors')({ origin: true }));
 app.post('/', async (request, response) => {
   if (!request.body)
     return response.status(400).json({ message: 'malformed request' });
-  const { name, password, email, dob } = request.body;
-  if (!name || !password || !email || !dob)
+  const { name, email, dob } = request.body;
+  if (!name || !email || !dob)
     return response.status(400).json({ message: 'malformed request' });
   const db = admin.database().ref('/Users');
 

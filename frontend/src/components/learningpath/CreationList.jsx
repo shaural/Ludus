@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import Class from '../class/Class';
 
 class CreationList extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleRemoveButton = e => {
     this.props.callback(e.target.value);
   };
@@ -14,6 +10,7 @@ class CreationList extends Component {
     let classlist = this.props.classIDs;
     var classes = [];
     for (let id in classlist) {
+      if (classlist[id] === undefined) return;
       classes.push(
         <div key={classlist[id]} className="ClassObject">
           {<Class classID={classlist[id]} />}

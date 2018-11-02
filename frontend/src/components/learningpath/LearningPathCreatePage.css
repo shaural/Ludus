@@ -35,3 +35,26 @@
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem !important;
 }
+
+.inputs {
+  overflow: hidden;
+  text-align: right;
+  position: center;
+  display: block;
+  width: auto;
+  max-width: 900px;
+  height: auto;
+  padding: 10px;
+  margin: auto;
+  margin-bottom: 8px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+
+.long {
+  display: inline-block;
+  margin-right: 23%;
+  width: 41%;
+  align-items: center;
+}

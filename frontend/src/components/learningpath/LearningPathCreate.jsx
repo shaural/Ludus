@@ -28,20 +28,22 @@ export default class LearningPathCreate extends Component {
   render() {
     return (
       <div>
-        Learning Path Name:&nbsp;
-        <input
-          className="inLine"
-          type="text"
-          onChange={event => this.setState({ name: event.target.value })}
-        />
-        <br /> <br />
-        Topic:&nbsp;
-        {'\t\t'}
-        <input
-          className="inLine"
-          type="text"
-          onChange={event => this.setState({ topic: event.target.value })}
-        />
+        <form className="inputs">
+          Learning Path Name:&nbsp;
+          <input
+            className="long"
+            type="text"
+            onChange={event => this.setState({ name: event.target.value })}
+          />
+          <br /> <br />
+          Topic:&nbsp;
+          {'\t\t'}
+          <input
+            className="long"
+            type="text"
+            onChange={event => this.setState({ topic: event.target.value })}
+          />
+        </form>
         <div className="lpcontainer">
           {' '}
           <CreationList
