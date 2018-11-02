@@ -1,0 +1,8 @@
+.lpInfo {
+	display: block;
+	width: 750px;
+	max-width: 750px;
+	height: 100px;
+	background-color: #fff;
+	float: left;
+}

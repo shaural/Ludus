@@ -1,0 +1,12 @@
+.borderuserInfo {
+  border: solid;
+  border-width: 10px;
+  border-radius: 20%;
+  position: relative;
+  left: 20px;
+  width: 500px;
+  height: 500px;
+}
+.userInfo {
+  
+}
