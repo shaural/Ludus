@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Class from './Class';
 import ClassAddButton from './ClassAddButton';
 import './Forms.css';
-import './Classlist.css';
+import './ClassList.css';
 const Axios = require('axios');
 
 class ClassList extends Component {
