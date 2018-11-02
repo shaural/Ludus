@@ -49,7 +49,12 @@ class App extends Component {
             component={PasswordReset} /*placeholder*/
           />
           {/*requires userID*/}
-          <Route path="/profile" component={ProfilePage} /*placeholder*/ />
+          <Route
+            path="/profile"
+            render={props => (
+              <ProfilePage {...props} userID={this.state.userID} />
+            )}
+          />
           <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/student-classlist"

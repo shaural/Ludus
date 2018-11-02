@@ -37,7 +37,7 @@ constructor(props){
 
 componentDidMount() {
   //this.getUser();
-  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/-LNVWR9kD2dvN8GLGFYE/`)
+  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/${this.props.userID}/`)
   //Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/{uid}/`) getting logged in state in progress
   .then(({ data }) => {
     console.log(data);
