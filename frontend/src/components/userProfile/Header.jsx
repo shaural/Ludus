@@ -3,6 +3,8 @@ import FollowBtn from './FollowBtn';
 import UnfollowBtn from './UnfollowBtn';
 import NotificationList from './NotificationList';
 import profilePic from './profilePic.jpg';
+import TeacherFollowingList from '../FollowingList/TeacherFollowingList'
+import { Route, Link, Switch } from 'react-router-dom';
 import './header.css';
 
 const Axios =require('axios');
@@ -11,7 +13,7 @@ class Header extends Component {
 constructor(props) {
   super(props);
   this.state = {
-    Name: 'database_error_fetching_name',
+    Name: 'null',
     Email: 'emailtest',
     DoB: 'dobtest',
     data: []
@@ -66,12 +68,20 @@ componentDidMount() {
           </div>
           <div className="UnfollowerBtn">
           {<UnfollowBtn />}
+          <Link to="/following">Following</Link> &nbsp;
+          <Route
+            path="/following"
+            render={props => (
+              <TeacherFollowingList {...props} userID={this.props.userID} />
+            )}
+          />
           </div>
           <div className="notifications">
             {<NotificationList />}
           </div>
         </span>
       </container>
+
     );
   }
 }

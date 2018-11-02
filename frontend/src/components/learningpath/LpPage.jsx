@@ -3,6 +3,7 @@ import Lp from './Lp';
 import LpCreateBtn from './LpCreateBtn';
 import LpDeleteBtn from './LpDeleteBtn';
 import LpEditBtn from './LpEditBtn';
+import LpFilter from './LpFilter';
 import './lpPage.css';
 
 const Axios =require('axios');
@@ -52,7 +53,7 @@ class LpPage extends Component {
 	render() {
 		return (
 			<div>
-			<div> {<LpCreateBtn />} </div>
+			<div> {<LpCreateBtn />} {<LpFilter />}</div>
 			<div className="LpPage">{this.createLpPage()}</div>;
 			</div>
 		)
