@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import CreationList from './CreationList';
-import SelectClass from './SelectClass';
+import AddList from './AddList';
 const Axios = require('axios');
 var querystring = require('querystring');
 
 export default class LearningPathCreate extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: '', topic: '', classes: ['0'] };
+    this.state = { name: '', topic: '', classes: ['-LNzxRJDHFYaiXTz7xNE'] };
+    this.handleAddClass = this.handleAddClass.bind(this);
+    this.handleRemoveClass = this.handleRemoveClass.bind(this);
     this.submitLP = this.submitLP.bind(this);
   }
 
@@ -43,7 +45,7 @@ export default class LearningPathCreate extends Component {
             callback={this.handleRemoveClass}
           />
           <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
-            <SelectClass callback={this.handleAddClass} />
+            <AddList callback={this.handleAddClass} />
           </Modal>
           <button type="button" onClick={this.showModal}>
             Add Classes...
@@ -55,17 +57,17 @@ export default class LearningPathCreate extends Component {
   }
 
   //list of classes chosen so far
-  handleAddClass = event => {
+  handleAddClass(event) {
     var array = [...this.state.classes, event.target.value];
     this.setState({ classes: array });
-  };
+  }
 
-  handleRemoveClass = event => {
+  handleRemoveClass(event) {
     var array = [...this.state.classes];
     var index = array.indexOf(event.target.value);
     array.splice(index, 1);
     this.setState({ classes: array });
-  };
+  }
 
   submitLP() {
     /*
@@ -74,15 +76,16 @@ export default class LearningPathCreate extends Component {
     }*/
     const requestBody = {
       name: this.state.name,
-      topic: this.state.topic
+      topic: this.state.topic,
+      Classlist: this.state.classes
     };
     const config = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     };
     Axios.post(
-      `https://us-central1-ludusfire.cloudfunctions.net/${
+      `https://us-central1-ludusfire.cloudfunctions.net/users/${
         this.props.userID
-      }/teacher/learningPath`,
+      }/teacher/learningPath/`,
       querystring.stringify(requestBody),
       config
     )
@@ -91,6 +94,7 @@ export default class LearningPathCreate extends Component {
       })
       .catch(function(error) {
         console.log(error);
+        alert(error.message);
       });
     alert('Published Learning Path!');
 

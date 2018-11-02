@@ -16,7 +16,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userID: ''
+      userID: '-LNVWR9kD2dvN8GLGFYE'
     };
   }
 

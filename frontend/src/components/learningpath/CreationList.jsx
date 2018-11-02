@@ -1,28 +1,30 @@
 import React, { Component } from 'react';
 import Class from '../class/Class';
-import '../class/Classlist.css';
 
 class CreationList extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { classIDs: ['-LNzxRJDHFYaiXTz7xNE'] };
   }
 
-  createClasslist = () => {
-    //let classIDList = []
-    //waiting on API call for classIDs
-    //axios.get('https://us-central1-ludusfire.cloudfunctions.net/classes/', { params: /*produce userID from somewhere*/ }).then( function(response){});
+  handleClick = e => {
+    this.props.callback(e.target.value);
+  };
 
-    let classlist = this.props.classIDs;
+  createClasslist = () => {
+    let classlist = this.state.classIDs;
     var classes = [];
     for (let id in classlist) {
-      <div key={id} className="ClassObject">
-        {<Class classID={id} />}
-        <span className="Highlight">
-          <button onClick={this.props.callback} value={id} />
-          {/*<ClassRemoveButton classID={id} />*/}
-        </span>
-      </div>;
+      classes.push(
+        <div key={classlist[id]} className="ClassObject">
+          {<Class classID={classlist[id]} />}
+          <span className="Highlight">
+            <button onClick={this.handleClick} value={classlist[id]}>
+              Remove
+            </button>{' '}
+          </span>
+        </div>
+      );
     }
 
     return classes;
