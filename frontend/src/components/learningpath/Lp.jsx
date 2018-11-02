@@ -28,6 +28,7 @@ class Lp extends Component {
         </container>
       );
     }
+
     if (!this.props.LearningPathID.Classes) {
       return (
         <container>

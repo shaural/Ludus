@@ -10,7 +10,9 @@ class ProfilePage extends Component {
   render() {
     return (
       <div className="fullPage">
-        <NavBar /> <Header userID={this.props.userID}/> <UserInfoContainer userID={this.props.userID} /> <LpInfoContainer userID={this.props.userID}/>
+        <NavBar /> <Header userID={this.props.userID} />{' '}
+        <UserInfoContainer userID={this.props.userID} />{' '}
+        <LpInfoContainer userID={this.props.userID} />
       </div>
     );
   }

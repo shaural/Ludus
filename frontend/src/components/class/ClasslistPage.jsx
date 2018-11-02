@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import ClassList from './Classlist';
+import ClassList from './ClassList';
 
 import NavBar from '../NavBar';
 
