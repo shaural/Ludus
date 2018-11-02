@@ -7,55 +7,33 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
 app.post('/', async (request, response) => {
-  const db = admin.database().ref('/Users');
   if (!request.body)
     return response.status(400).json({ message: 'malformed request' });
-  const { name, password, email, dob } = request.body;
-  if (!name || !password || !email || !dob)
+  const { name, email, dob } = request.body;
+  if (!name || !email || !dob)
     return response.status(400).json({ message: 'malformed request' });
-  //basic validation tests
-  if (!email.toString().includes('@')) {
-    return response.status(400).json({
-      message: 'Invalid email, please try again'
-    });
-  } else if (!password.toString().length) {
-    return response.status(400).json({
-      message: 'Empty passwords are not allowed, please try again'
-    });
-  } else if (password.toString().length < 10) {
-    return response.status(400).json({
-      message: 'Minimum password length: 10 characters, please try again'
-    });
-  } else if (!name.toString().length) {
-    return response.status(400).json({
-      message: 'You may not have an empty name'
-    });
-  } else if (!dob.toString().length) {
-    //this will be obselete with HTML forms
-    // placeholder for testing purposes
-    return response.status(400).json({
-      message: 'Please enter your age'
-    });
-  } else {
-    //firebase database entry creation
-    let resp = {};
-    await db
-      .push({
-        Name: name,
-        Password: password,
-        Email: email,
-        DoB: dob
-      })
-      .once('value')
-      .then(snapshot => {
-        resp = {
-          id: snapshot.key,
-          user: { ...snapshot.val() }
-        };
-      });
+  const db = admin.database().ref('/Users');
 
-    return response.status(200).json(resp);
-  }
+  //firebase database entry creation
+  let resp = {};
+  await db
+    .push({
+      Name: name,
+      Email: email,
+      DoB: dob
+    })
+    .once('value')
+    .then(snapshot => {
+      resp = {
+        id: snapshot.key,
+        user: { ...snapshot.val() }
+      };
+    })
+    .catch(function(error) {
+      return response.status(400).json(error);
+    });
+
+  return response.status(200).json(resp);
 });
 
 // https://example.com/api/accounts/12345/teacher
@@ -418,7 +396,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
   const {
     topic,
     name,
-    ClassList = null,
+    ClassList,
     StudentsEnrolled = null,
     Teachers_who_recommend = null
   } = request.body;
@@ -435,7 +413,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
       Topic: topic,
       Name: name,
       Owner: request.params.user_id,
-      Class_List: [],
+      Class_List: ClassList,
       St_Enrolled: [],
       T_recommend: []
     })
