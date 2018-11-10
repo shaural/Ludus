@@ -86,6 +86,27 @@ app.post('/:user_id/student', async (request, response) => {
   return response.status(200).json();
 });
 
+app.patch('/:user_id/:interest_name', async (request, response) => {
+  const db = admin
+    .database()
+    .ref(`/Users/${request.params.user_id}`)
+    .child('Interests');
+  let interest = request.params.interest_name;
+  if (!db) {
+    return response.status(404).json({
+      message:
+        'A fatal error occurred when attempting to update the interests of this user'
+    });
+  }
+
+  let interestsRef = db.push();
+  interestsRef.update({
+    interest: interest
+  });
+  return response.status(200).json({
+    message: 'Successfully added an interest'
+  });
+});
 // Get all learning paths associated with a student
 app.get('/:user_id/student/learningPaths', async (request, response) => {
   // console.log('Executed get all lps function');
