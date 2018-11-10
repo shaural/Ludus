@@ -14,6 +14,7 @@ import IllegalPath from './components/IllegalPath';
 import EditLP from './components/learning_path/edit_learning_path';
 import { Route, Link, Switch } from 'react-router-dom';
 import ClassSearchPage from './components/class/ClassSearchPage';
+import { AddInterests } from './components/interests/add-interests';
 
 class App extends Component {
   constructor(props) {
@@ -36,6 +37,7 @@ class App extends Component {
         <Link to="/class-search">Search Classes</Link> &nbsp;
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
+        <Link to="/interests">Add or remove interests</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
         <Link
           to={{
@@ -64,6 +66,7 @@ class App extends Component {
           <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
+          <Route exact path="/interests" component={AddInterests} />
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
           <Route
