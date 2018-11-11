@@ -86,6 +86,7 @@ app.post('/:user_id/student', async (request, response) => {
   return response.status(200).json();
 });
 
+//patch function for interests
 app.patch('/:user_id/:interest_name', async (request, response) => {
   const db = admin
     .database()
@@ -98,7 +99,6 @@ app.patch('/:user_id/:interest_name', async (request, response) => {
         'A fatal error occurred when attempting to update the interests of this user'
     });
   }
-
   let interestsRef = db.push();
   interestsRef.update({
     interest: interest
@@ -107,6 +107,42 @@ app.patch('/:user_id/:interest_name', async (request, response) => {
     message: 'Successfully added an interest'
   });
 });
+
+//delete an interest
+app.delete('/:user_id/:interest_name', async (request, response) => {
+  let interest = request.params.interest_name;
+  const db = admin
+    .database()
+    .ref(`/Users/${request.params.user_id}`)
+    .child('Interests');
+  if (!db) {
+    return response.status(404).json({
+      message: 'A fatal error occurred when attempting to delete an interest'
+    });
+  }
+  //query find the correct interest to delete
+  let deleted = 0;
+  await db.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      childSnapshot.forEach(function(grandChildSnapshot) {
+        let testinterest = grandChildSnapshot.val();
+        if (testinterest == interest) {
+          db.child(childSnapshot.key)
+            .child(grandChildSnapshot.key)
+            .remove()
+            .then(() => {
+              return response.status(200).json({
+                message: 'Successfully removed interest'
+              });
+            });
+          //stop loop from running through the rest of the data
+          return true;
+        }
+      });
+    });
+  });
+});
+
 // Get all learning paths associated with a student
 app.get('/:user_id/student/learningPaths', async (request, response) => {
   // console.log('Executed get all lps function');
