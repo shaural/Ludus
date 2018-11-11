@@ -12,6 +12,17 @@ describe('testing users', function() {
   before(function() {
     server = require('../users').route;
   });
+  after(function(done) {
+    request(server)
+      .delete(`/${_test_user_id}`)
+      .expect(200)
+      .then(() => new Promise(resolve => setTimeout(resolve, 2500)))
+      .then(() => {
+        request(server)
+          .get(`/${_test_user_id}`)
+          .expect(404, done);
+      });
+  });
 
   //this.timeout(5000);
 
@@ -77,6 +88,11 @@ describe('testing users', function() {
         })
         .expect(200)
         .end(endfn(done));
+    });
+    it('can validate user information before deleting', function(done) {
+      request(server)
+        .delete(`/invalid_user`)
+        .expect(404, done);
     });
   });
   describe(`teacher`, function(done) {

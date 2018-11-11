@@ -146,7 +146,15 @@ app.get('/', (request, response) => {
   });
 });
 // GET method (for user with user_id)
-app.get('/:user_id', (request, response) => {
+app.get('/:user_id', async (request, response) => {
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.id} not found` });
   const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
   userRef.once('value', function(snapshot) {
     return response.status(200).json(snapshot.val());
@@ -198,28 +206,28 @@ app.patch('/:user_id', async (request, response) => {
 
 //delete user
 app.delete('/:user_id', async (request, response) => {
-  const userref = admin.database().ref(`/Users/${request.params.user_id}`);
-  if (!userref)
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
     return response
       .status(404)
       .json({ message: `user with id ${request.params.user_id} not found` });
 
+  const userref = admin.database().ref(`/Users/${request.params.user_id}`);
+
   //remove from db
-  userref
-    .remove()
-    .then(function() {
-      return response
-        .status(200)
-        .json({ message: `User with id ${request.params.user_id} deleted.` });
-    })
-    .catch(function(error) {
-      console.log('Error deleting user:', error);
-      return response.status(400).json({
-        message: `Error, Could not delete user with id ${
-          request.params.user_id
-        }`
-      });
+  try {
+    await userref.remove();
+    return response
+      .status(200)
+      .json({ message: `User with id ${request.params.user_id} deleted.` });
+  } catch (err) {
+    return response.status(500).json({
+      message: `Error, Could not delete user with id ${request.params.user_id}`
     });
+  }
 });
 
 // shen282 Update Teacher API
