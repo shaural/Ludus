@@ -38,7 +38,6 @@ class LpPage extends Component {
 		//for (let i = 0; i < lpIDList.length; i++) {
 		for (let i = 0; i < y; i++) {
 
-
 			learningPaths.push(
 				<div className="lpObject">
 					{<Lp LearningPathID={this.state.data} i={i} />}
@@ -48,7 +47,11 @@ class LpPage extends Component {
 				</div>
 			);
 		}
-
+		if(y=0){
+			learningPaths.push(
+				<text>"No Learning Paths enrolled or created yet :(" </text>
+			);
+		}
 		return learningPaths;
 	};
 
