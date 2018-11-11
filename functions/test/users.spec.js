@@ -16,7 +16,6 @@ describe('testing users', function() {
     request(server)
       .delete(`/${_test_user_id}`)
       .expect(200)
-      .then(() => new Promise(resolve => setTimeout(resolve, 2500)))
       .then(() => {
         request(server)
           .get(`/${_test_user_id}`)
