@@ -36,6 +36,13 @@ describe('testing users', function() {
         .expect(400)
         .end(endfn(done));
     });
+    it('can get a uid from an email', function(done) {
+      request(server)
+        .get('/getuid/willis62@purdue.edu')
+        .expect(response => expect('message: UID: interestsuser'))
+        .expect(200)
+        .end(endfn(done));
+    });
     it('can create a user', done => {
       request(server)
         .post('/')

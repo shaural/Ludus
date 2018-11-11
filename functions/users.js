@@ -16,20 +16,18 @@ app.get('/getuid/:email', async (request, response) => {
       message: 'Unable to make database connection'
     });
   }
-
-  await db.on('value', function(snapshot) {
+  let uid = '';
+  await db.once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(grandChildSnapshot) {
-        let uid = childSnapshot.key;
         let val = grandChildSnapshot.val();
-        console.log('Uid: ' + uid);
-        console.log('Value:' + val);
         if (val == email) {
-          return response.status(200).json({
-            message: 'UID: ' + uid
-          });
+          uid = childSnapshot.key;
         }
       });
+    });
+    return response.status(200).json({
+      message: 'UID: ' + uid
     });
   });
 });
