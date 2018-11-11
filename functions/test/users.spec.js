@@ -116,6 +116,13 @@ describe('testing users', function() {
         .expect(400)
         .end(endfn(done));
     });
+    it('can add an interest', function(done) {
+      request(server)
+        .patch(`/interestsuser/testinterestcommit`)
+        .send({})
+        .expect(200)
+        .end(endfn(done));
+    });
     it('can create a new student record', function(done) {
       request(server)
         .post(`/${test_user_id}/student/`)
