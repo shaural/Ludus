@@ -104,7 +104,7 @@ describe('testing users', function() {
       request(server)
         .post(`/invalid_user/teacher/`)
         .send({})
-        .set('Accept', 'application,json')
+        .set('Accept', 'application/json')
         .expect(404)
         .end(endfn(done));
     });
@@ -114,6 +114,21 @@ describe('testing users', function() {
         .send({ bio: 'my life is a test' })
         .set('Accept', 'application/json')
         .expect(200)
+        .end(endfn(done));
+    });
+    it('can validate a teacher information before updating', function(done) {
+      request(server)
+        .patch(`/${test_user_id}/teacher/`)
+        .send({})
+        .set('Accept', 'application/json')
+        .expect(400, done);
+    });
+    it('can validate a teacher record before updating', function(done) {
+      request(server)
+        .patch('/-LQJxU218iUrEU8_Ut6b/teacher/')
+        .send({ bio: 'my life has always been a test' })
+        .set('Accept', 'application/json')
+        .expect(404)
         .end(endfn(done));
     });
   });

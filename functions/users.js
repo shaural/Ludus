@@ -231,13 +231,29 @@ app.delete('/:user_id', async (request, response) => {
 });
 
 // shen282 Update Teacher API
-app.patch('/:user_id/teacher', (request, response) => {
-  if (!request.body)
+app.patch('/:user_id/teacher', async (request, response) => {
+  if (!Object.keys(request.body).length)
     return response.status(400).json({ messsage: 'malformed request' });
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const found_teacher = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Teacher'
+  );
+  if (!found_teacher)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a teacher`
+    });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
   if (!db)
     return response.status(404).json({
-      message: 'user with id ${request.params.user_id} not found'
+      message: `user with id ${request.params.user_id} not found`
     });
 
   const { bio, nickName } = request.body;
