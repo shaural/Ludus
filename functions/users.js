@@ -6,6 +6,34 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
+//endpoint to return user id, given an email address
+//needed for frontend
+app.get('/getuid/:email', async (request, response) => {
+  let email = request.params.email;
+  const db = admin.database().ref('/Users');
+  if (!db) {
+    return response.status(404).json({
+      message: 'Unable to make database connection'
+    });
+  }
+
+  await db.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      childSnapshot.forEach(function(grandChildSnapshot) {
+        let uid = childSnapshot.key;
+        let val = grandChildSnapshot.val();
+        console.log('Uid: ' + uid);
+        console.log('Value:' + val);
+        if (val == email) {
+          return response.status(200).json({
+            message: 'UID: ' + uid
+          });
+        }
+      });
+    });
+  });
+});
+
 app.post('/', async (request, response) => {
   if (!request.body)
     return response.status(400).json({ message: 'malformed request' });
