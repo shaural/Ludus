@@ -5,7 +5,7 @@ const Axios = require('axios');
 class Class extends Component {
   constructor(props) {
     super(props);
-    this.state = { values: [], present: [1, 1, 1, 1] };
+    this.state = { values: [], present: [1, 1, 1, 1, 1] };
   }
   render() {
     return <div>{this.fetchData()}</div>;
@@ -36,6 +36,7 @@ class Class extends Component {
           vars.push(
             <span className="detail" key={'Owner'}>
               {'Owner: ' + response.data.Owner}
+              &nbsp;
             </span>
           );
         }
@@ -45,6 +46,7 @@ class Class extends Component {
           vars.push(
             <span className="detail" key={'Content Type'}>
               {'Content Type: ' + response.data.Content_Type}
+              &nbsp;
             </span>
           );
         }
@@ -54,6 +56,18 @@ class Class extends Component {
           vars.push(
             <span className="detail" key={'Tags'}>
               {'Tags: ' + response.data.Tag}
+              &nbsp;
+            </span>
+          );
+        }
+        if (!response.data.Mature) {
+          pres[4] = 0;
+        } else if (response.data.Mature === 'yes') {
+          vars.push(
+            <span className="mature" key={'Tags'}>
+              &nbsp;
+              {'Mature Content'}
+              &nbsp;
             </span>
           );
         }

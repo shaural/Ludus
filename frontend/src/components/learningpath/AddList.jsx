@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Class from '../class/Class';
+import '../class/ClassList.css';
 const Axios = require('axios');
 
 class SignUpForm extends Component {
@@ -128,7 +129,7 @@ class SignUpForm extends Component {
             onClick={this.createClasslist}
           />
         </form>
-        {this.submitSearch()}
+        <div className="searchResults">{this.submitSearch()}</div>
       </div>
     );
   }
