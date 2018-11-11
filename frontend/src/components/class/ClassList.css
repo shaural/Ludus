@@ -1,4 +1,10 @@
-.lpObject {
+.Subject {
+  text-align: center;
+  margin: auto;
+  margin-bottom: 10px;
+  position: center;
+}
+.ClassObject {
   overflow: hidden;
   position: center;
   display: block;
@@ -13,7 +19,18 @@
   border-radius: 0.25rem !important;
 }
 
-.Placeholder {
+.ClassForm {
+  width: auto;
+  position: center;
+  max-width: 900px;
+  padding: 10px;
+  margin: auto;
+  max-height: 60%;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+.Highlight {
   display: block;
   height: 50px;
   background-color: #fff;

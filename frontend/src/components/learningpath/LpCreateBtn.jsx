@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
-import LpFilter from './LpFilter'
+import LpFilter from './LpFilter';
 
 class LpCreateBtn extends Component {
   render() {
     return (
-    /*Placeholder*/
+      /*Placeholder*/
 
-
-        <button>
-            Create new Path
-        </button>
+      <button>Create new Path</button>
     );
   }
-
 }
 
 export default LpCreateBtn;

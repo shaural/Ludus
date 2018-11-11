@@ -6,18 +6,17 @@ import LpEditBtn from './LpEditBtn';
 import LpFilter from './LpFilter';
 import './lpPage.css';
 
-const Axios =require('axios');
+const Axios = require('axios');
 
 class LpPage extends Component {
-
-	constructor(props){
-	  super(props);
-	  this.state = {
-			length: 3,
-			LearningPath: '',
-	    data: []
-	  }
-	}
+  constructor(props) {
+    super(props);
+    this.state = {
+      length: 1,
+      LearningPath: '',
+      data: []
+    };
+  }
 
 	componentDidMount() {
 	  Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${this.props.userID}`)
@@ -55,14 +54,17 @@ class LpPage extends Component {
 		return learningPaths;
 	};
 
-	render() {
-		return (
-			<div>
-			<div> {<LpCreateBtn />} {<LpFilter />}</div>
-			<div className="LpPage">{this.createLpPage()}</div>;
-			</div>
-		)
-	}
+  render() {
+    return (
+      <div>
+        <div>
+          {' '}
+          {<LpCreateBtn />} {<LpFilter />}
+        </div>
+        <div className="LpPage">{this.createLpPage()}</div>;
+      </div>
+    );
+  }
 }
 
 export default LpPage;

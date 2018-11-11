@@ -9,14 +9,14 @@ class LpFilter extends Component {
   }
   render() {
     return (
-    /*TODO: Implementation*/
-        <form className="FilterBar">
+      /*TODO: Implementation*/
+      <form className="FilterBar">
         <input
           className="inLine"
           type="text"
           onChange={event => this.setState({ topic: event.target.value })}
         />
-        </form>
+      </form>
     );
   }
 }

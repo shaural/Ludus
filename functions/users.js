@@ -1,60 +1,54 @@
-const admin = require('./utils').firebaseAdmin;
+const { firebaseAdmin, ref_has_child } = require('./utils');
+const admin = firebaseAdmin;
 const app = require('express')();
-
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
 app.post('/', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
+  const { name, email, dob } = request.body;
+  if (!name || !email || !dob)
+    return response.status(400).json({ message: 'malformed request' });
   const db = admin.database().ref('/Users');
 
-  const { name, password, email, dob } = request.body;
+  //firebase database entry creation
+  let resp = {};
+  await db
+    .push({
+      Name: name,
+      Email: email,
+      DoB: dob
+    })
+    .once('value')
+    .then(snapshot => {
+      resp = {
+        id: snapshot.key,
+        user: { ...snapshot.val() }
+      };
+    })
+    .catch(function(error) {
+      return response.status(400).json(error);
+    });
 
-  //basic validation tests
-  if (!email.toString().includes('@')) {
-    return response.status(400).json({
-      message: 'Invalid email, please try again'
-    });
-  } else if (!password.toString().length) {
-    return response.status(400).json({
-      message: 'Empty passwords are not allowed, please try again'
-    });
-  } else if (password.toString().length < 10) {
-    return response.status(400).json({
-      message: 'Minimum password length: 10 characters, please try again'
-    });
-  } else if (!name.toString().length) {
-    return response.status(400).json({
-      message: 'You may not have an empty name'
-    });
-  } else if (!dob.toString().length) {
-    //this will be obselete with HTML forms
-    // placeholder for testing purposes
-    return response.status(400).json({
-      message: 'Please enter your age'
-    });
-  } else {
-    //firebase database entry creation
-    let resp = {};
-    await db
-      .push({
-        Name: name,
-        Password: password,
-        Email: email,
-        DoB: dob
-      })
-      .once('value')
-      .then(snapshot => {
-        resp = {
-          id: snapshot.key,
-          user: { ...snapshot.val() }
-        };
-      });
-
-    return response.status(200).json(resp);
-  }
+  return response.status(200).json(resp);
 });
 
 // https://example.com/api/accounts/12345/teacher
 app.post('/:user_id/teacher', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
+
+  const found = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
   if (!db)
     return response
@@ -70,6 +64,8 @@ app.post('/:user_id/teacher', async (request, response) => {
 });
 
 app.post('/:user_id/student', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response
@@ -93,6 +89,24 @@ app.post('/:user_id/student', async (request, response) => {
 // Get all learning paths associated with a student
 app.get('/:user_id/student/learningPaths', async (request, response) => {
   // console.log('Executed get all lps function');
+
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Student'
+  );
+  if (!found_student)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
+
   const db = admin
     .database()
     .ref(`/Users/`)
@@ -142,6 +156,15 @@ app.get('/:user_id', (request, response) => {
 // Update user
 app.patch('/:user_id', async (request, response) => {
   const uid = request.params.user_id;
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
+
+  const found = await ref_has_child(admin.database().ref('/Users'), uid);
+  if (!found)
+    return response
+      .status(404)
+      .json({ message: `user with id ${uid} not found` });
+
   const { name, password, email, dob } = request.body;
   const userRef = admin
     .database()
@@ -201,6 +224,8 @@ app.delete('/:user_id', async (request, response) => {
 
 // shen282 Update Teacher API
 app.patch('/:user_id/teacher', (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
   if (!db)
     return response.status(404).json({
@@ -217,11 +242,17 @@ app.patch('/:user_id/teacher', (request, response) => {
 });
 
 // shen282 Update Student API
-app.patch('/:user_id/student', (request, response) => {
+app.patch('/:user_id/student', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
+  const found = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response.status(404).json({
-      message: 'user with id ${request.params.user_id} not found'
+      message: `user with id ${request.params.user_id} not found`
     });
 
   const { name } = request.body; //const { name, LP, teachers }
@@ -234,11 +265,138 @@ app.patch('/:user_id/student', (request, response) => {
   return response.status(200);
 });
 
+app.get('/:user_id/student/following', async (request, response) => {
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Student'
+  );
+  if (!found_student)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
+
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  let rtn = [];
+  await db
+    .child(`T_Following`)
+    .once('value', snapshot => (rtn = snapshot.val()));
+
+  response.status(200).json({ teachers: rtn });
+});
+
+app.post('/:user_id/student/following', async (request, response) => {
+  if (!request.body || !request.body.teachers || !request.body.teachers.length)
+    return response
+      .status(400)
+      .json({ message: 'need to send at least one teacher ID' });
+
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Student'
+  );
+  if (!found_student)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
+  const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const found_arr = await ref_has_child(db, 'T_Following');
+  // const objs = request.body.teachers.map(e => Object.assign({ id: e }, {}));
+  let ids = [];
+  if (found_arr) {
+    await db
+      .child('T_Following')
+      .once('value', snapshot => (ids = snapshot.val()));
+  }
+  // merge and deduplicate
+  ids = [...new Set([...ids, ...request.body.teachers])];
+  try {
+    await db.child('T_Following').set(ids);
+  } catch (err) {
+    return response.status(500).json(err);
+  }
+  return response.status(200).json({});
+});
+
+app.delete(
+  '/:user_id/student/following/:teacher_id',
+  async (request, response) => {
+    const found_user = await ref_has_child(
+      admin.database().ref('/Users'),
+      request.params.user_id
+    );
+
+    if (!found_user)
+      return response
+        .status(404)
+        .json({ message: `user with id ${request.params.user_id} not found` });
+
+    const found_student = await ref_has_child(
+      admin.database().ref(`/Users/${request.params.user_id}`),
+      'Student'
+    );
+    if (!found_student)
+      return response.status(404).json({
+        message: `user with id ${request.params.user_id} is not a student`
+      });
+
+    const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
+    if (!db) return response.status(404).json({}); // not found somehow
+
+    const t_ref = db.child('T_Following');
+    let ids = [];
+    await t_ref.once('value', snapshot => {
+      ids = snapshot.val();
+    });
+    ids = ids.filter(e => e != request.params.teacher_id);
+    try {
+      await t_ref.set(ids);
+    } catch (err) {
+      return response.status(500).json(err);
+    }
+    return response.status(200).json({});
+  }
+);
+
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ messsage: 'malformed request' });
+  // TODO: verify that user_id is valid
+  // const validate_input = (topic, name) =>
+  //   (topic && topic.toString().length) &&
+  //   (name && name.toString().length);
+
   const {
     topic,
     name,
-    ClassList = null,
+    ClassList,
     StudentsEnrolled = null,
     Teachers_who_recommend = null
   } = request.body;
@@ -255,7 +413,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
       Topic: topic,
       Name: name,
       Owner: request.params.user_id,
-      Class_List: [],
+      Class_List: ClassList,
       St_Enrolled: [],
       T_recommend: []
     })
@@ -373,7 +531,7 @@ app.post(
     const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
     const lpRef = admin
       .database()
-      .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+      .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
 
     // get classes of lp: lp_id
     var updates = {};
@@ -385,7 +543,7 @@ app.post(
           lpExists = true;
         }
         snapshot.forEach(function(childSnapshot) {
-          updates[childSnapshot.child('Class_Id').val()] = 0;
+          updates[childSnapshot.val()] = 0;
         });
       });
       if (!lpExists) {
