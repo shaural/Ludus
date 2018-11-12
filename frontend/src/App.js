@@ -15,6 +15,7 @@ import EditLP from './components/learning_path/edit_learning_path';
 import { Route, Link, Switch } from 'react-router-dom';
 import ClassSearchPage from './components/class/ClassSearchPage';
 import { AddInterests } from './components/interests/add-interests';
+import { DeleteInterests } from './components/interests/delete-interests';
 
 class App extends Component {
   constructor(props) {
@@ -70,6 +71,7 @@ class App extends Component {
           <Route exact path="/interests" component={AddInterests} />
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
+          <Route exact path="/remove" component={DeleteInterests} />
           <Route
             path="/password-recovery"
             component={PasswordReset} /*placeholder*/

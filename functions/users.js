@@ -129,9 +129,7 @@ app.patch('/:user_id/:interest_name', async (request, response) => {
   interestsRef.update({
     interest: interest
   });
-  return response.status(200).json({
-    message: 'Successfully added an interest'
-  });
+  return response.status(200).json('Successfully added an interest');
 });
 
 //delete an interest
@@ -147,6 +145,9 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
     });
   }
   //query to find the correct interest to delete
+  //note: In case the user typed an interest and spammed the enter key
+  //creating multiple instances of the interest
+  //this function will remove them
   await db.on('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(grandChildSnapshot) {
@@ -156,7 +157,15 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
             .child(grandChildSnapshot.key)
             .remove()
             .then(() => {
-              return response.status(200).json('Successfully removed interest');
+              try {
+                return response
+                  .status(200)
+                  .json('Successfully removed interest');
+              } catch (e) {
+                return response
+                  .status(404)
+                  .json('A server error occurred during deletion');
+              }
             });
           //stop loop from running through the rest of the data
           return true;
