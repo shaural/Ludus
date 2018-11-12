@@ -146,8 +146,7 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
       message: 'A fatal error occurred when attempting to delete an interest'
     });
   }
-  //query find the correct interest to delete
-  let deleted = 0;
+  //query to find the correct interest to delete
   await db.on('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(grandChildSnapshot) {
@@ -157,9 +156,7 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
             .child(grandChildSnapshot.key)
             .remove()
             .then(() => {
-              return response.status(200).json({
-                message: 'Successfully removed interest'
-              });
+              return response.status(200).json('Successfully removed interest');
             });
           //stop loop from running through the rest of the data
           return true;

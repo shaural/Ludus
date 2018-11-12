@@ -60,6 +60,7 @@ class App extends Component {
           type="text"
           onChange={event => this.setState({ userID: event.target.value })}
         />
+        {/*TODO: Use firebase.auth().currentUser to check if a user is logged in or not*/}
         {/* probably want to check if you're logged in or not for the home page? */}
         <Switch>
           <Route exact path="/LPEdit" component={EditLP} />
