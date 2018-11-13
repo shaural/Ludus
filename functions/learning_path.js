@@ -1,6 +1,8 @@
-const admin = require('./utils').firebaseAdmin;
+const { firebaseAdmin, ref_has_child } = require('./utils');
+const admin = firebaseAdmin;
 
 const app = require('express')();
+
 app.use(require('cors')({ origin: true }));
 
 // Body: Index: Order of class in learning path, class_id
@@ -76,7 +78,11 @@ app.get('/:lp_id/classes', (request, response) => {
 // delete learning path with id lp_id
 app.delete('/:lp_id', async (request, response) => {
   const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
-  if (!lpRef)
+  const found_user = await ref_has_child(
+    admin.database().ref(`/Learning_Paths`),
+    request.params.lp_id
+  );
+  if (!found_user)
     return response.status(404).json({
       message: `Learning path with id ${request.params.lp_id} not found`
     });
@@ -104,14 +110,17 @@ app.post('/', async (request, response) => {
 
   const { name, owner, topic } = request.body;
 
-  //DO I NEED TO CHECK IF OWNER IS A TEACHER?
-  if (!name.toString().length) {
+  if (!name) {
     return response.status(400).json({
       message: 'You may not have an empty name'
     });
-  } else if (!owner.toString().length) {
+  } else if (!owner) {
     return response.status(400).json({
-      message: 'Please enter your age'
+      message: 'you may not have an empty owner'
+    });
+  } else if (!topic) {
+    return response.status(400).json({
+      message: 'you may not have an empty topic'
     });
   } else {
     let resp = {};
@@ -182,6 +191,141 @@ app.get('/:lp_id/nextClassByIndex/:current_index', (request, response) => {
       }
     });
   }
+  
+// body: name, owner, topic
+app.patch('/:lp_id', async (request, response) => {
+  const db = admin
+    .database()
+    .ref('/Learning_Paths')
+    .child(request.params.lp_id);
+
+  const { name, owner, topic } = request.body;
+  const found_user = await ref_has_child(
+    admin.database().ref(`/Learning_Paths`),
+    request.params.lp_id
+  );
+
+  let resp;
+  var updates = {};
+  if (found_user) {
+    if (name) {
+      updates['Name'] = name;
+    }
+    if (owner) {
+      updates['Owner'] = owner;
+    }
+    if (topic) {
+      updates['Topic'] = topic;
+    }
+    db.update(updates);
+    db.once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
+  } else {
+    return response.status(404).json({
+      message: `Learning Path with id ${request.params.lp_id} not found`
+    });
+  }
+});
+
+// START CODE FOR LP SEARCH
+// GET learning paths for a teacher -> from owner attribute in lp
+app.get('/teacher/:user_id', (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  lpRef
+    .orderByChild('Owner')
+    .equalTo(request.params.user_id)
+    .once('value', function(snapshot) {
+      return response.status(200).json(snapshot.val());
+    });
+});
+
+// This endpoint basically makes previous one invalid since you can just put the user_id of teacher as owner=user_id. (But made it as John specifically asked for it)
+// GET all lps matching query vars: Name, Topic, Owner (to get all leave empty)
+app.get('/search', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  let name = request.query.name || '';
+  let owner = request.query.owner || '';
+  let topic = request.query.topic || '';
+  let valsExist = false;
+  let nameExists = true;
+  let ownerExists = true;
+  let topicExists = true;
+  if (name.length == 0) {
+    nameExists = false;
+  }
+  if (owner.length == 0) {
+    ownerExists = false;
+  }
+  if (topic.length == 0) {
+    topicExists = false;
+  }
+  if (nameExists || ownerExists || topicExists) {
+    valsExist = true;
+  }
+  var resp = [];
+  await lpRef.once('value', function(snapshot) {
+    if (valsExist) {
+      snapshot.forEach(function(childSnapshot) {
+        let nflg = false;
+        let oflg = false;
+        let tflg = false;
+        if (
+          name &&
+          childSnapshot.hasChild('Name') &&
+          childSnapshot
+            .child('Name')
+            .val()
+            .toLowerCase()
+            .indexOf(name.toLowerCase()) != -1
+        ) {
+          nflg = true;
+        }
+        if (
+          topic &&
+          childSnapshot.hasChild('Topic') &&
+          childSnapshot
+            .child('Topic')
+            .val()
+            .toLowerCase()
+            .indexOf(topic.toLowerCase()) != -1
+        ) {
+          tflg = true;
+        }
+        if (
+          owner &&
+          childSnapshot.hasChild('Owner') &&
+          childSnapshot
+            .child('Owner')
+            .val()
+            .toLowerCase()
+            .indexOf(owner.toLowerCase()) != -1
+        ) {
+          oflg = true;
+        }
+        // check if all arguments sent are matched
+        let nameCheck = true;
+        let ownerCheck = true;
+        let topicCheck = true;
+        if (nameExists && !nflg) {
+          nameCheck = false;
+        }
+        if (ownerExists && !oflg) {
+          ownerCheck = false;
+        }
+        if (topicExists && !tflg) {
+          topicCheck = false;
+        }
+        if (nameCheck && ownerCheck && topicCheck) {
+          resp.push([childSnapshot.key, childSnapshot.val()]);
+        }
+      });
+    } else {
+      resp = snapshot.val();
+    }
+  });
+  return response.status(200).json(resp);
+
 });
 
 exports.route = app;

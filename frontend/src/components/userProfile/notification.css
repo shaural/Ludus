@@ -1,0 +1,16 @@
+.notificationName {
+  display: block;
+  border-bottom: dotted;
+  width: 200px;
+}
+.notificationPreview {
+  width: 200px;
+}
+.notBorder {
+  width: 210px;
+  position: relative;
+  top: -300px;
+  left: 1400px;
+  border: solid;
+  border-width: 5px;
+}
