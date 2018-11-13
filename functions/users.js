@@ -26,9 +26,7 @@ app.get('/getuid/:email', async (request, response) => {
         }
       });
     });
-    return response.status(200).json({
-      message: 'UID: ' + uid
-    });
+    return response.status(200).json(uid);
   });
 });
 
@@ -168,7 +166,7 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
               }
             });
           //stop loop from running through the rest of the data
-          return true;
+          //return true;
         }
       });
     });

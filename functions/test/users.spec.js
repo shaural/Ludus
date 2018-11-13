@@ -39,7 +39,7 @@ describe('testing users', function() {
     it('can get a uid from an email', function(done) {
       request(server)
         .get('/getuid/willis62@purdue.edu')
-        .expect(response => expect('message: UID: interestsuser'))
+        .expect(response => expect('"interestsuser"'))
         .expect(200)
         .end(endfn(done));
     });

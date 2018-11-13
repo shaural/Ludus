@@ -1,13 +1,7 @@
 import React, { Component } from 'react';
 import 'firebase-auth';
 import firebase from 'firebase';
-import {
-  FormGroup,
-  ControlLabel,
-  Form,
-  FormControl,
-  Button
-} from 'react-bootstrap';
+import { ControlLabel, Form, FormControl, Button } from 'react-bootstrap';
 import Axios from 'axios';
 export class DeleteInterests extends Component {
   constructor(props, context) {
@@ -28,20 +22,18 @@ export class DeleteInterests extends Component {
       Axios.get(
         `https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${email}`
       ).then(response => {
-        const out = JSON.stringify(response.data);
-        let targetindex = out.lastIndexOf(':') + 1;
-        let temp = out.substr(targetindex, out.length);
-        let uid = temp.substring(0, temp.length - 2);
-        alert(uid);
-        alert(out);
-        alert(this.state.interest);
-        Axios.delete(
-          `https://us-central1-ludusfire.cloudfunctions.net/users/${uid}/${
-            this.state.interest
-          }`
-        ).then(response => {
-          alert('Interest removed');
-        });
+        let received = JSON.stringify(response.data);
+        let uid = received.substring(1, received.length - 1);
+        let interestname = this.state.interest.trimLeft();
+        let url = `https://us-central1-ludusfire.cloudfunctions.net/users/${uid}/${interestname}`;
+        alert(url);
+        try {
+          Axios.delete(url).then(response => {
+            alert('Removed interest');
+          });
+        } catch (e) {
+          alert('An error occured');
+        }
       });
     } else {
       alert('You must be logged in to remove an interest');
