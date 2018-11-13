@@ -10,9 +10,17 @@ app.use(require('cors')({ origin: true }));
 //needed for frontend
 app.get('/getuid/:email', async (request, response) => {
   let email = request.params.email;
-  const db = admin.database().ref('/Users');
+  let found = await ref_has_child(admin.database().ref(), '/Users');
+
+  if (!found) {
+    return response.json(500).status('Fatal error, unable to find users');
+  }
+  const db = admin
+    .database()
+    .ref()
+    .child('/Users');
   if (!db) {
-    return response.status(404).json({
+    return response.status(500).json({
       message: 'Unable to make database connection'
     });
   }
@@ -21,7 +29,7 @@ app.get('/getuid/:email', async (request, response) => {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(grandChildSnapshot) {
         let val = grandChildSnapshot.val();
-        if (val == email) {
+        if (val === email) {
           uid = childSnapshot.key;
         }
       });
@@ -112,17 +120,18 @@ app.post('/:user_id/student', async (request, response) => {
 
 //patch function for interests
 app.patch('/:user_id/:interest_name', async (request, response) => {
-  const db = admin
-    .database()
-    .ref(`/Users/${request.params.user_id}`)
-    .child('Interests');
-  let interest = request.params.interest_name;
-  if (!db) {
-    return response.status(404).json({
-      message:
-        'A fatal error occurred when attempting to update the interests of this user'
-    });
+  const found = await ref_has_child(admin.database().ref(), 'Users');
+  if (!found) {
+    return response.status(500).json('Error: No interests found!');
   }
+
+  const db = admin.database().ref(`/Users/${request.params.user_id}`);
+  let interest = request.params.interest_name;
+
+  if (!db) {
+    return response.status(500).json('Fatal error: Could not connect to db');
+  }
+
   let interestsRef = db.push();
   interestsRef.update({
     interest: interest
@@ -133,6 +142,7 @@ app.patch('/:user_id/:interest_name', async (request, response) => {
 //delete an interest
 app.delete('/:user_id/:interest_name', async (request, response) => {
   let interest = request.params.interest_name;
+
   const db = admin
     .database()
     .ref(`/Users/${request.params.user_id}`)
@@ -142,6 +152,17 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
       message: 'A fatal error occurred when attempting to delete an interest'
     });
   }
+
+  let found = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Interests'
+  );
+  if (!found) {
+    return response
+      .status(500)
+      .json('Fatal error: Could not find the interests list');
+  }
+
   //query to find the correct interest to delete
   //note: In case the user typed an interest and spammed the enter key
   //creating multiple instances of the interest
@@ -161,7 +182,7 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
                   .json('Successfully removed interest');
               } catch (e) {
                 return response
-                  .status(404)
+                  .status(500)
                   .json('A server error occurred during deletion');
               }
             });
