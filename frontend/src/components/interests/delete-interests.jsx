@@ -26,7 +26,6 @@ export class DeleteInterests extends Component {
         let uid = received.substring(1, received.length - 1);
         let interestname = this.state.interest.trimLeft();
         let url = `https://us-central1-ludusfire.cloudfunctions.net/users/${uid}/${interestname}`;
-        alert(url);
         try {
           Axios.delete(url).then(response => {
             alert('Removed interest');
