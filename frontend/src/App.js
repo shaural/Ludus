@@ -15,6 +15,7 @@ import { Route, Link, Switch } from 'react-router-dom';
 import EditLP from './components/learning_path/edit_learning_path';
 import ClassSearchPage from './components/class/ClassSearchPage';
 import LearningPathsEnrolledPage from './components/learningpath/LearningPathsEnrolledPage';
+import NavBar from './components/NavBar';
 
 class App extends Component {
   constructor(props) {
@@ -61,9 +62,16 @@ class App extends Component {
           onChange={event => this.setState({ userID: event.target.value })}
         />
         {/* probably want to check if you're logged in or not for the home page? */}
+        <NavBar userID={this.state.userID} />
         <Switch>
           <Route exact path="/LPEdit" component={EditLP} />
-          <Route exact path="/" component={HomePage} />
+          <Route
+            exact
+            path="/"
+            render={props => (
+              <HomePage {...props} userID={this.state.userID} />
+            )} /*placeholder*/
+          />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route path="/login" component={LoginPage} />
@@ -81,8 +89,7 @@ class App extends Component {
           />
           <Route path="/class-search" component={ClassSearchPage} />
           {/*requires userID*/}
-          <Route path="/profile" component={IllegalPath} /*placeholder*/ />
-          <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
+          <Route path="/dashboard" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/student-classlist"
             component={IllegalPath} /*placeholder*/
@@ -96,7 +103,6 @@ class App extends Component {
               />
             )} /*placeholder*/
           />
-          <Route path="/teacher-dash" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/teacher-class-create"
             component={IllegalPath} /*placeholder*/
@@ -106,12 +112,6 @@ class App extends Component {
             render={props => (
               <IllegalPath {...props} userID={this.state.userID} />
             )} /*placeholder*/
-          />
-          <Route
-            path="/teacher-classlist"
-            render={props => (
-              <ClasslistPage {...props} userID={this.state.userID} />
-            )}
           />
           <Route
             path="/teacher-classlist"

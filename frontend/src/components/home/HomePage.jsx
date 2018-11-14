@@ -6,16 +6,27 @@ import { Link } from 'react-router-dom';
 
 export default class HomePage extends Component {
   render() {
-    return (
-      <div>
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to Ludus</h1>
-        </header>
-        <p className="App-intro">Please sign up to begin</p>
-        <Link to="/signup">Sign Up</Link> &nbsp;
-        <Link to="/login">I already have an account</Link>
-      </div>
-    );
+    if (this.props.userID) {
+      return (
+        <div>
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <h1 className="App-title">Welcome Back!</h1>
+          </header>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <h1 className="App-title">Welcome to Ludus</h1>
+          </header>
+          <p className="App-intro">Please sign up to begin</p>
+          <Link to="/signup">Sign Up</Link> &nbsp;
+          <Link to="/login">I already have an account</Link>
+        </div>
+      );
+    }
   }
 }

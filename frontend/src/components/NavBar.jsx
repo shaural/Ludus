@@ -4,27 +4,48 @@ import { Link } from 'react-router-dom';
 
 class NavBar extends Component {
   render() {
-    return (
-      <Navbar fixedTop>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <Link to="/">Ludus</Link>
-          </Navbar.Brand>
-        </Navbar.Header>
-        {/* <Navbar.Collapse> */}
-        <Nav>
-          <NavItem eventKey={1} href="#">
-            {' '}
-            Student Dash{' '}
-          </NavItem>
-          <NavItem eventKey={2} href="#">
-            {' '}
-            Teacher Dash{' '}
-          </NavItem>
-        </Nav>
-        {/* </Navbar.Collapse> */}
-      </Navbar>
-    );
+    if (this.props.userID) {
+      return (
+        <Navbar fixedTop>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <Link to="/">Ludus</Link>
+            </Navbar.Brand>
+          </Navbar.Header>
+          {/* <Navbar.Collapse> */}
+          <Nav>
+            <NavItem eventKey={1} href="#">
+              <Link to="/profile">Profile</Link>
+            </NavItem>
+            <NavItem eventKey={2} href="#">
+              <Link to="/signup">Dashboard</Link>
+            </NavItem>
+          </Nav>
+          {/* </Navbar.Collapse> */}
+        </Navbar>
+      );
+    } else {
+      return (
+        <Navbar fixedTop>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <Link to="/">Ludus</Link>
+            </Navbar.Brand>
+          </Navbar.Header>
+          {/* <Navbar.Collapse> */}
+          <Nav>
+            <NavItem eventKey={1} href="#">
+              <Link to="/signup">Sign Up</Link>
+            </NavItem>
+            <NavItem eventKey={2} href="#">
+              {' '}
+              <Link to="/login">Log In</Link>
+            </NavItem>
+          </Nav>
+          {/* </Navbar.Collapse> */}
+        </Navbar>
+      );
+    }
   }
 }
 
