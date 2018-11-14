@@ -690,4 +690,35 @@ app.post(
   }
 );
 
+app.get('/:teacherid/stats', async (request, response) => {
+  let found = await ref_has_child(admin.database().ref(), 'Users');
+  if (!found) {
+    return response.status(500).json('Error: No users found');
+  }
+  let tid = request.params.teacherid;
+
+  let user = await ref_has_child(admin.database().ref(`/Users`), tid);
+  if (!user) {
+    return response.status(500).json('Fatal error: User not found');
+  }
+
+  let teacher = await ref_has_child(
+    admin.database().ref(`Users/${tid}`),
+    'Teacher'
+  );
+  if (!teacher) {
+    return response
+      .status(500)
+      .json('Error: No teacher associated with this user');
+  }
+  const db = admin.database().ref(`/Users/${tid}/Teacher`);
+  if (!db) {
+    return response.status(500).json('Database not found');
+  }
+  db.on('value', function(snapshot) {
+    let out = snapshot.val();
+    return response.status(200).json(out);
+  });
+});
+
 exports.route = app;
