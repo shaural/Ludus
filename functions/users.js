@@ -715,9 +715,17 @@ app.get('/:teacherid/stats', async (request, response) => {
   if (!db) {
     return response.status(500).json('Database not found');
   }
+  const lpref = admin.database().ref(`/Learning_Paths`);
+  if (!lpref) {
+    return response
+      .status(500)
+      .json('Fatal error, unable to access learning paths');
+  }
+  //TODO: iterate through learning paths to find enrolled
+
   db.on('value', function(snapshot) {
-    let out = snapshot.val();
-    return response.status(200).json(out);
+    //let out = snapshot.val();
+    //return response.status(200).json(out);
   });
 });
 
