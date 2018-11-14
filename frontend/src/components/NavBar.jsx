@@ -13,14 +13,10 @@ class NavBar extends Component {
             </Navbar.Brand>
           </Navbar.Header>
           {/* <Navbar.Collapse> */}
-          <Nav>
-            <NavItem eventKey={1} href="#">
-              <Link to="/profile">Profile</Link>
-            </NavItem>
-            <NavItem eventKey={2} href="#">
-              <Link to="/signup">Dashboard</Link>
-            </NavItem>
-          </Nav>
+          <div>
+            <Link to="/profile">Profile</Link> <br />
+            <Link to="/signup">Dashboard</Link>
+          </div>
           {/* </Navbar.Collapse> */}
         </Navbar>
       );
@@ -33,15 +29,10 @@ class NavBar extends Component {
             </Navbar.Brand>
           </Navbar.Header>
           {/* <Navbar.Collapse> */}
-          <Nav>
-            <NavItem eventKey={1} href="#">
-              <Link to="/signup">Sign Up</Link>
-            </NavItem>
-            <NavItem eventKey={2} href="#">
-              {' '}
-              <Link to="/login">Log In</Link>
-            </NavItem>
-          </Nav>
+          <div>
+            <Link to="/signup">Sign Up</Link> <br />
+            <Link to="/login">Log In</Link>
+          </div>
           {/* </Navbar.Collapse> */}
         </Navbar>
       );
