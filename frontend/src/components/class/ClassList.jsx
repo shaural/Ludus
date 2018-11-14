@@ -21,24 +21,8 @@ class ClassList extends Component {
 
   componentDidMount = () => {
     this.createClasslist();
-    /*
-    if (!this.props.userID) return;
-    Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/classes/search/?owner=${this.props.userID}`)
-      .then((response) => {
-        console.log(response);
-        let classIDList = [];
-        let classInfoList = [];
-        for (let id in response.data) {
-          classIDList.push(response.data[id][0]);
-          classInfoList.push(response.data[id][1]);
-        }
-        this.setState({ classIDList: classIDList, classInfo: classInfoList });
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-      .finally(this.submitSearch);*/
   };
+
   createClasslist = () => {
     if (!this.props.userID) return;
     let query = '?';
@@ -94,7 +78,6 @@ class ClassList extends Component {
   render() {
     return (
       <div>
-        <h1>My Classes</h1>
         <form className="FilterBar">
           <br />
           Filter by name:&nbsp;

@@ -14,6 +14,7 @@ import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
 import EditLP from './components/learning_path/edit_learning_path';
 import ClassSearchPage from './components/class/ClassSearchPage';
+import LearningPathsEnrolledPage from './components/learningpath/LearningPathsEnrolledPage';
 
 class App extends Component {
   constructor(props) {
@@ -31,6 +32,7 @@ class App extends Component {
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
+        <Link to="/student-lplist">Enrolled Learning Paths</Link> &nbsp;
         <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
         <Link to="/profile">User Profile</Link> &nbsp;
         <Link to="/class-search">Search Classes</Link> &nbsp;
@@ -70,7 +72,6 @@ class App extends Component {
             path="/password-recovery"
             component={PasswordReset} /*placeholder*/
           />
-
           {/*requires userID*/}
           <Route
             path="/profile"
@@ -78,20 +79,22 @@ class App extends Component {
               <ProfilePage {...props} userID={this.state.userID} />
             )}
           />
-
           <Route path="/class-search" component={ClassSearchPage} />
-
           {/*requires userID*/}
           <Route path="/profile" component={IllegalPath} /*placeholder*/ />
-
           <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/student-classlist"
             component={IllegalPath} /*placeholder*/
-          />
+          />{' '}
           <Route
             path="/student-lplist"
-            component={IllegalPath} /*placeholder*/
+            render={props => (
+              <LearningPathsEnrolledPage
+                {...props}
+                userID={this.state.userID}
+              />
+            )} /*placeholder*/
           />
           <Route path="/teacher-dash" component={IllegalPath} /*placeholder*/ />
           <Route
@@ -120,7 +123,6 @@ class App extends Component {
             path="/teacher-lplist"
             render={props => <LpPage {...props} userID={this.state.userID} />}
           />
-
           <Route
             path="/teacher-lp-create"
             render={props => (

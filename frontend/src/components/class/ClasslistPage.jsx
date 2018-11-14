@@ -7,7 +7,8 @@ class ClasslistPage extends Component {
   render() {
     return (
       <div>
-        <NavBar /> <ClassList userID={this.props.userID} />
+        <NavBar />
+        <h1>My Classes</h1> <ClassList userID={this.props.userID} />
       </div>
     );
   }

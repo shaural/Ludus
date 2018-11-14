@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import Class from './Class';
-import ClassAddButton from './ClassAddButton';
-import ClassRemoveButton from './ClassRemoveButton';
-import './Forms.css';
+import Lp from './Lp';
+//import LpDropButton from './LpDropButton';
+//import './Forms.css';
 //import './ClassList.css';
 const Axios = require('axios');
 
@@ -13,52 +12,37 @@ class ClassList extends Component {
       name: '',
       owner: this.props.userID /*-LNVWR9kD2dvN8GLGFYE*/,
       update: '',
-      classList: []
+      pathIDList: [],
+      pathInfo: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
 
   componentDidMount = () => {
-    if (!this.props.userID) return;
-    Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/user/teacher/${
-        this.props.userID
-      }`
-    )
-      .then(response => {
-        console.log(response);
-        let lpList = [];
-        for (let lp in response.data) {
-          for (let sid in lp) {
-            lpList.push(response.data[lp][sid]);
-          }
-        }
-        this.setState({ classIDList: lpList });
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-      .finally(this.submitSearch);
+    this.createPathList();
   };
-  createClasslist = () => {
-    if (!this.props.userID) return;
-    let query = '?';
-    query += 'owner=' + this.state.owner;
-    if (this.state.name.toString().length) {
-      query += '&name=' + this.state.name;
-    }
+
+  createPathList = () => {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
+      `https://us-central1-ludusfire.cloudfunctions.net/users/${
+        this.props.userID
+      }/student/learningPaths`
     )
       .then(response => {
         console.log(response);
-        let classList = [];
+        let IDList = [];
+        let InfoList = [];
         for (let id in response.data) {
-          for (let sid in id) {
-            classList.push(response.data[id][sid]);
+          if (id != 'message') {
+            for (let sid in response.data[id]) {
+              for (let did in response.data[id][sid]) {
+                console.log(did);
+                IDList.push(did);
+              }
+            }
           }
         }
-        this.setState({ classIDList: classList });
+        this.setState({ pathIDList: IDList, pathInfo: InfoList });
       })
       .catch(function(error) {
         console.log(error);
@@ -68,29 +52,23 @@ class ClassList extends Component {
   };
 
   submitSearch = () => {
-    if (this.state.classIDList === undefined || !this.state.classIDList)
-      return <h2>No classes...</h2>;
-    let classes = [];
-    for (let id in this.state.classIDList) {
-      classes.push(
-        <div className="ClassObject" key={id}>
-          {<Class classID={this.state.classIDList[id]} />}
-          {
-            <ClassRemoveButton
-              onClick={event => this.setState({ update: '' })}
-              classID={this.state.classIDList[id]}
-            />
-          }
+    if (this.state.pathIDList === undefined || !this.state.pathIDList)
+      return <h2>No Learning Paths...</h2>;
+    let paths = [];
+    for (let id in this.state.pathIDList) {
+      paths.push(
+        <div className="LpObject" key={id}>
+          {<Lp LearningPathID={this.state.pathIDList[id]} />}
+          {/*<LpDropButton onClick={(event) => this.setState({ update: '' })} classID={this.state.classIDList[id]} />*/}
         </div>
       );
     }
-    return classes;
+    return paths;
   };
 
   render() {
     return (
       <div>
-        <h1>My Classes</h1>
         <form className="FilterBar">
           <br />
           Filter by name:&nbsp;
@@ -106,7 +84,6 @@ class ClassList extends Component {
             onClick={this.createClasslist}
           />{' '}
           &nbsp;
-          <ClassAddButton />
         </form>
         <br /> <br />
         <div className="ClassForm">{this.submitSearch()}</div>
