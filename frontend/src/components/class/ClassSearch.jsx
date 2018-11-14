@@ -10,6 +10,7 @@ class ClassSearch extends Component {
       owner: '',
       content: '',
       tag: '',
+      mature: 'no',
       classList: []
     };
     this.submitSearch = this.submitSearch.bind(this);
@@ -35,6 +36,10 @@ class ClassSearch extends Component {
     if (this.state.tag.toString().length) {
       if (multi) query += '&';
       query += 'tag=' + this.state.tag;
+    }
+    if (this.state.mature == 'yes') {
+      if (multi) query += '&';
+      query += 'mature=yes';
     }
     Axios.get(
       `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
@@ -70,6 +75,16 @@ class ClassSearch extends Component {
     return classes;
   };
 
+  handleMatureCheck = event => {
+    console.log(this.state.mature === 'no');
+    if (event.target.checked) {
+      this.setState({ mature: 'yes' });
+    } else {
+      this.setState({ mature: 'no' });
+    }
+    console.log(this.state.mature);
+  };
+
   render() {
     return (
       <div>
@@ -103,6 +118,13 @@ class ClassSearch extends Component {
             className="inLine"
             type="text"
             onChange={event => this.setState({ tag: event.target.value })}
+          />
+          <br /> <br />
+          Mature Content Filter:&nbsp;
+          <input
+            className="check"
+            type="checkbox"
+            onChange={event => this.handleMatureCheck(event)}
           />
           <br /> <br />
           <input

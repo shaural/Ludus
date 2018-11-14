@@ -69,7 +69,7 @@ app.delete('/:lp_id', async (request, response) => {
 app.post('/', async (request, response) => {
   const db = admin.database().ref('/Learning_Paths');
 
-  const { name, owner, topic } = request.body;
+  const { name, owner, mature, topic } = request.body;
 
   if (!name) {
     return response.status(400).json({
@@ -89,7 +89,9 @@ app.post('/', async (request, response) => {
       .push({
         Name: name,
         Owner: owner,
-        Topic: topic
+        Topic: topic,
+        Mature: mature || 'no',
+        Classes: classes || []
       })
       .once('value')
       .then(snapshot => {
@@ -171,7 +173,7 @@ app.get('/search', async (request, response) => {
   if (topic.length == 0) {
     topicExists = false;
   }
-  if (nameExists || ownerExists || topicExists) {
+  if (nameExists || ownerExists || topicExists || mature) {
     valsExist = true;
   }
   var resp = [];
@@ -180,6 +182,7 @@ app.get('/search', async (request, response) => {
       snapshot.forEach(function(childSnapshot) {
         let nflg = false;
         let oflg = false;
+        let mflg = false;
         let tflg = false;
         if (
           name &&
@@ -204,6 +207,16 @@ app.get('/search', async (request, response) => {
           tflg = true;
         }
         if (
+          mature &&
+          childSnapshot.hasChild('Mature') &&
+          childSnapshot
+            .child('Mature')
+            .val()
+            .toLowerCase() !== 'yes'
+        ) {
+          tflg = true;
+        }
+        if (
           owner &&
           childSnapshot.hasChild('Owner') &&
           childSnapshot
@@ -218,6 +231,7 @@ app.get('/search', async (request, response) => {
         let nameCheck = true;
         let ownerCheck = true;
         let topicCheck = true;
+        let matureCheck = true;
         if (nameExists && !nflg) {
           nameCheck = false;
         }
@@ -227,7 +241,10 @@ app.get('/search', async (request, response) => {
         if (topicExists && !tflg) {
           topicCheck = false;
         }
-        if (nameCheck && ownerCheck && topicCheck) {
+        if (mature && !mflg) {
+          matureCheck = false;
+        }
+        if (nameCheck && ownerCheck && matureCheck && topicCheck) {
           resp.push([childSnapshot.key, childSnapshot.val()]);
         }
       });
