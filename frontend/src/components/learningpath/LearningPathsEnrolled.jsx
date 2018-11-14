@@ -3,7 +3,7 @@ import Class from './Class';
 import ClassAddButton from './ClassAddButton';
 import ClassRemoveButton from './ClassRemoveButton';
 import './Forms.css';
-import './ClassList.css';
+//import './ClassList.css';
 const Axios = require('axios');
 
 class ClassList extends Component {
@@ -13,31 +13,32 @@ class ClassList extends Component {
       name: '',
       owner: this.props.userID /*-LNVWR9kD2dvN8GLGFYE*/,
       update: '',
-      classList: [],
-      classInfo: []
+      classList: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
 
   componentDidMount = () => {
-    this.createClasslist();
-    /*
     if (!this.props.userID) return;
-    Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/classes/search/?owner=${this.props.userID}`)
-      .then((response) => {
+    Axios.get(
+      `https://us-central1-ludusfire.cloudfunctions.net/user/teacher/${
+        this.props.userID
+      }`
+    )
+      .then(response => {
         console.log(response);
-        let classIDList = [];
-        let classInfoList = [];
-        for (let id in response.data) {
-          classIDList.push(response.data[id][0]);
-          classInfoList.push(response.data[id][1]);
+        let lpList = [];
+        for (let lp in response.data) {
+          for (let sid in lp) {
+            lpList.push(response.data[lp][sid]);
+          }
         }
-        this.setState({ classIDList: classIDList, classInfo: classInfoList });
+        this.setState({ classIDList: lpList });
       })
       .catch(function(error) {
         console.log(error);
       })
-      .finally(this.submitSearch);*/
+      .finally(this.submitSearch);
   };
   createClasslist = () => {
     if (!this.props.userID) return;
@@ -51,13 +52,13 @@ class ClassList extends Component {
     )
       .then(response => {
         console.log(response);
-        let classIDList = [];
-        let classInfoList = [];
+        let classList = [];
         for (let id in response.data) {
-          classIDList.push(response.data[id][0]);
-          classInfoList.push(response.data[id][1]);
+          for (let sid in id) {
+            classList.push(response.data[id][sid]);
+          }
         }
-        this.setState({ classIDList: classIDList, classInfo: classInfoList });
+        this.setState({ classIDList: classList });
       })
       .catch(function(error) {
         console.log(error);
@@ -73,12 +74,7 @@ class ClassList extends Component {
     for (let id in this.state.classIDList) {
       classes.push(
         <div className="ClassObject" key={id}>
-          {
-            <Class
-              classID={this.state.classIDList[id]}
-              classInfo={this.state.classInfo[id]}
-            />
-          }
+          {<Class classID={this.state.classIDList[id]} />}
           {
             <ClassRemoveButton
               onClick={event => this.setState({ update: '' })}

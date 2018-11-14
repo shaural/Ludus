@@ -11,25 +11,41 @@ class Class extends Component {
     return <div>{this.fetchData()}</div>;
   }
   componentDidMount = () => {
-    Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/classes/${
-        this.props.classID
-      }/info/`
-    )
-      .then(response => {
-        let vars = [];
-        let pres = this.state.present;
+    let vars = [];
+    let pres = this.state.present;
+    //Not scalable yet for sanity's sake atm
+    for (let key in this.props.classInfo) {
+      if (key === 'Name') {
+        const name = (
+          <div className="className" key={key}>
+            <b>{this.props.classInfo[key]}</b> <br />
+          </div>
+        );
 
-        //Not scalable yet for sanity's sake atm
-        if (!response.data.Name) {
-          pres[0] = 0;
-        } else {
-          vars.push(
-            <div className="className" key={'Name'}>
-              <b>{response.data.Name}</b> <br />
-            </div>
-          );
-        }
+        vars = [name, ...vars];
+      } else if (key === 'Tag') {
+        vars.push(
+          <span className="detail" key={key}>
+            {key + ': ' + this.props.classInfo[key]} &nbsp;
+          </span>
+        );
+      } else {
+        vars.push(
+          <span className="detail" key={key}>
+            {key + ': ' + this.props.classInfo[key]} &nbsp;
+          </span>
+        );
+      }
+    } /*
+          if (!response.data.Name) {
+            pres[0] = 0;
+          } else {
+            vars.push(
+              <div className="className" key={'Name'}>
+                <b>{response.data.Name}</b> <br />
+              </div>
+            );
+          }
         if (!response.data.Owner) {
           pres[1] = 0;
         } else {
@@ -56,13 +72,8 @@ class Class extends Component {
               {'Tags: ' + response.data.Tag}
             </span>
           );
-        }
-        this.setState({ values: vars });
-        this.setState({ present: pres });
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
+        }*/
+    this.setState({ values: vars });
   };
   fetchData = () => {
     //TODO: API Call for info on the class from database
