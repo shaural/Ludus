@@ -11,7 +11,8 @@ class ClassSearch extends Component {
       content: '',
       tag: '',
       mature: 'no',
-      classList: []
+      classList: [],
+      classInfo: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
@@ -47,12 +48,12 @@ class ClassSearch extends Component {
       .then(response => {
         console.log(response);
         let classList = [];
+        let classInfo = [];
         for (let id in response.data) {
-          for (let sid in id) {
-            classList.push(response.data[id][sid]);
-          }
+          classList.push(response.data[id][0]);
+          classInfo.push(response.data[id][1]);
         }
-        this.setState({ classIDList: classList });
+        this.setState({ classIDList: classList, classInfo: classInfo });
         this.submitSearch();
       })
       .catch(function(error) {
@@ -68,7 +69,12 @@ class ClassSearch extends Component {
       if (this.state.classIDList[id] === undefined) return;
       classes.push(
         <div className="ClassObject" key={id}>
-          {<Class classID={this.state.classIDList[id]} />}
+          {
+            <Class
+              classID={this.state.classIDList[id]}
+              classInfo={this.state.classInfo[id]}
+            />
+          }
         </div>
       );
     }
