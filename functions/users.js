@@ -721,12 +721,45 @@ app.get('/:teacherid/stats', async (request, response) => {
       .status(500)
       .json('Fatal error, unable to access learning paths');
   }
-  //TODO: iterate through learning paths to find enrolled
-
-  db.on('value', function(snapshot) {
-    //let out = snapshot.val();
-    //return response.status(200).json(out);
+  //iterate through learning paths to find the ones whose
+  //owner is the teacher we are compiling stats for
+  let studentRef = '';
+  await lpref.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      childSnapshot.forEach(function(grandChildSnapshot) {
+        if (
+          grandChildSnapshot.key === 'Owner' &&
+          grandChildSnapshot.val() === tid
+        ) {
+          studentRef = admin
+            .database()
+            .ref(`/Learning_Paths/${snapshot.key}/${childSnapshot.key}`)
+            .child('Students_Enrolled');
+          return true;
+        }
+      });
+      // console.log(childSnapshot.key)
+    });
   });
+
+  //next step: For each student in Students_Enrolled
+  //open a reference to the student in Users pointed to from Students_Enrolled
+  //get the Dob, add it to a list
+  let birthdatelist = [];
+  await studentRef.on('value', function(snapshot) {
+    let currentstudent = snapshot.val();
+    let currentstudentRef = admin
+      .database()
+      .ref('/Users')
+      .child(currentstudent);
+    if (!currentstudentRef) {
+      return response
+        .status(500)
+        .json('Error: Unable to find one of the students');
+    }
+  });
+
+  // console.log(name)
 });
 
 exports.route = app;
