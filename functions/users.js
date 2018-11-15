@@ -733,30 +733,34 @@ app.get('/:teacherid/stats', async (request, response) => {
         ) {
           studentRef = admin
             .database()
-            .ref(`/Learning_Paths/${snapshot.key}/${childSnapshot.key}`)
-            .child('Students_Enrolled');
-          return true;
+            .ref(
+              `/Learning_Paths/${snapshot.key}/${
+                childSnapshot.key
+              }/Students_Enrolled`
+            );
+          if (!studentRef) {
+            return response.status(500).json('Unable to make student ref');
+          }
+
+          //next step: For each student in Students_Enrolled
+          //open a reference to the student in Users pointed to from Students_Enrolled
+          //get the Dob, add it to a list
+          let birthdatelist = [];
+          studentRef.once('value', function(snapshot) {
+            let currentstudent = snapshot.val();
+            let currentstudentRef = admin
+              .database()
+              .ref(`/Users/${currentstudent}`);
+            if (!currentstudentRef) {
+              return response
+                .status(500)
+                .json('Error: Unable to find one of the students');
+            }
+          });
         }
       });
       // console.log(childSnapshot.key)
     });
-  });
-
-  //next step: For each student in Students_Enrolled
-  //open a reference to the student in Users pointed to from Students_Enrolled
-  //get the Dob, add it to a list
-  let birthdatelist = [];
-  await studentRef.on('value', function(snapshot) {
-    let currentstudent = snapshot.val();
-    let currentstudentRef = admin
-      .database()
-      .ref('/Users')
-      .child(currentstudent);
-    if (!currentstudentRef) {
-      return response
-        .status(500)
-        .json('Error: Unable to find one of the students');
-    }
   });
 
   // console.log(name)
