@@ -13,14 +13,14 @@ app.get('/getuid/:email', async (request, response) => {
   let found = await ref_has_child(admin.database().ref(), '/Users');
 
   if (!found) {
-    return response.json(500).status('Fatal error, unable to find users');
+    return response.json(404).status('Unable to find users');
   }
   const db = admin
     .database()
     .ref()
     .child('/Users');
   if (!db) {
-    return response.status(500).json({
+    return response.status(404).json({
       message: 'Unable to make database connection'
     });
   }
@@ -122,14 +122,14 @@ app.post('/:user_id/student', async (request, response) => {
 app.patch('/:user_id/:interest_name', async (request, response) => {
   const found = await ref_has_child(admin.database().ref(), 'Users');
   if (!found) {
-    return response.status(500).json('Error: No interests found!');
+    return response.status(404).json('Error: No interests found!');
   }
 
   const db = admin.database().ref(`/Users/${request.params.user_id}`);
   let interest = request.params.interest_name;
 
   if (!db) {
-    return response.status(500).json('Fatal error: Could not connect to db');
+    return response.status(404).json(' Could not connect to db');
   }
 
   let interestsRef = db.push();
@@ -143,24 +143,22 @@ app.patch('/:user_id/:interest_name', async (request, response) => {
 app.delete('/:user_id/:interest_name', async (request, response) => {
   let interest = request.params.interest_name;
 
+  let found = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Interests'
+  );
+  if (!found) {
+    return response.status(404).json('Could not find the interests list');
+  }
+
   const db = admin
     .database()
     .ref(`/Users/${request.params.user_id}`)
     .child('Interests');
   if (!db) {
     return response.status(404).json({
-      message: 'A fatal error occurred when attempting to delete an interest'
+      message: 'Unable to find the interests'
     });
-  }
-
-  let found = await ref_has_child(
-    admin.database().ref(`/Users/${request.params.user_id}`),
-    'Interests'
-  );
-  if (!found) {
-    return response
-      .status(500)
-      .json('Fatal error: Could not find the interests list');
   }
 
   //query to find the correct interest to delete
