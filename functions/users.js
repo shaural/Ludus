@@ -731,13 +731,15 @@ app.get('/:teacherid/stats', async (request, response) => {
           grandChildSnapshot.key === 'Owner' &&
           grandChildSnapshot.val() === tid
         ) {
+          /*
+          console.log(snapshot.key)
+          console.log(childSnapshot.key)
+          console.log(tid)
+          console.log(grandChildSnapshot.key)
+          */
           studentRef = admin
             .database()
-            .ref(
-              `/Learning_Paths/${snapshot.key}/${
-                childSnapshot.key
-              }/Students_Enrolled`
-            );
+            .ref(`/Learning_Paths/${childSnapshot.key}/Students_Enrolled`);
           if (!studentRef) {
             return response.status(500).json('Unable to make student ref');
           }
@@ -746,20 +748,33 @@ app.get('/:teacherid/stats', async (request, response) => {
           //open a reference to the student in Users pointed to from Students_Enrolled
           //get the Dob, add it to a list
           let birthdatelist = [];
-          studentRef.once('value', function(snapshot) {
-            let currentstudent = snapshot.val();
-            let currentstudentRef = admin
-              .database()
-              .ref(`/Users/${currentstudent}`);
-            if (!currentstudentRef) {
-              return response
-                .status(500)
-                .json('Error: Unable to find one of the students');
-            }
+          studentRef.once('value', function(studentsnapshot) {
+            studentsnapshot.forEach(function(childofStudent) {
+              let currentstudent = childofStudent.val();
+              // console.log(currentstudent)
+              let currentstudentRef = admin
+                .database()
+                .ref(`/Users/${currentstudent}`);
+              if (!currentstudentRef) {
+                return response
+                  .status(404)
+                  .json('Error: Unable to find one of the students');
+              }
+              //Open up the current student object and find the DoB
+              currentstudentRef.once('value', function(currentstudentSnapshot) {
+                currentstudentSnapshot.forEach(function(currentstudentchild) {
+                  // console.log(currentstudentchild.key)
+                  if (currentstudentchild.key === 'DoB') {
+                    birthdatelist.push(currentstudentchild.val());
+                    // console.log(currentstudentchild.val())
+                  }
+                });
+              });
+            });
           });
+          // console.log(birthdatelist)
         }
       });
-      // console.log(childSnapshot.key)
     });
   });
 
