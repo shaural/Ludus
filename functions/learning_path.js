@@ -191,7 +191,7 @@ app.get('/:lp_id/nextClassByIndex/:current_index', (request, response) => {
       }
     });
   }
-  
+});
 // body: name, owner, topic
 app.patch('/:lp_id', async (request, response) => {
   const db = admin
@@ -325,7 +325,6 @@ app.get('/search', async (request, response) => {
     }
   });
   return response.status(200).json(resp);
-
 });
 
 exports.route = app;
