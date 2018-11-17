@@ -724,7 +724,7 @@ app.get('/:teacherid/stats', async (request, response) => {
   //iterate through learning paths to find the ones whose
   //owner is the teacher we are compiling stats for
   let studentRef = '';
-
+  let birthdatelist = [];
   await lpref.once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(grandChildSnapshot) {
@@ -748,7 +748,7 @@ app.get('/:teacherid/stats', async (request, response) => {
           //next step: For each student in Students_Enrolled
           //open a reference to the student in Users pointed to from Students_Enrolled
           //get the Dob, add it to a list
-          let birthdatelist = [];
+
           studentRef
             .once('value', function(studentsnapshot) {
               studentsnapshot.forEach(function(childofStudent) {
@@ -774,11 +774,10 @@ app.get('/:teacherid/stats', async (request, response) => {
                     }
                   });
                 });
-
-                // .then(calcdate(birthdatelist, response))
               });
             })
             .then(calcdate(birthdatelist, response));
+
           // console.log(birthdatelist)
         }
       });
@@ -788,6 +787,10 @@ app.get('/:teacherid/stats', async (request, response) => {
 
   // console.log(name)
 });
+
+function reject() {
+  alert('Error');
+}
 
 function calcdate(bdaylist, response) {
   console.log('Execute new function');
