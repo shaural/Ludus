@@ -46,6 +46,13 @@ describe('testing users', function() {
         .expect(400)
         .end(endfn(done));
     });
+    it('can get a uid from an email', function(done) {
+      request(server)
+        .get('/getuid/willis62@purdue.edu')
+        .expect(response => expect('"interestsuser"'))
+        .expect(200)
+        .end(endfn(done));
+    });
     it('can create a user', done => {
       request(server)
         .post('/')
@@ -144,6 +151,13 @@ describe('testing users', function() {
         .send({})
         .set('Accept', 'application/json')
         .expect(400)
+        .end(endfn(done));
+    });
+    it('can add an interest', function(done) {
+      request(server)
+        .patch(`/interestsuser/testinterestcommit`)
+        .send({})
+        .expect(200)
         .end(endfn(done));
     });
     it('can create a new student record', function(done) {

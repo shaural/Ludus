@@ -8,8 +8,6 @@ import {
   Button
 } from 'react-bootstrap';
 import Axios from 'axios';
-import { request } from 'https';
-// import { prependOnceListener } from 'cluster';
 export class EditLP extends Component {
   constructor(props, context) {
     super(props, context);
