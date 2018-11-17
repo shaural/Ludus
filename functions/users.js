@@ -119,7 +119,7 @@ app.post('/:user_id/student', async (request, response) => {
 });
 
 //patch function for interests
-app.patch('/:user_id/:interest_name', async (request, response) => {
+app.patch('/:user_id/interests/:interest_name', async (request, response) => {
   const found = await ref_has_child(admin.database().ref(), 'Users');
   if (!found) {
     return response.status(404).json('Error: No interests found!');

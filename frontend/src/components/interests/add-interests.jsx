@@ -29,7 +29,7 @@ export class AddInterests extends Component {
           let uid = out.substring(1, out.length - 1);
           let interestname = this.state.interest.trimLeft();
           Axios.patch(
-            `https://us-central1-ludusfire.cloudfunctions.net/users/${uid}/${interestname}`
+            `https://us-central1-ludusfire.cloudfunctions.net/users/${uid}/interests/${interestname}`
           )
             .then(response => {
               alert('Interest saved');

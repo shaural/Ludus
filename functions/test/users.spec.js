@@ -125,7 +125,7 @@ describe('testing users', function() {
     });
     it('can add an interest', function(done) {
       request(server)
-        .patch(`/interestsuser/testinterestcommit`)
+        .patch(`/interestsuser/interests/testinterestcommit`)
         .send({})
         .expect(200)
         .end(endfn(done));
