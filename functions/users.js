@@ -689,7 +689,7 @@ app.post(
     }
   }
 );
-
+let birthdatelist = [];
 app.get('/:teacherid/stats', async (request, response) => {
   let found = await ref_has_child(admin.database().ref(), 'Users');
   if (!found) {
@@ -724,7 +724,7 @@ app.get('/:teacherid/stats', async (request, response) => {
   //iterate through learning paths to find the ones whose
   //owner is the teacher we are compiling stats for
   let studentRef = '';
-  let birthdatelist = [];
+
   await lpref.once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(grandChildSnapshot) {
@@ -749,34 +749,35 @@ app.get('/:teacherid/stats', async (request, response) => {
           //open a reference to the student in Users pointed to from Students_Enrolled
           //get the Dob, add it to a list
 
-          studentRef
-            .once('value', function(studentsnapshot) {
-              studentsnapshot.forEach(function(childofStudent) {
-                let currentstudent = childofStudent.val();
-                // console.log(currentstudent)
-                let currentstudentRef = admin
-                  .database()
-                  .ref(`/Users/${currentstudent}`);
-                if (!currentstudentRef) {
-                  return response
-                    .status(404)
-                    .json('Error: Unable to find one of the students');
-                }
-                //Open up the current student object and find the DoB
-                currentstudentRef.once('value', function(
-                  currentstudentSnapshot
-                ) {
+          studentRef.once('value', function(studentsnapshot) {
+            studentsnapshot.forEach(function(childofStudent) {
+              let currentstudent = childofStudent.val();
+              // console.log(currentstudent)
+              let currentstudentRef = admin
+                .database()
+                .ref(`/Users/${currentstudent}`);
+              if (!currentstudentRef) {
+                return response
+                  .status(404)
+                  .json('Error: Unable to find one of the students');
+              }
+              //Open up the current student object and find the DoB
+              let bday = '';
+              currentstudentRef
+                .once('value', function(currentstudentSnapshot) {
                   currentstudentSnapshot.forEach(function(currentstudentchild) {
                     // console.log(currentstudentchild.key)
                     if (currentstudentchild.key === 'DoB') {
-                      birthdatelist.push(currentstudentchild.val());
+                      // birthdatelist.push(currentstudentchild.val());
                       // console.log(currentstudentchild.val())
+                      bday = currentstudentchild.val();
                     }
                   });
-                });
-              });
-            })
-            .then(calcdate(birthdatelist, response));
+                })
+                .then(addtolist(bday))
+                .then(calcdate(response));
+            });
+          });
 
           // console.log(birthdatelist)
         }
@@ -786,16 +787,19 @@ app.get('/:teacherid/stats', async (request, response) => {
   });
 
   // console.log(name)
+  console.log(birthdatelist);
 });
 
-function reject() {
-  alert('Error');
+function addtolist(bday) {
+  console.log('pushed');
+  birthdatelist.push(bday);
+  return birthdatelist;
 }
 
-function calcdate(bdaylist, response) {
+function calcdate(response) {
   console.log('Execute new function');
-  console.log(bdaylist);
-  //return response.status(200).json("ok")
+  // console.log(bdaylist);
+  //TODO: Calculate average
 }
 
 exports.route = app;
