@@ -738,6 +738,8 @@ app.get('/:teacherid/stats', async (request, response) => {
           console.log(tid)
           console.log(grandChildSnapshot.key)
           */
+
+          //we've reached a learning path whose owner matches the current teacher
           studentRef = admin
             .database()
             .ref(`/Learning_Paths/${childSnapshot.key}/Students_Enrolled`);
@@ -765,41 +767,48 @@ app.get('/:teacherid/stats', async (request, response) => {
               let bday = '';
               currentstudentRef
                 .once('value', function(currentstudentSnapshot) {
+                  //iterate through the children of student to get to DoB
                   currentstudentSnapshot.forEach(function(currentstudentchild) {
                     // console.log(currentstudentchild.key)
                     if (currentstudentchild.key === 'DoB') {
                       // birthdatelist.push(currentstudentchild.val());
                       // console.log(currentstudentchild.val())
                       bday = currentstudentchild.val();
+                      let td = new Date(bday);
+                      // console.log("Birthday: "+td.toString())
+                      birthdatelist.push(td);
+                      //let p = new Promise(resolve, reject)
                     }
                   });
                 })
-                .then(addtolist(bday))
-                .then(calcdate(response));
+                .then(calcdate);
             });
           });
-
-          // console.log(birthdatelist)
         }
       });
     });
-    // return response.status(200).json(birthdatelist)
   });
-
-  // console.log(name)
-  console.log(birthdatelist);
 });
 
-function addtolist(bday) {
-  console.log('pushed');
-  birthdatelist.push(bday);
-  return birthdatelist;
-}
-
-function calcdate(response) {
+function calcdate() {
   console.log('Execute new function');
-  // console.log(bdaylist);
+  console.log(birthdatelist.length);
   //TODO: Calculate average
+
+  console.log('hi');
+
+  let avg = 0;
+  for (i = 0; i < birthdatelist.length; i++) {
+    console.log(birthdatelist[i].getFullYear().toString());
+    avg += parseInt(birthdatelist[i].getFullYear().toString());
+  }
+  avg = avg / birthdatelist.length;
+  avg = Math.trunc(avg);
+  console.log(avg);
+  let d = new Date();
+  let currYear = parseInt(d.getFullYear().toString());
+  console.log(currYear);
+  console.log('Average age: ' + (currYear - avg));
 }
 
 exports.route = app;
