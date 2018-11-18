@@ -750,7 +750,6 @@ app.get('/:teacherid/stats', async (request, response) => {
           //next step: For each student in Students_Enrolled
           //open a reference to the student in Users pointed to from Students_Enrolled
           //get the Dob, add it to a list
-
           studentRef.once('value', function(studentsnapshot) {
             studentsnapshot.forEach(function(childofStudent) {
               let currentstudent = childofStudent.val();
@@ -767,21 +766,24 @@ app.get('/:teacherid/stats', async (request, response) => {
               let bday = '';
               currentstudentRef
                 .once('value', function(currentstudentSnapshot) {
-                  //iterate through the children of student to get to DoB
+                  //iterate through the children attributes of a student to get to DoB
                   currentstudentSnapshot.forEach(function(currentstudentchild) {
-                    // console.log(currentstudentchild.key)
                     if (currentstudentchild.key === 'DoB') {
-                      // birthdatelist.push(currentstudentchild.val());
-                      // console.log(currentstudentchild.val())
                       bday = currentstudentchild.val();
                       let td = new Date(bday);
-                      // console.log("Birthday: "+td.toString())
                       birthdatelist.push(td);
-                      //let p = new Promise(resolve, reject)
                     }
                   });
                 })
-                .then(calcdate);
+                .then(function(calc) {
+                  let a = calcdate();
+                  return response.status(200).json('Average age: ' + a);
+                })
+                .catch(function(err) {
+                  return response
+                    .status(404)
+                    .json('An error happened when getting statistics' + err);
+                });
             });
           });
         }
@@ -791,12 +793,6 @@ app.get('/:teacherid/stats', async (request, response) => {
 });
 
 function calcdate() {
-  console.log('Execute new function');
-  console.log(birthdatelist.length);
-  //TODO: Calculate average
-
-  console.log('hi');
-
   let avg = 0;
   for (i = 0; i < birthdatelist.length; i++) {
     console.log(birthdatelist[i].getFullYear().toString());
@@ -804,11 +800,11 @@ function calcdate() {
   }
   avg = avg / birthdatelist.length;
   avg = Math.trunc(avg);
-  console.log(avg);
   let d = new Date();
   let currYear = parseInt(d.getFullYear().toString());
-  console.log(currYear);
-  console.log('Average age: ' + (currYear - avg));
+  avg = currYear - avg;
+  console.log('Average age: ' + avg);
+  return avg;
 }
 
 exports.route = app;
