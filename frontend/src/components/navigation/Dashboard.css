@@ -1,0 +1,23 @@
+.DashWrapper {
+  width: 60%;
+  display: block;
+  margin: auto;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+
+.Learn {
+  width: 50%;
+  float: left;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+
+.Teach {
+  width: 50%;
+  float: right;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}

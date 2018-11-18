@@ -14,6 +14,7 @@ import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
 import EditLP from './components/learning_path/edit_learning_path';
 import ClassSearchPage from './components/class/ClassSearchPage';
+import Dashboard from './components/navigation/Dashboard';
 import LearningPathsEnrolledPage from './components/learningpath/LearningPathsEnrolledPage';
 import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
@@ -42,7 +43,6 @@ class App extends Component {
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
-        <Link to="garbage">404</Link> &nbsp;
         <Link
           to={{
             pathname: '/LPEdit',
@@ -95,7 +95,7 @@ class App extends Component {
           />
           <Route path="/class-search" component={ClassSearchPage} />
           {/*requires userID*/}
-          <Route path="/dashboard" component={IllegalPath} /*placeholder*/ />
+          <Route path="/dashboard" component={Dashboard} /*placeholder*/ />
           <Route
             path="/student-classlist"
             component={IllegalPath} /*placeholder*/
