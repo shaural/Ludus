@@ -344,7 +344,6 @@ app.patch('/:user_id/teacher', async (request, response) => {
     admin.database().ref('/Users'),
     request.params.user_id
   );
-  console.log(found_user);
   if (!found_user)
     return response
       .status(404)
@@ -353,7 +352,6 @@ app.patch('/:user_id/teacher', async (request, response) => {
     admin.database().ref(`/Users/${request.params.user_id}`),
     'Teacher'
   );
-  console.log(found_teacher);
   if (!found_teacher)
     return response.status(404).json({
       message: `user with id ${request.params.user_id} is not a teacher`
@@ -370,7 +368,6 @@ app.patch('/:user_id/teacher', async (request, response) => {
   if (nickName) updates['Nickname'] = nickName;
 
   db.update(updates);
-  console.log('done');
   return response.status(200).json({});
 });
 
@@ -391,11 +388,9 @@ app.patch('/:user_id/student', async (request, response) => {
     'Student'
   );
   if (!found_student)
-    return response
-      .status(404)
-      .json({
-        message: `user with id ${request.params.user_id} is not a student`
-      });
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response.status(404).json({
