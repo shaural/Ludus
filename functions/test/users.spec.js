@@ -146,6 +146,41 @@ describe('testing users', function() {
         .expect(200)
         .end(endfn(done));
     });
+    describe('learning paths', function(done) {
+      describe('validate learning path information before creation', function(done) {
+        it('can handle no data', function(done) {
+          request(server)
+            .post(`/${test_user_id}/teacher/learningPath`)
+            .send({})
+            .set('Accept', 'application/json')
+            .expect(400, done);
+        });
+        it('can handle missing data', function(done) {
+          request(server)
+            .post(`/${test_user_id}/teacher/learningPath`)
+            .send({ topic: 'lol' })
+            .set('Accept', 'application/json')
+            .expect(400, done);
+        });
+        it('can validate a teacher record before creating', function(done) {
+          request(server)
+            .post(`/-LQJxU218iUrEU8_Ut6b/teacher/learningPath`)
+            .send({ topic: 'lol', name: 'dab' })
+            .set('Accept', 'application/json')
+            .expect(404, done);
+        });
+        it('can create a learning path', function(done) {
+          request(server)
+            .post(`/${test_user_id}/teacher/learningPath`)
+            .send({
+              topic: 'lifestyle',
+              name: 'how to write test cases'
+            })
+            .set('Accept', 'application/json')
+            .expect(200, done);
+        });
+      });
+    });
   });
   describe(`student`, () => {
     const learning_path_id = '-LNWF1Itj0gydp4gt02V';

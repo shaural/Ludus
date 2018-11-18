@@ -528,12 +528,30 @@ app.delete(
 );
 
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
-  if (!request.body)
+  if (!Object.keys(request.body).length)
     return response.status(400).json({ messsage: 'malformed request' });
   // TODO: verify that user_id is valid
   // const validate_input = (topic, name) =>
   //   (topic && topic.toString().length) &&
   //   (name && name.toString().length);
+
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users/'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const found_teacher = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Teacher'
+  );
+  if (!found_teacher)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a teacher`
+    });
 
   const {
     topic,
@@ -555,7 +573,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
       Topic: topic,
       Name: name,
       Owner: request.params.user_id,
-      Class_List: ClassList,
+      Class_List: ClassList || [],
       St_Enrolled: [],
       T_recommend: []
     })
