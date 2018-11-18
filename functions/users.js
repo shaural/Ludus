@@ -6,6 +6,38 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
+//endpoint to return user id, given an email address
+//needed for frontend
+app.get('/getuid/:email', async (request, response) => {
+  let email = request.params.email;
+  let found = await ref_has_child(admin.database().ref(), '/Users');
+
+  if (!found) {
+    return response.json(404).status('Unable to find users');
+  }
+  const db = admin
+    .database()
+    .ref()
+    .child('/Users');
+  if (!db) {
+    return response.status(404).json({
+      message: 'Unable to make database connection'
+    });
+  }
+  let uid = '';
+  await db.once('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      childSnapshot.forEach(function(grandChildSnapshot) {
+        let val = grandChildSnapshot.val();
+        if (val === email) {
+          uid = childSnapshot.key;
+        }
+      });
+    });
+    return response.status(200).json(uid);
+  });
+});
+
 app.post('/', async (request, response) => {
   if (!request.body)
     return response.status(400).json({ message: 'malformed request' });
@@ -84,6 +116,80 @@ app.post('/:user_id/student', async (request, response) => {
     T_Following: []
   });
   return response.status(200).json();
+});
+
+//patch function for interests
+app.patch('/:user_id/:interest_name', async (request, response) => {
+  const found = await ref_has_child(admin.database().ref(), 'Users');
+  if (!found) {
+    return response.status(404).json('Error: No interests found!');
+  }
+
+  const db = admin.database().ref(`/Users/${request.params.user_id}`);
+  let interest = request.params.interest_name;
+
+  if (!db) {
+    return response.status(404).json(' Could not connect to db');
+  }
+
+  let interestsRef = db.push();
+  interestsRef.update({
+    interest: interest
+  });
+  return response.status(200).json('Successfully added an interest');
+});
+
+//delete an interest
+app.delete('/:user_id/:interest_name', async (request, response) => {
+  let interest = request.params.interest_name;
+
+  let found = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Interests'
+  );
+  if (!found) {
+    return response.status(404).json('Could not find the interests list');
+  }
+
+  const db = admin
+    .database()
+    .ref(`/Users/${request.params.user_id}`)
+    .child('Interests');
+  if (!db) {
+    return response.status(404).json({
+      message: 'Unable to find the interests'
+    });
+  }
+
+  //query to find the correct interest to delete
+  //note: In case the user typed an interest and spammed the enter key
+  //creating multiple instances of the interest
+  //this function will remove them
+  await db.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      childSnapshot.forEach(function(grandChildSnapshot) {
+        let testinterest = grandChildSnapshot.val();
+        if (testinterest == interest) {
+          db.child(childSnapshot.key)
+            .child(grandChildSnapshot.key)
+            .remove()
+            .then(() => {
+              try {
+                return response
+                  .status(200)
+                  .json('Successfully removed interest');
+              } catch (e) {
+                return response
+                  .status(500)
+                  .json('A server error occurred during deletion');
+              }
+            });
+          //stop loop from running through the rest of the data
+          //return true;
+        }
+      });
+    });
+  });
 });
 
 // Get all learning paths associated with a student
