@@ -344,6 +344,7 @@ app.patch('/:user_id/teacher', async (request, response) => {
     admin.database().ref('/Users'),
     request.params.user_id
   );
+  console.log(found_user);
   if (!found_user)
     return response
       .status(404)
@@ -352,6 +353,7 @@ app.patch('/:user_id/teacher', async (request, response) => {
     admin.database().ref(`/Users/${request.params.user_id}`),
     'Teacher'
   );
+  console.log(found_teacher);
   if (!found_teacher)
     return response.status(404).json({
       message: `user with id ${request.params.user_id} is not a teacher`
@@ -368,17 +370,32 @@ app.patch('/:user_id/teacher', async (request, response) => {
   if (nickName) updates['Nickname'] = nickName;
 
   db.update(updates);
-  return response.status(200);
+  console.log('done');
+  return response.status(200).json({});
 });
 
 // shen282 Update Student API
 app.patch('/:user_id/student', async (request, response) => {
-  if (!request.body)
+  if (!Object.keys(request.body).length)
     return response.status(400).json({ messsage: 'malformed request' });
-  const found = await ref_has_child(
+  const found_user = await ref_has_child(
     admin.database().ref('/Users'),
     request.params.user_id
   );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}/`),
+    'Student'
+  );
+  if (!found_student)
+    return response
+      .status(404)
+      .json({
+        message: `user with id ${request.params.user_id} is not a student`
+      });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response.status(404).json({
@@ -387,12 +404,12 @@ app.patch('/:user_id/student', async (request, response) => {
 
   const { name } = request.body; //const { name, LP, teachers }
   let updates = {};
-  if (name) updates['nickName'] = name;
+  if (name) updates['Nickname'] = name;
   // how are we going to handle containing student specific information on lp's enrolled in, array?
   // firebase update can't append to array, only replace with a larger one
   // if(LP) updates['LP_Enrolled'] = ( `${request.params.user_id}_lp_enrolled` - old array, LP - pass in new array )?
   db.update(updates);
-  return response.status(200);
+  return response.status(200).json({});
 });
 
 app.get('/:user_id/student/following', async (request, response) => {

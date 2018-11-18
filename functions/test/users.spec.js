@@ -138,6 +138,14 @@ describe('testing users', function() {
         .expect(404)
         .end(endfn(done));
     });
+    it('can update a teacher record', function(done) {
+      request(server)
+        .patch(`/${test_user_id}/teacher/`)
+        .send({ bio: 'my life has always been a test' })
+        .set('Accept', 'application/json')
+        .expect(200)
+        .end(endfn(done));
+    });
   });
   describe(`student`, () => {
     const learning_path_id = '-LNWF1Itj0gydp4gt02V';
@@ -153,17 +161,46 @@ describe('testing users', function() {
         .expect(400)
         .end(endfn(done));
     });
-    it('can add an interest', function(done) {
-      request(server)
-        .patch(`/interestsuser/interest/testinterestcommit`)
-        .send({})
-        .expect(200)
-        .end(endfn(done));
-    });
     it('can create a new student record', function(done) {
       request(server)
         .post(`/${test_user_id}/student/`)
         .send({ name: 'test-kun' })
+        .expect(200)
+        .end(endfn(done));
+    });
+    it('can validate student information before updating', function(done) {
+      request(server)
+        .patch(`/${test_user_id}/student/`)
+        .send({})
+        .expect(400)
+        .end(endfn(done));
+    });
+    it('can validate a student record before updating', function(done) {
+      request(server)
+        .patch('/invalid_user/student/')
+        .send({ name: 'test-chan' })
+        .expect(404, done);
+    });
+    it('can update a student record', function(done) {
+      request(server)
+        .patch(`/${test_user_id}/student/`)
+        .send({ name: 'test-chan' })
+        .expect(200)
+        .then(() => {
+          request(server)
+            .get(`/${test_user_id}/`)
+            .expect(response => {
+              expect(response.body.Student).to.include({
+                Nickname: 'test-chan'
+              });
+            })
+            .expect(200, done);
+        });
+    });
+    it('can add an interest', function(done) {
+      request(server)
+        .patch(`/interestsuser/interest/testinterestcommit`)
+        .send({})
         .expect(200)
         .end(endfn(done));
     });
