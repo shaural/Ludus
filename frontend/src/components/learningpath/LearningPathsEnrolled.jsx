@@ -69,22 +69,6 @@ class ClassList extends Component {
   render() {
     return (
       <div>
-        <form className="FilterBar">
-          <br />
-          Filter by name:&nbsp;
-          <input
-            className="filterText"
-            type="text"
-            onChange={event => this.setState({ name: event.target.value })}
-          />
-          <input
-            type="button"
-            id="submitbutton"
-            value="Go"
-            onClick={this.createClasslist}
-          />{' '}
-          &nbsp;
-        </form>
         <br /> <br />
         <div className="ClassForm">{this.submitSearch()}</div>
       </div>
