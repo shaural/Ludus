@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import UserEdit from './UserEdit';
-import './UserInfoContainer.css';
-import './followbtn.css';
 
-class EditProfileBtn extends Component {
+class PageofLp extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false
+      name: '',
+      owner: '',
+      lpID: '-LO0Mk238mCqz4fbfMjh',
+      data: []
     };
   }
 
@@ -19,20 +19,28 @@ class EditProfileBtn extends Component {
     this.setState({ show: false });
   };
 
+  componentDidMount() {
+    //Get individual LP
+    Axios.get(
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${
+        this.state.lpID
+      }`
+    ).then(({ data }) => {
+      console.log(data);
+      this.setState({
+        length: data.length,
+        data: data
+      });
+    });
+  }
   render() {
     return (
-      <main>
-        <button class="editButton" onClick={this.showModal}>
-          Edit
-        </button>
-
-        <Modal show={this.state.show} handleClose={this.hideModal}>
-          <UserEdit />
-        </Modal>
-      </main>
+      <h3> {this.state.name} </h3>
+      //create classes based on amount w/h view buttons
     );
   }
 }
+
 const Modal = ({ handleClose, show, children }) => {
   const showHideClassName = show ? 'modal display-block' : 'modal display-none';
 
@@ -46,5 +54,4 @@ const Modal = ({ handleClose, show, children }) => {
     </div>
   );
 };
-
-export default EditProfileBtn;
+export default PageofLp;

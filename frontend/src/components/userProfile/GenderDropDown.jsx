@@ -4,7 +4,7 @@ class GenderDropDown extends Component {
   constructor() {
     super();
     this.state = {
-      showMenu: false,
+      showMenu: false
     };
 
     this.showMenu = this.showMenu.bind(this);
@@ -20,44 +20,34 @@ class GenderDropDown extends Component {
   }
 
   closeMenu(event) {
-
     if (!this.dropdownMenu.contains(event.target)) {
-
       this.setState({ showMenu: false }, () => {
         document.removeEventListener('click', this.closeMenu);
       });
-
     }
   }
 
   render() {
     return (
       <div>
-        <button onClick={this.showMenu}>
-          Gender
-        </button>
+        <br />
+        <button onClick={this.showMenu}>Gender</button>
 
-        {
-          this.state.showMenu
-            ? (
-              <div
-                className="menu"
-                ref={(element) => {
-                  this.dropdownMenu = element;
-                }}
-              >
-                <button> Male </button>
-                <button> Female </button>
-                <button> Other </button>
-              </div>
-            )
-            : (
-              null
-            )
-        }
+        {this.state.showMenu ? (
+          <div
+            className="menu"
+            ref={element => {
+              this.dropdownMenu = element;
+            }}
+          >
+            <button> Male </button>
+            <button> Female </button>
+            <button> Other </button>
+          </div>
+        ) : null}
       </div>
     );
   }
 }
 
-export default GenderDropDown
+export default GenderDropDown;

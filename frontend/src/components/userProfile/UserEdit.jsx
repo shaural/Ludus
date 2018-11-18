@@ -9,26 +9,39 @@ class UserEdit extends Component {
       inputThing: ''
     };
   }
-  handleSubmit(){
+
+  handleSubmit() {
     var data = JSON.stringify({
       Age: this.state.inputAge,
       Thing: this.state.inputThing
     });
-    Axios.patch(`https://us-central1-ludusfire.cloudfunctions.net/users/${
+    /*Axios.patch(`https://us-central1-ludusfire.cloudfunctions.net/users/${
       this.props.userID
-    }`,
+    }` */
   }
+
   render() {
     return (
       <div>
         <container>
-          <div class="modal-lg">
-            <div class="modal-in">
+          <div>
+            <h3> Edit User Info </h3>
+            <div>
               <form action="">
-                <input type="text" Placeholder="Age" value={this.state.inputAge}/>
+                <input
+                  type="text"
+                  placeholder="Age"
+                  value={this.state.inputAge}
+                />
+                <br />
                 <GenderDropDown />
-                <input type="text" Placeholder="Thing" value={this.state.inputThing}/>
-                <br></br>
+                <br />
+                <input
+                  type="text"
+                  placeholder="Thing"
+                  value={this.state.inputThing}
+                />
+                <br />
                 <button onClick={this.handleSubmit()}> Submit </button>
               </form>
             </div>
@@ -38,7 +51,5 @@ class UserEdit extends Component {
     );
   }
 }
-
-
 
 export default UserEdit;

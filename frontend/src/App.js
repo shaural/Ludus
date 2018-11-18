@@ -3,6 +3,7 @@ import './App.css';
 // import custom component
 
 import { PasswordReset } from './passwordreset/PasswordReset';
+import ClassCreatePage from './components/createclass/ClassCreatePage';
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
@@ -61,6 +62,7 @@ class App extends Component {
         {/* probably want to check if you're logged in or not for the home page? */}
         <Switch>
           <Route exact path="/LPEdit" component={EditLP} />
+          <Route exact path="/classCreate" component={ClassCreatePage} />
           <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
