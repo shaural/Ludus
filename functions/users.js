@@ -689,8 +689,9 @@ app.post(
     }
   }
 );
-let birthdatelist = [];
+
 app.get('/:teacherid/stats', async (request, response) => {
+  let birthdatelist = [];
   let found = await ref_has_child(admin.database().ref(), 'Users');
   if (!found) {
     return response.status(500).json('Error: No users found');
@@ -724,78 +725,51 @@ app.get('/:teacherid/stats', async (request, response) => {
   //iterate through learning paths to find the ones whose
   //owner is the teacher we are compiling stats for
   let studentRef = '';
-
+  const learning_paths = [];
   await lpref.once('value', function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      childSnapshot.forEach(function(grandChildSnapshot) {
-        if (
-          grandChildSnapshot.key === 'Owner' &&
-          grandChildSnapshot.val() === tid
-        ) {
-          /*
-          console.log(snapshot.key)
-          console.log(childSnapshot.key)
-          console.log(tid)
-          console.log(grandChildSnapshot.key)
-          */
-
-          //we've reached a learning path whose owner matches the current teacher
-          studentRef = admin
-            .database()
-            .ref(`/Learning_Paths/${childSnapshot.key}/Students_Enrolled`);
-          if (!studentRef) {
-            return response.status(500).json('Unable to make student ref');
-          }
-
-          //next step: For each student in Students_Enrolled
-          //open a reference to the student in Users pointed to from Students_Enrolled
-          //get the Dob, add it to a list
-          studentRef.once('value', function(studentsnapshot) {
-            studentsnapshot.forEach(function(childofStudent) {
-              let currentstudent = childofStudent.val();
-              // console.log(currentstudent)
-              let currentstudentRef = admin
-                .database()
-                .ref(`/Users/${currentstudent}`);
-              if (!currentstudentRef) {
-                return response
-                  .status(404)
-                  .json('Error: Unable to find one of the students');
-              }
-              //Open up the current student object and find the DoB
-              let bday = '';
-              currentstudentRef
-                .once('value', function(currentstudentSnapshot) {
-                  //iterate through the children attributes of a student to get to DoB
-                  currentstudentSnapshot.forEach(function(currentstudentchild) {
-                    if (currentstudentchild.key === 'DoB') {
-                      bday = currentstudentchild.val();
-                      let td = new Date(bday);
-                      birthdatelist.push(td);
-                    }
-                  });
-                })
-                .then(function(calc) {
-                  let a = calcdate();
-                  return response.status(200).json('Average age: ' + a);
-                })
-                .catch(function(err) {
-                  return response
-                    .status(404)
-                    .json('An error happened when getting statistics' + err);
-                });
-            });
-          });
+      if (
+        childSnapshot.hasChild('Owner') &&
+        childSnapshot.child('Owner').val() === tid
+      ) {
+        learning_paths.push(childSnapshot.key);
+      }
+    });
+  });
+  // console.log(learning_paths);
+  const students = [];
+  for (let lp of learning_paths) {
+    await admin
+      .database()
+      .ref(`/Learning_Paths/${lp}/Students_Enrolled`)
+      .once('value', snapshot => {
+        snapshot.forEach(child => {
+          students.push(child.val());
+        });
+      });
+  }
+  // console.log(students);
+  const birthdays = [];
+  for (let student of students) {
+    await admin
+      .database()
+      .ref(`/Users/${student}`)
+      .once('value', snapshot => {
+        if (snapshot.hasChild('DoB')) {
+          birthdays.push(new Date(snapshot.child('DoB').val()));
         }
       });
-    });
+  }
+  let avg_age = calcdate(birthdays);
+  return response.status(200).json({
+    'Average age:': avg_age
   });
 });
 
-function calcdate() {
+function calcdate(birthdatelist) {
   let avg = 0;
   for (i = 0; i < birthdatelist.length; i++) {
-    console.log(birthdatelist[i].getFullYear().toString());
+    // console.log(birthdatelist[i].getFullYear().toString());
     avg += parseInt(birthdatelist[i].getFullYear().toString());
   }
   avg = avg / birthdatelist.length;
@@ -803,7 +777,7 @@ function calcdate() {
   let d = new Date();
   let currYear = parseInt(d.getFullYear().toString());
   avg = currYear - avg;
-  console.log('Average age: ' + avg);
+  // console.log('Average age: ' + avg);
   return avg;
 }
 
