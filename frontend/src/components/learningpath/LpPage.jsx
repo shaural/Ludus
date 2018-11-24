@@ -18,7 +18,7 @@ class LpPage extends Component {
     };
   }
 
-	componentDidMount() {
+  componentDidMount() {
     Axios.get(
       `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
         this.props.userID
@@ -43,7 +43,8 @@ class LpPage extends Component {
         <div className="lpObject">
           {<Lp LearningPathID={this.state.data} i={i} />}
           <span className="Placeholder">
-            {<LpEditBtn />} <text> </text> {<LpDeleteBtn lpID={this.state.data[0]}/>}
+            {<LpEditBtn LearningPathID={this.state.data[i]} />} <text> </text>{' '}
+            {<LpDeleteBtn lpID={this.state.data[0]} />}
           </span>
         </div>
       );

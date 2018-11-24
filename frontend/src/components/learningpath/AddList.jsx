@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Class from '../class/Class';
+import '../class/ClassList.css';
 const Axios = require('axios');
 
 class SignUpForm extends Component {
@@ -10,7 +11,8 @@ class SignUpForm extends Component {
       owner: '',
       content: '',
       tag: '',
-      classList: []
+      classIDList: [],
+      classInfo: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
@@ -42,12 +44,13 @@ class SignUpForm extends Component {
       .then(response => {
         console.log(response);
         let classList = [];
+        let classInfo = [];
         for (let id in response.data) {
-          for (let sid in id) {
-            classList.push(response.data[id][sid]);
-          }
+          classList.push(response.data[id][0]);
+          classInfo.push(response.data[id][1]);
         }
-        this.setState({ classIDList: classList });
+        this.setState({ classIDList: classList, classInfo: classInfo });
+        this.submitSearch();
       })
       .catch(function(error) {
         console.log(error);
@@ -63,7 +66,12 @@ class SignUpForm extends Component {
       if (this.state.classIDList[id] === undefined) return;
       classes.push(
         <div className="ClassObject" key={id}>
-          {<Class classID={this.state.classIDList[id]} />}
+          {
+            <Class
+              classID={this.state.classIDList[id]}
+              classInfo={this.state.classInfo[id]}
+            />
+          }
           {
             <div>
               <button
@@ -128,7 +136,7 @@ class SignUpForm extends Component {
             onClick={this.createClasslist}
           />
         </form>
-        {this.submitSearch()}
+        <div className="searchResults">{this.submitSearch()}</div>
       </div>
     );
   }

@@ -502,6 +502,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
   const {
     topic,
     name,
+    mature,
     ClassList,
     StudentsEnrolled = null,
     Teachers_who_recommend = null
@@ -518,8 +519,9 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
     .push({
       Topic: topic,
       Name: name,
+      Mature: mature,
       Owner: request.params.user_id,
-      Class_List: ClassList,
+      Class_List: ClassList || [],
       St_Enrolled: [],
       T_recommend: []
     })
