@@ -39,6 +39,7 @@ class App extends Component {
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
+        <Link to="/fb">Facebook login</Link> &nbsp;
         <Link to="garbage">404</Link> &nbsp;
         <Link
           to={{
@@ -68,6 +69,7 @@ class App extends Component {
           <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
+          <Route exact path="/fb" component={FacebookLogin} />
           <Route exact path="/interests" component={AddInterests} />
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
