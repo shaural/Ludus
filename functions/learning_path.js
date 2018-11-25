@@ -36,6 +36,54 @@ app.post('/:lp_id/class', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+app.post('/:lp_id/recommended_pre_reqs', async (request, response) => {
+  let temp = request.body.pre_reqs_list;
+  let pre_reqs_array = temp.toString().split(',');
+  let lpid = request.params.lp_id;
+  let db = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${lpid}`),
+    'Pre-reqs'
+  );
+  if (!db) {
+    return response.status(404).json('Unable to find pre-requisites');
+  }
+
+  //For now, we will push to recommended pre-reqs
+  //there will be a different endpoint that pushes to mandatory pre-reqs
+  //something like /:lp_id/mandatory_pre_reqs
+  let rec = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${lpid}/Pre-reqs`),
+    'Recommended'
+  );
+  if (!rec) {
+    return response
+      .status(404)
+      .json('Unable to make recommended pre-requisite');
+  }
+  let rec_ref = admin
+    .database()
+    .ref(`/Learning_Paths/${lpid}/Pre-reqs/Recommended`);
+  try {
+    for (t in pre_reqs_array) {
+      let preq = pre_reqs_array[t];
+      console.log(preq);
+      await rec_ref.push({ Prereq: preq });
+    }
+  } catch (err) {
+    console.log(err);
+    return response
+      .status(404)
+      .json('An error happened when setting the pre-requsisites');
+  }
+  return response.status(200).json('Successfully set pre-reqs');
+  // console.log(temp.length)
+  /*
+    for(t in temp){
+    console.log("Pre-reqs: " + temp[t])
+    }
+    */
+});
+
 // delete learning path with id lp_id
 app.delete('/:lp_id', async (request, response) => {
   const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
