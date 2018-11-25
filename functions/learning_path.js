@@ -30,6 +30,8 @@ app.post('/:lp_id/class', async (request, response) => {
           class: { ...snapshot.val() }
         };
       });
+
+    //TODO: Call the patch endpoint for any pre-reqs that have been entered?
   } catch (e) {
     return response.status(400).json({ message: 'malformed request' });
   }

@@ -21,9 +21,9 @@ export default class LearningPathCreate extends Component {
     this.submitPrereq = this.submitPrereq.bind(this);
   }
 
-  submitPrereq() {
+  submitPrereq = () => {
     alert('Needs fleshing out');
-  }
+  };
 
   showModal = () => {
     this.setState({ show: true });
