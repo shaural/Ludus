@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import CreationList from './CreationList';
 import AddList from './AddList';
 const Axios = require('axios');
@@ -10,15 +11,26 @@ export default class LearningPathCreate extends Component {
     this.state = {
       name: '',
       topic: '',
+      prereq: '',
       classes: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
     this.submitLP = this.submitLP.bind(this);
+    this.changePrereq = this.changePrereq.bind(this);
+    this.submitPrereq = this.submitPrereq.bind(this);
+  }
+
+  submitPrereq() {
+    alert('Needs fleshing out');
   }
 
   showModal = () => {
     this.setState({ show: true });
+  };
+
+  changePrereq = e => {
+    this.setState({ preq: e.value });
   };
 
   hideModal = () => {
@@ -28,6 +40,14 @@ export default class LearningPathCreate extends Component {
   render() {
     return (
       <div>
+        <form className="pre-reqs">
+          Add a recommended pre-requisite learning path here [optional]:&nbsp;
+          <input className="prereq" type="text" onChange={this.changePrereq} />
+          <button type="button" onChange={this.submitPrereq}>
+            Click here to add a recommended pre-req
+          </button>
+        </form>
+
         <form className="inputs">
           Learning Path Name:&nbsp;
           <input

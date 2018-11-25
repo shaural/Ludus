@@ -36,10 +36,16 @@ app.post('/:lp_id/class', async (request, response) => {
   return response.status(200).json(resp);
 });
 
-app.post('/:lp_id/recommended_pre_reqs', async (request, response) => {
+app.patch('/:lp_id/recommended_pre_reqs', async (request, response) => {
   let temp = request.body.pre_reqs_list;
   let pre_reqs_array = temp.toString().split(',');
-
+  let db = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${lpid}`),
+    'Pre-reqs'
+  );
+  if (!db) {
+    return response.status(404).json('Unable to find pre-requisites');
+  }
   //convert lp names to ids, in order to check if they exist
   //if they don't, return an error
   for (v in pre_reqs_array) {
@@ -57,13 +63,6 @@ app.post('/:lp_id/recommended_pre_reqs', async (request, response) => {
   }
 
   let lpid = request.params.lp_id;
-  let db = await ref_has_child(
-    admin.database().ref(`/Learning_Paths/${lpid}`),
-    'Pre-reqs'
-  );
-  if (!db) {
-    return response.status(404).json('Unable to find pre-requisites');
-  }
 
   //For now, we will push to recommended pre-reqs
   //there will be a different endpoint that pushes to mandatory pre-reqs
@@ -83,11 +82,11 @@ app.post('/:lp_id/recommended_pre_reqs', async (request, response) => {
   try {
     for (t in pre_reqs_array) {
       let preq = pre_reqs_array[t];
-      console.log(preq);
+      // console.log(preq);
       await rec_ref.push({ Prereq: preq });
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     return response
       .status(404)
       .json('An error happened when setting the pre-requsisites');
