@@ -39,6 +39,23 @@ app.post('/:lp_id/class', async (request, response) => {
 app.post('/:lp_id/recommended_pre_reqs', async (request, response) => {
   let temp = request.body.pre_reqs_list;
   let pre_reqs_array = temp.toString().split(',');
+
+  //convert lp names to ids, in order to check if they exist
+  //if they don't, return an error
+  for (v in pre_reqs_array) {
+    let temp2 = pre_reqs_array[v];
+    let tempref = await ref_has_child(
+      admin.database().ref(`/Users/Learning_Paths`),
+      temp2
+    );
+    if (!tempref) {
+      let out = 'Error: Learning Path' + temp2 + ' does not exist';
+      return response.status(404).json({
+        out
+      });
+    }
+  }
+
   let lpid = request.params.lp_id;
   let db = await ref_has_child(
     admin.database().ref(`/Learning_Paths/${lpid}`),
