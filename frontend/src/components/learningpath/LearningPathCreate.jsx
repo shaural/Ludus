@@ -22,7 +22,28 @@ export default class LearningPathCreate extends Component {
   }
 
   submitPrereq = () => {
-    alert('Needs fleshing out');
+    let data = JSON.stringify(this.state.prereq);
+    if (
+      this.state.name.toString().length != 0 &&
+      this.state.topic.toString().length != 0
+    ) {
+      Axios.patch(
+        `https://us-central1-ludusfire.cloudfunctions.net/learningPath/
+     ${this.state.topic}/recommended_pre_reqs`,
+        'pre_reqs_list:' + data
+      )
+        .then(function(resp) {
+          console.log(resp);
+        })
+        .catch(function(err) {
+          alert(err);
+        });
+    } else {
+      //ignore empty lp
+      alert(
+        'You may not create pre-requisites for a non-existent learning path'
+      );
+    }
   };
 
   showModal = () => {
@@ -43,7 +64,7 @@ export default class LearningPathCreate extends Component {
         <form className="pre-reqs">
           Add a recommended pre-requisite learning path here [optional]:&nbsp;
           <input className="prereq" type="text" onChange={this.changePrereq} />
-          <button type="button" onChange={this.submitPrereq}>
+          <button type="button" onClick={this.submitPrereq}>
             Click here to add a recommended pre-req
           </button>
         </form>

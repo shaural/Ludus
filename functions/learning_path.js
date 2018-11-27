@@ -40,24 +40,46 @@ app.post('/:lp_id/class', async (request, response) => {
 
 app.patch('/:lp_id/recommended_pre_reqs', async (request, response) => {
   let temp = request.body.pre_reqs_list;
+  console.log(request.params.lp_id);
   let pre_reqs_array = temp.toString().split(',');
+
   let db = await ref_has_child(
-    admin.database().ref(`/Learning_Paths/${lpid}`),
+    admin.database().ref(`/Learning_Paths/${request.params.lp_id}`),
     'Pre-reqs'
   );
   if (!db) {
     return response.status(404).json('Unable to find pre-requisites');
   }
-  //convert lp names to ids, in order to check if they exist
-  //if they don't, return an error
+
+  //the loop may need to be removed in the future because this function will
+  //likely only be called with one learning path at a time
+  //will discuss during meeting or via slack
+
+  //checks that the learning path name actually exists
   for (v in pre_reqs_array) {
     let temp2 = pre_reqs_array[v];
-    let tempref = await ref_has_child(
-      admin.database().ref(`/Users/Learning_Paths`),
-      temp2
-    );
+    //placeholder, will always evaluate to false
+    //so we must wait for the loop below to find the correct path
+    let tempref = admin
+      .database()
+      .ref(`/Users/Learning_Paths`)
+      .child(temp2);
+    await admin
+      .database()
+      .ref('/Users/Learning_Paths')
+      .on('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          //we found the learning path
+          console.log(snapshot.key + ' ' + snapshot.val());
+          if (childSnapshot.key == 'Name') {
+            tempref = admin
+              .database()
+              .ref(`/Users/Learning_Paths/${snapshot.key}`);
+          }
+        });
+      });
     if (!tempref) {
-      let out = 'Error: Learning Path' + temp2 + ' does not exist';
+      let out = 'Error: Learning Path ' + temp2 + ' does not exist';
       return response.status(404).json({
         out
       });
@@ -69,10 +91,13 @@ app.patch('/:lp_id/recommended_pre_reqs', async (request, response) => {
   //For now, we will push to recommended pre-reqs
   //there will be a different endpoint that pushes to mandatory pre-reqs
   //something like /:lp_id/mandatory_pre_reqs
+
   let rec = await ref_has_child(
     admin.database().ref(`/Learning_Paths/${lpid}/Pre-reqs`),
     'Recommended'
   );
+
+  // let rec = admin.database().ref(`/Learning_Paths/${lpid}/Pre-reqs`).child('Recommended')
   if (!rec) {
     return response
       .status(404)
