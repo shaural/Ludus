@@ -6,7 +6,7 @@ app.use(require('cors')({ origin: true }));
 app.post('/', async (request, response) => {
   const db = admin.database().ref(`/Classes`);
 
-  const { name, content_type, owner, tags, time } = request.body;
+  const { name, content_type, owner, tags, time, video } = request.body;
   try {
     await db
       .push({
@@ -44,7 +44,8 @@ app.patch('/:class_id', async (request, response) => {
     owner,
     tags,
     comments,
-    time
+    time,
+    video
   } = request.body;
 
   await db
@@ -52,6 +53,7 @@ app.patch('/:class_id', async (request, response) => {
       Name: name,
       Owner: owner,
       Time: time,
+      Video: video,
       Ratings: rating || [],
       Content_type: content_type || [],
       Tags: tags || [],
