@@ -24,10 +24,10 @@ componentDidMount() {
        this.props.userID
      }`
     ).then(({ data }) => {
-			console.log(data);
-	    this.setState({
-					length: data.length,
-					data: data
+      console.log(data);
+      this.setState({
+        length: data.length,
+        data: data
 			 });
 	  });
 	}
