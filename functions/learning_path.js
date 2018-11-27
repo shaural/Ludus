@@ -238,4 +238,12 @@ app.get('/search', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+//Get individual lp with lpID & all children
+app.get('/:lp_id', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
+  lpRef.once('value', function(snapshot) {
+    return response.status(200).json(snapshot.val());
+  });
+});
+
 exports.route = app;
