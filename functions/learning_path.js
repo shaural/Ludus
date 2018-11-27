@@ -5,35 +5,74 @@ const app = require('express')();
 
 app.use(require('cors')({ origin: true }));
 
+// Body: Index: Order of class in learning path, class_id
 app.post('/:lp_id/class', async (request, response) => {
   const db = admin
     .database()
-    .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+    .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
+
+  const { index, class_id } = request.body;
+  if (index < 0) {
+    // invalid (assuming index starting with 0)
+    return response.status(400).json({
+      message: `Invalid index.`
+    });
+  }
   if (!db)
     return response.status(404).json({
       message: `learning path with id ${request.params.lp_id} not found`
     });
 
   // TODO: append to learningpath/:lp_id/class array without creating UID structure?
-  const { class_id } = request.body;
   if (!class_id)
     return response.status(400).json({ message: 'class_id can not be empty' });
   try {
-    await db
-      .push({
-        Class_Id: class_id
-      })
-      .once('value')
-      .then(snapshot => {
-        resp = {
-          id: snapshot.key,
-          class: { ...snapshot.val() }
-        };
+    // check if index already taken (need to use PATCH instead)
+    let indexExists = false;
+    await db.once('value').then(snapshot => {
+      if (snapshot.hasChild(index)) {
+        indexExists = true;
+      }
+    });
+
+    if (indexExists) {
+      return response.status(400).json({
+        message: `Learning path already contains class at index ${index}. Please use PATCH method instead.` // TODO create patch endpoint
       });
+    }
+    db.child(index).set(class_id);
   } catch (e) {
-    return response.status(400).json({ message: 'malformed request' });
+    return response
+      .status(400)
+      .json({ message: `malformed request... exception: ${e}` });
   }
-  return response.status(200).json(resp);
+  return response.status(200).json({
+    message: `Class: ${class_id} has been added to learning path with id: ${
+      request.params.lp_id
+    } at index: ${index}`
+  });
+});
+
+app.get('/:lp_id/classes', (request, response) => {
+  //console.log('Ran new code');
+  const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
+  if (!db)
+    return response
+      .status(404)
+      .json({ message: `${request.params.lp_id} does not have any classes` });
+  else {
+    db.once('value', function(snapshot) {
+      if (snapshot.hasChild('Classes')) {
+        return response.status(200).json(snapshot.child('Classes').val());
+      } else {
+        return response.status(400).json({
+          message: `Learning path with id: ${
+            request.params.lp_id
+          } does not exist or does not have any classes.`
+        });
+      }
+    });
+  }
 });
 
 // delete learning path with id lp_id
@@ -69,7 +108,7 @@ app.delete('/:lp_id', async (request, response) => {
 app.post('/', async (request, response) => {
   const db = admin.database().ref('/Learning_Paths');
 
-  const { name, owner, topic } = request.body;
+  const { name, owner, mature, topic } = request.body;
 
   if (!name) {
     return response.status(400).json({
@@ -89,7 +128,9 @@ app.post('/', async (request, response) => {
       .push({
         Name: name,
         Owner: owner,
-        Topic: topic
+        Topic: topic,
+        Mature: mature || 'no',
+        Classes: classes || []
       })
       .once('value')
       .then(snapshot => {
@@ -103,6 +144,56 @@ app.post('/', async (request, response) => {
   }
 });
 
+// Implement GET next class from index, current_index: index of current class
+app.get('/:lp_id/nextClassByIndex/:current_index', (request, response) => {
+  const db = admin
+    .database()
+    .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
+  if (!db) {
+    return response
+      .status(404)
+      .json({ message: `${request.params.lp_id} does not have any classes` });
+  } else {
+    db.orderByKey().once('value', function(snapshot) {
+      if (snapshot.exists()) {
+        let indexReched = false;
+        let classFound = false;
+        if (snapshot.hasChild(request.params.current_index)) {
+          snapshot.forEach(function(childSnapshot) {
+            if (indexReched) {
+              classFound = true;
+              return response.status(200).json(childSnapshot.val());
+            }
+            if (childSnapshot.key == request.params.current_index) {
+              indexReched = true;
+            }
+          });
+          if (indexReched && !classFound) {
+            // last -> no more next class
+            return response.status(400).json({
+              message: `Learning path with id: ${
+                request.params.lp_id
+              } does not does not have any more classes (after index: ${
+                request.params.current_index
+              }).`
+            });
+          }
+        } else {
+          // current_index does not exist (no class there)
+          return response
+            .status(400)
+            .json({ message: 'Invalid current index' });
+        }
+      } else {
+        return response.status(400).json({
+          message: `Learning path with id: ${
+            request.params.lp_id
+          } does not exist.`
+        });
+      }
+    });
+  }
+});
 // body: name, owner, topic
 app.patch('/:lp_id', async (request, response) => {
   const db = admin
@@ -171,7 +262,7 @@ app.get('/search', async (request, response) => {
   if (topic.length == 0) {
     topicExists = false;
   }
-  if (nameExists || ownerExists || topicExists) {
+  if (nameExists || ownerExists || topicExists || mature) {
     valsExist = true;
   }
   var resp = [];
@@ -180,6 +271,7 @@ app.get('/search', async (request, response) => {
       snapshot.forEach(function(childSnapshot) {
         let nflg = false;
         let oflg = false;
+        let mflg = false;
         let tflg = false;
         if (
           name &&
@@ -204,6 +296,16 @@ app.get('/search', async (request, response) => {
           tflg = true;
         }
         if (
+          mature &&
+          childSnapshot.hasChild('Mature') &&
+          childSnapshot
+            .child('Mature')
+            .val()
+            .toLowerCase() !== 'yes'
+        ) {
+          tflg = true;
+        }
+        if (
           owner &&
           childSnapshot.hasChild('Owner') &&
           childSnapshot
@@ -218,6 +320,7 @@ app.get('/search', async (request, response) => {
         let nameCheck = true;
         let ownerCheck = true;
         let topicCheck = true;
+        let matureCheck = true;
         if (nameExists && !nflg) {
           nameCheck = false;
         }
@@ -227,7 +330,10 @@ app.get('/search', async (request, response) => {
         if (topicExists && !tflg) {
           topicCheck = false;
         }
-        if (nameCheck && ownerCheck && topicCheck) {
+        if (mature && !mflg) {
+          matureCheck = false;
+        }
+        if (nameCheck && ownerCheck && matureCheck && topicCheck) {
           resp.push([childSnapshot.key, childSnapshot.val()]);
         }
       });

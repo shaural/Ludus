@@ -18,19 +18,20 @@ class LpPage extends Component {
     };
   }
 
-componentDidMount() {
-	 Axios.get(
-     `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
-       this.props.userID
-     }`
+  componentDidMount() {
+    Axios.get(
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
+        this.props.userID
+      }`
+
     ).then(({ data }) => {
       console.log(data);
       this.setState({
         length: data.length,
         data: data
-			 });
-	  });
-	}
+      });
+    });
+  }
 
 createLpPage = () => {
   //let lpIDList = []
