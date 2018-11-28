@@ -242,6 +242,7 @@ app.get('/teacher/:user_id', (request, response) => {
     });
 });
 
+// add ability to sort by interests for specific uid -> if interest match then lp will be ranked higher
 // This endpoint basically makes previous one invalid since you can just put the user_id of teacher as owner=user_id. (But made it as John specifically asked for it)
 // GET all lps matching query vars: Name, Topic, Owner (to get all leave empty)
 app.get('/search', async (request, response) => {
@@ -249,10 +250,13 @@ app.get('/search', async (request, response) => {
   let name = request.query.name || '';
   let owner = request.query.owner || '';
   let topic = request.query.topic || '';
+  let mature = request.query.topic || '';
+  let uid = request.query.uid || '';
   let valsExist = false;
   let nameExists = true;
   let ownerExists = true;
   let topicExists = true;
+  let uidExists = true;
   if (name.length == 0) {
     nameExists = false;
   }
@@ -262,10 +266,35 @@ app.get('/search', async (request, response) => {
   if (topic.length == 0) {
     topicExists = false;
   }
-  if (nameExists || ownerExists || topicExists || mature) {
+  let interests = [];
+  if (uid.length == 0) {
+    uidExists = false;
+  } else {
+    const userRef = admin.database().ref(`/Users/${uid}`);
+    await userRef.once('value', function(snapshot) {
+      if (!snapshot.exists) {
+        // uid not found
+        return response.status(400).json({
+          message: `User with id: ${uid} not found.`
+        });
+      } else {
+        if (snapshot.hasChild('Interests')) {
+          snapshot.child('Interests').forEach(function(childSnap) {
+            interests.push(childSnap.val());
+          });
+        } else {
+          return response.status(400).json({
+            message: `Learning path with id: ${uid} does not have any Interests.`
+          });
+        }
+      }
+    });
+  }
+  if (nameExists || ownerExists || topicExists || mature || uidExists) {
     valsExist = true;
   }
   var resp = [];
+  var resp2 = [];
   await lpRef.once('value', function(snapshot) {
     if (valsExist) {
       snapshot.forEach(function(childSnapshot) {
@@ -334,13 +363,34 @@ app.get('/search', async (request, response) => {
           matureCheck = false;
         }
         if (nameCheck && ownerCheck && matureCheck && topicCheck) {
-          resp.push([childSnapshot.key, childSnapshot.val()]);
+          if (interests.length > 0) {
+            // if snap matches interest then add to resp, else add to resp2
+            // console.log(snapshot.val());
+            interests.forEach(element => {
+              if (
+                JSON.stringify(childSnapshot.val())
+                  .toLowerCase()
+                  .indexOf(element.toLowerCase()) != -1
+              ) {
+                //snapshot contains interest
+                console.log(childSnapshot.val());
+                resp.push([childSnapshot.key, childSnapshot.val()]);
+              } else {
+                resp2.push([childSnapshot.key, childSnapshot.val()]);
+              }
+            });
+          } else {
+            resp.push([childSnapshot.key, childSnapshot.val()]);
+          }
         }
       });
     } else {
       resp = snapshot.val();
     }
   });
+  if (resp2.length > 0) {
+    resp = resp.concat(resp2);
+  }
   return response.status(200).json(resp);
 });
 
