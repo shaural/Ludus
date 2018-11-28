@@ -22,7 +22,9 @@ export default class LearningPathCreate extends Component {
   }
 
   submitPrereq = () => {
-    let data = JSON.stringify(this.state.prereq);
+    let data = JSON.stringify({
+      pre_reqs_list: this.state.prereq
+    });
     if (
       this.state.name.toString().length != 0 &&
       this.state.topic.toString().length != 0
@@ -30,13 +32,19 @@ export default class LearningPathCreate extends Component {
       Axios.patch(
         `https://us-central1-ludusfire.cloudfunctions.net/learningPath/
      ${this.state.topic}/recommended_pre_reqs`,
-        'pre_reqs_list:' + data
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       )
         .then(function(resp) {
           console.log(resp);
         })
         .catch(function(err) {
           alert(err);
+          console.log(err.data);
         });
     } else {
       //ignore empty lp
@@ -138,6 +146,7 @@ export default class LearningPathCreate extends Component {
     const config = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     };
+
     Axios.post(
       `https://us-central1-ludusfire.cloudfunctions.net/users/${
         this.props.userID
