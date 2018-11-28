@@ -174,7 +174,8 @@ describe('testing users', function() {
             .post(`/${test_user_id}/teacher/learningPath`)
             .send({
               topic: 'lifestyle',
-              name: 'how to write test cases'
+              name: 'how to write test cases',
+              mature: false
             })
             .set('Accept', 'application/json')
             .expect(200, done);
