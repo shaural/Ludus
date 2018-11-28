@@ -108,7 +108,7 @@ app.delete('/:lp_id', async (request, response) => {
 app.post('/', async (request, response) => {
   const db = admin.database().ref('/Learning_Paths');
 
-  const { name, owner, mature, topic } = request.body;
+  const { name, owner, mature, topic, classes } = request.body;
 
   if (!name) {
     return response.status(400).json({
