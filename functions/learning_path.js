@@ -394,4 +394,126 @@ app.get('/search', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+// fetch similar LPs like ones I have completed
+app.get('/student/:user_id/similarCompleted', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  const userRef = admin.database().ref(`/Users`);
+  let uid = request.params.user_id;
+  // get LPs user with uid has completed
+  let lps_compelted = [];
+  await userRef.once('value', function(snapshot) {
+    if (snapshot.hasChild(uid)) {
+      if (
+        snapshot
+          .child(uid)
+          .child('Student')
+          .hasChild('LP_Enrolled')
+      ) {
+        // student is enrolled in atleast 1 lp
+        snapshot
+          .child(uid)
+          .child('Student')
+          .child('LP_Enrolled')
+          .forEach(function(childSnap) {
+            if (
+              childSnap
+                .child('LP_Status')
+                .val()
+                .indexOf('Completed') != -1
+            ) {
+              // childSnap lp is completed
+              lps_compelted.push(childSnap.key);
+            }
+          });
+      } else {
+        // student not enrolled in any lps
+        return response.status(400).json({
+          message: `User with id: ${uid} not enrolled in any Learning Paths.`
+        });
+      }
+    } else {
+      // User does not exist
+      return response.status(400).json({
+        message: `User with id: ${uid} not found.`
+      });
+    }
+  });
+  let resp = [];
+  await lpRef.once('value', function(snapshot) {
+    console.log(lps_compelted);
+    lps_compelted.forEach(completedLp => {
+      //get info for compeletedLp
+      let owner = '';
+      let topic = '';
+      // let name = "";
+      let topic_split = [];
+      let lp_id_inserted = [];
+      if (snapshot.child(completedLp).hasChild('Owner')) {
+        owner = snapshot
+          .child(completedLp)
+          .child('Owner')
+          .val();
+        snapshot.forEach(function(childSnap) {
+          if (
+            owner.length > 0 &&
+            childSnap.hasChild('Owner') &&
+            childSnap
+              .child('Owner')
+              .val()
+              .toLowerCase()
+              .indexOf(owner.toLowerCase()) != -1
+          ) {
+            if (
+              !lps_compelted.includes(childSnap.key) &&
+              !lp_id_inserted.includes(childSnap.key)
+            ) {
+              // not already completed -> need to suggest
+              resp.push([childSnap.key, childSnap.val()]);
+              lp_id_inserted.push(childSnap.key);
+            }
+          }
+        });
+      }
+      if (snapshot.child(completedLp).hasChild('Topic')) {
+        topic = snapshot
+          .child(completedLp)
+          .child('Topic')
+          .val();
+        // looks like topic is stored as a ', ' seperated string (will not change this now, since might mess up something someone else implemented)
+        topic_split = topic.split(', ');
+        snapshot.forEach(function(childSnap) {
+          for (var t of topic_split) {
+            if (
+              t.length > 0 &&
+              childSnap.hasChild('Topic') &&
+              childSnap
+                .child('Topic')
+                .val()
+                .toLowerCase()
+                .indexOf(t.toLowerCase()) != -1
+            ) {
+              if (
+                !lps_compelted.includes(childSnap.key) &&
+                !lp_id_inserted.includes(childSnap.key)
+              ) {
+                // not already completed -> need to suggest
+                resp.push([childSnap.key, childSnap.val()]);
+                lp_id_inserted.push(childSnap.key);
+                break;
+              }
+            }
+          }
+        });
+      }
+      // do I need to check for name, as name can be arbitrary...?
+      // if(snapshot.child(completedLp).hasChild("Name")) {
+      //   name = snapshot.child(completedLp).child("Name").val();
+      // }
+
+      // get all lps that have same owner as in lps_completed
+    });
+  });
+  return response.status(200).json(resp);
+});
+
 exports.route = app;
