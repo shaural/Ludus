@@ -12,7 +12,7 @@ class LpPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      length: 3,
+      length: 1,
       LearningPath: '',
       data: []
     };
@@ -43,7 +43,8 @@ class LpPage extends Component {
         <div className="lpObject">
           {<Lp LearningPathID={this.state.data} i={i} />}
           <span className="Placeholder">
-            {<LpEditBtn />} <text> </text> {<LpDeleteBtn />}
+            {<LpEditBtn LearningPathID={this.state.data[i]} />} <text> </text>{' '}
+            {<LpDeleteBtn lpID={this.state.data[0]} />}
           </span>
         </div>
       );

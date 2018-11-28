@@ -10,18 +10,20 @@ class ClassRemoveButton extends Component {
     );
   }
 
-  requestRemove() {
-    /* waiting on getClassID API
-    Axios.delete('https://us-central1-ludusfire.cloudfunctions.net/classes/', { params: this.props.classID })
+  requestRemove = () => {
+    Axios.delete(
+      `https://us-central1-ludusfire.cloudfunctions.net/classes/${
+        this.props.classID
+      }`
+    )
       .then(function(response) {
         console.log(response);
       })
       .catch(function(error) {
         console.log(error);
       });
-    */
     return false;
-  }
+  };
 }
 
 export default ClassRemoveButton;

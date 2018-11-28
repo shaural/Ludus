@@ -10,7 +10,15 @@ app.use(require('cors')({ origin: true }));
 //needed for frontend
 app.get('/getuid/:email', async (request, response) => {
   let email = request.params.email;
-  const db = admin.database().ref('/Users');
+  let found = await ref_has_child(admin.database().ref(), '/Users');
+
+  if (!found) {
+    return response.json(404).status('Unable to find users');
+  }
+  const db = admin
+    .database()
+    .ref()
+    .child('/Users');
   if (!db) {
     return response.status(404).json({
       message: 'Unable to make database connection'
@@ -21,7 +29,7 @@ app.get('/getuid/:email', async (request, response) => {
     snapshot.forEach(function(childSnapshot) {
       childSnapshot.forEach(function(grandChildSnapshot) {
         let val = grandChildSnapshot.val();
-        if (val == email) {
+        if (val === email) {
           uid = childSnapshot.key;
         }
       });
@@ -111,18 +119,19 @@ app.post('/:user_id/student', async (request, response) => {
 });
 
 //patch function for interests
-app.patch('/:user_id/:interest_name', async (request, response) => {
-  const db = admin
-    .database()
-    .ref(`/Users/${request.params.user_id}`)
-    .child('Interests');
-  let interest = request.params.interest_name;
-  if (!db) {
-    return response.status(404).json({
-      message:
-        'A fatal error occurred when attempting to update the interests of this user'
-    });
+app.patch('/:user_id/interest/:interest_name', async (request, response) => {
+  const found = await ref_has_child(admin.database().ref(), 'Users');
+  if (!found) {
+    return response.status(404).json('Error: No interests found!');
   }
+
+  const db = admin.database().ref(`/Users/${request.params.user_id}`);
+  let interest = request.params.interest_name;
+
+  if (!db) {
+    return response.status(404).json(' Could not connect to db');
+  }
+
   let interestsRef = db.push();
   interestsRef.update({
     interest: interest
@@ -131,17 +140,27 @@ app.patch('/:user_id/:interest_name', async (request, response) => {
 });
 
 //delete an interest
-app.delete('/:user_id/:interest_name', async (request, response) => {
+app.delete('/:user_id/interest/:interest_name', async (request, response) => {
   let interest = request.params.interest_name;
+
+  let found = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Interests'
+  );
+  if (!found) {
+    return response.status(404).json('Could not find the interests list');
+  }
+
   const db = admin
     .database()
     .ref(`/Users/${request.params.user_id}`)
     .child('Interests');
   if (!db) {
     return response.status(404).json({
-      message: 'A fatal error occurred when attempting to delete an interest'
+      message: 'Unable to find the interests'
     });
   }
+
   //query to find the correct interest to delete
   //note: In case the user typed an interest and spammed the enter key
   //creating multiple instances of the interest
@@ -161,7 +180,7 @@ app.delete('/:user_id/:interest_name', async (request, response) => {
                   .json('Successfully removed interest');
               } catch (e) {
                 return response
-                  .status(404)
+                  .status(500)
                   .json('A server error occurred during deletion');
               }
             });
@@ -233,7 +252,15 @@ app.get('/', (request, response) => {
   });
 });
 // GET method (for user with user_id)
-app.get('/:user_id', (request, response) => {
+app.get('/:user_id', async (request, response) => {
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.id} not found` });
   const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
   userRef.once('value', function(snapshot) {
     return response.status(200).json(snapshot.val());
@@ -285,38 +312,54 @@ app.patch('/:user_id', async (request, response) => {
 
 //delete user
 app.delete('/:user_id', async (request, response) => {
-  const userref = admin.database().ref(`/Users/${request.params.user_id}`);
-  if (!userref)
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
     return response
       .status(404)
       .json({ message: `user with id ${request.params.user_id} not found` });
 
+  const userref = admin.database().ref(`/Users/${request.params.user_id}`);
+
   //remove from db
-  userref
-    .remove()
-    .then(function() {
-      return response
-        .status(200)
-        .json({ message: `User with id ${request.params.user_id} deleted.` });
-    })
-    .catch(function(error) {
-      console.log('Error deleting user:', error);
-      return response.status(400).json({
-        message: `Error, Could not delete user with id ${
-          request.params.user_id
-        }`
-      });
+  try {
+    await userref.remove();
+    return response
+      .status(200)
+      .json({ message: `User with id ${request.params.user_id} deleted.` });
+  } catch (err) {
+    return response.status(500).json({
+      message: `Error, Could not delete user with id ${request.params.user_id}`
     });
+  }
 });
 
 // shen282 Update Teacher API
-app.patch('/:user_id/teacher', (request, response) => {
-  if (!request.body)
+app.patch('/:user_id/teacher', async (request, response) => {
+  if (!Object.keys(request.body).length)
     return response.status(400).json({ messsage: 'malformed request' });
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const found_teacher = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Teacher'
+  );
+  if (!found_teacher)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a teacher`
+    });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Teacher`);
   if (!db)
     return response.status(404).json({
-      message: 'user with id ${request.params.user_id} not found'
+      message: `user with id ${request.params.user_id} not found`
     });
 
   const { bio, nickName } = request.body;
@@ -325,17 +368,29 @@ app.patch('/:user_id/teacher', (request, response) => {
   if (nickName) updates['Nickname'] = nickName;
 
   db.update(updates);
-  return response.status(200);
+  return response.status(200).json({});
 });
 
 // shen282 Update Student API
 app.patch('/:user_id/student', async (request, response) => {
-  if (!request.body)
+  if (!Object.keys(request.body).length)
     return response.status(400).json({ messsage: 'malformed request' });
-  const found = await ref_has_child(
+  const found_user = await ref_has_child(
     admin.database().ref('/Users'),
     request.params.user_id
   );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}/`),
+    'Student'
+  );
+  if (!found_student)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
   const db = admin.database().ref(`/Users/${request.params.user_id}/Student`);
   if (!db)
     return response.status(404).json({
@@ -344,12 +399,12 @@ app.patch('/:user_id/student', async (request, response) => {
 
   const { name } = request.body; //const { name, LP, teachers }
   let updates = {};
-  if (name) updates['nickName'] = name;
+  if (name) updates['Nickname'] = name;
   // how are we going to handle containing student specific information on lp's enrolled in, array?
   // firebase update can't append to array, only replace with a larger one
   // if(LP) updates['LP_Enrolled'] = ( `${request.params.user_id}_lp_enrolled` - old array, LP - pass in new array )?
   db.update(updates);
-  return response.status(200);
+  return response.status(200).json({});
 });
 
 app.get('/:user_id/student/following', async (request, response) => {
@@ -473,16 +528,35 @@ app.delete(
 );
 
 app.post('/:user_id/teacher/learningPath', async (request, response) => {
-  if (!request.body)
+  if (!Object.keys(request.body).length)
     return response.status(400).json({ messsage: 'malformed request' });
   // TODO: verify that user_id is valid
   // const validate_input = (topic, name) =>
   //   (topic && topic.toString().length) &&
   //   (name && name.toString().length);
 
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users/'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+
+  const found_teacher = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Teacher'
+  );
+  if (!found_teacher)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a teacher`
+    });
+
   const {
     topic,
     name,
+    mature,
     ClassList,
     StudentsEnrolled = null,
     Teachers_who_recommend = null
@@ -499,8 +573,9 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
     .push({
       Topic: topic,
       Name: name,
+      Mature: mature,
       Owner: request.params.user_id,
-      Class_List: ClassList,
+      Class_List: ClassList || [],
       St_Enrolled: [],
       T_recommend: []
     })
@@ -618,7 +693,7 @@ app.post(
     const userRef = admin.database().ref(`/Users/${request.params.user_id}`);
     const lpRef = admin
       .database()
-      .ref(`/Learning_Paths/${request.params.lp_id}/Class`);
+      .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
 
     // get classes of lp: lp_id
     var updates = {};
@@ -630,7 +705,7 @@ app.post(
           lpExists = true;
         }
         snapshot.forEach(function(childSnapshot) {
-          updates[childSnapshot.child('Class_Id').val()] = 0;
+          updates[childSnapshot.val()] = 0;
         });
       });
       if (!lpExists) {

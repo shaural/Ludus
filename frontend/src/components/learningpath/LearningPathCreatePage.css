@@ -52,6 +52,12 @@
   border-radius: 0.25rem !important;
 }
 
+.check {
+  display: inline-block;
+  margin-right: 43%;
+  align-items: center;
+}
+
 .long {
   display: inline-block;
   margin-right: 23%;

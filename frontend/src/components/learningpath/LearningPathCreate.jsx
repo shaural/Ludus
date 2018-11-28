@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import CreationList from './CreationList';
 import AddList from './AddList';
+import '../class/ClassList.css';
 const Axios = require('axios');
 var querystring = require('querystring');
 
@@ -12,6 +13,7 @@ export default class LearningPathCreate extends Component {
       name: '',
       topic: '',
       prereq: '',
+      mature: 'no',
       classes: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
@@ -66,6 +68,16 @@ export default class LearningPathCreate extends Component {
     this.setState({ show: false });
   };
 
+  handleMatureCheck = event => {
+    console.log(this.state.mature);
+    if (event.target.checked) {
+      this.setState({ mature: 'yes' });
+    } else {
+      this.setState({ mature: 'no' });
+    }
+    console.log(this.state.mature);
+  };
+
   render() {
     return (
       <div>
@@ -91,6 +103,14 @@ export default class LearningPathCreate extends Component {
             className="long"
             type="text"
             onChange={event => this.setState({ topic: event.target.value })}
+          />
+          <br /> <br />
+          Mature Content&nbsp;
+          {'\t\t'}
+          <input
+            className="check"
+            type="checkbox"
+            onChange={event => this.handleMatureCheck(event)}
           />
         </form>
         <div className="lpcontainer">
@@ -141,6 +161,7 @@ export default class LearningPathCreate extends Component {
     const requestBody = {
       name: this.state.name,
       topic: this.state.topic,
+      mature: this.state.mature,
       ClassList: this.state.classes
     };
     const config = {
@@ -172,11 +193,13 @@ const Modal = ({ handleClose, show, children }) => {
 
   return (
     <div className={showHideClassName}>
-      <section className="modal-main">
-        {children}
-        <button onClick={handleClose}>Back</button>
-        <br />
-      </section>
+      <div className="ClassForm">
+        <section className="modal-main">
+          {children}
+          <button onClick={handleClose}>Back</button>
+          <br />
+        </section>
+      </div>
     </div>
   );
 };
