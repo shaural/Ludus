@@ -10,7 +10,9 @@ class ClassSearch extends Component {
       owner: '',
       content: '',
       tag: '',
-      classList: []
+      mature: 'no',
+      classList: [],
+      classInfo: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
@@ -36,18 +38,22 @@ class ClassSearch extends Component {
       if (multi) query += '&';
       query += 'tag=' + this.state.tag;
     }
+    if (this.state.mature == 'yes') {
+      if (multi) query += '&';
+      query += 'mature=yes';
+    }
     Axios.get(
       `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
     )
       .then(response => {
         console.log(response);
         let classList = [];
+        let classInfo = [];
         for (let id in response.data) {
-          for (let sid in id) {
-            classList.push(response.data[id][sid]);
-          }
+          classList.push(response.data[id][0]);
+          classInfo.push(response.data[id][1]);
         }
-        this.setState({ classIDList: classList });
+        this.setState({ classIDList: classList, classInfo: classInfo });
         this.submitSearch();
       })
       .catch(function(error) {
@@ -63,11 +69,26 @@ class ClassSearch extends Component {
       if (this.state.classIDList[id] === undefined) return;
       classes.push(
         <div className="ClassObject" key={id}>
-          {<Class classID={this.state.classIDList[id]} />}
+          {
+            <Class
+              classID={this.state.classIDList[id]}
+              classInfo={this.state.classInfo[id]}
+            />
+          }
         </div>
       );
     }
     return classes;
+  };
+
+  handleMatureCheck = event => {
+    console.log(this.state.mature === 'no');
+    if (event.target.checked) {
+      this.setState({ mature: 'yes' });
+    } else {
+      this.setState({ mature: 'no' });
+    }
+    console.log(this.state.mature);
   };
 
   render() {
@@ -103,6 +124,13 @@ class ClassSearch extends Component {
             className="inLine"
             type="text"
             onChange={event => this.setState({ tag: event.target.value })}
+          />
+          <br /> <br />
+          Mature Content Filter:&nbsp;
+          <input
+            className="check"
+            type="checkbox"
+            onChange={event => this.handleMatureCheck(event)}
           />
           <br /> <br />
           <input

@@ -1,20 +1,33 @@
-const admin = require('./utils').firebaseAdmin;
+const { firebaseAdmin, ref_has_child } = require('./utils');
+const admin = firebaseAdmin;
 
 const app = require('express')();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
 app.post('/', async (request, response) => {
   const db = admin.database().ref(`/Classes`);
 
-  const { name, content_type, owner, tags, time, video } = request.body;
+  const {
+    name,
+    content_type,
+    owner,
+    mature,
+    tags,
+    time,
+    content
+  } = request.body;
   try {
     await db
       .push({
         Name: name,
         Owner: owner,
-        Time: time,
-        Video: video,
+        Content: content,
+        Time: time || [],
         Content_type: content_type || [],
+        Mature: mature || 'no',
         Tags: tags || []
       })
       .once('value')
@@ -42,20 +55,22 @@ app.patch('/:class_id', async (request, response) => {
     rating,
     content_type,
     owner,
+    mature,
     tags,
     comments,
     time,
-    video
+    content
   } = request.body;
 
   await db
     .push({
       Name: name,
       Owner: owner,
-      Time: time,
-      Video: video,
+      Content: content,
+      Time: time || [],
       Ratings: rating || [],
       Content_type: content_type || [],
+      Mature: mature || 'no',
       Tags: tags || [],
       Comments: comments || []
     })
@@ -71,11 +86,15 @@ app.patch('/:class_id', async (request, response) => {
 });
 
 app.delete('/:class_id', async (request, response) => {
-  const db = admin.database().ref(`/Classes/${request.params.class_id}`);
-  if (!db)
+  const found = await ref_has_child(
+    admin.database().ref(`/Classes/`),
+    request.params.class_id
+  );
+  if (!found)
     return response.status(404).json({
       message: `class with id ${request.params.id} not found`
     });
+  const db = admin.database().ref(`/Classes/${request.params.class_id}`);
   return db
     .remove()
     .then(() =>
@@ -104,14 +123,18 @@ app.get('/classlist/:user_id', (request, response) => {
 
 // Class information API
 app.get('/:class_id/info', async (request, response) => {
+  const found = await ref_has_child(
+    admin.database().ref('/Classes'),
+    request.params.class_id
+  );
+  if (!found)
+    return response.status(404).json({
+      message: `class with id ${request.params.id} not found`
+    });
   const db = admin
     .database()
     .ref(`/Classes/`)
     .child(request.params.class_id);
-  if (!db)
-    return response.status(404).json({
-      message: `class with id ${request.params.id} not found`
-    });
   var out = {};
   db.once('value').then(function(snapshot) {
     out = snapshot.val();
@@ -132,18 +155,21 @@ app.get('/:class_id/info', async (request, response) => {
   });
 });
 
-// Code for Class Search by: name, owner, content_type, Tags
+// Code for Class Search by: name, owner, content_type, Tags, mature filter
 app.get('/search', async (request, response) => {
   const classRef = admin.database().ref(`/Classes`);
   let name = request.query.name || '';
   let owner = request.query.owner || '';
   let content_type = request.query.content_type || '';
   let tag = request.query.tag || '';
+  let mature = request.query.mature || '';
   let nameExists = true;
   let ownerExists = true;
   let ctExists = true;
   let tagExists = true;
+  let matureExists = true;
   let valsExist = false;
+
   if (name.length == 0) {
     nameExists = false;
   }
@@ -156,7 +182,10 @@ app.get('/search', async (request, response) => {
   if (tag.length == 0) {
     tagExists = false;
   }
-  if (ctExists || nameExists || ownerExists || tagExists) {
+  if (mature.length == 0) {
+    matureExists = false;
+  }
+  if (ctExists || nameExists || ownerExists || tagExists || matureExists) {
     valsExist = true;
   }
   var resp = [];
@@ -167,6 +196,7 @@ app.get('/search', async (request, response) => {
         let oflg = false;
         let cflg = false;
         let tflg = false;
+        let mflg = true;
         if (
           name &&
           childSnapshot
@@ -210,11 +240,16 @@ app.get('/search', async (request, response) => {
             }
           });
         }
+        //check if mature filter is on, and if the class is marked so
+        if (mature && childSnapshot.child('Mature').val() == 'yes') {
+          mflg = false;
+        }
         // check if all arguments sent are matched
         let nameCheck = true;
         let ownerCheck = true;
         let ctCheck = true;
         let tagCheck = true;
+        let matureCheck = true;
         if (nameExists && !nflg) {
           nameCheck = false;
         }
@@ -227,7 +262,10 @@ app.get('/search', async (request, response) => {
         if (tagExists && !tflg) {
           tagCheck = false;
         }
-        if (nameCheck && ownerCheck && ctCheck && tagCheck) {
+        if (matureExists && !mflg) {
+          matureCheck = false;
+        }
+        if (nameCheck && ownerCheck && ctCheck && tagCheck && matureCheck) {
           resp.push([childSnapshot.key, childSnapshot.val()]);
         }
       });

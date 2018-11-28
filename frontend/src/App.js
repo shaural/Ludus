@@ -15,6 +15,11 @@ import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
 import EditLP from './components/learning_path/edit_learning_path';
 import ClassSearchPage from './components/class/ClassSearchPage';
+import Dashboard from './components/navigation/Dashboard';
+import LearningPathsEnrolledPage from './components/learningpath/LearningPathsEnrolledPage';
+import NavBar from './components/NavBar';
+import { AddInterests } from './components/interests/add-interests';
+import { DeleteInterests } from './components/interests/delete-interests';
 
 class App extends Component {
   constructor(props) {
@@ -32,12 +37,13 @@ class App extends Component {
         <Link to="/login">Login</Link> &nbsp;
         <Link to="/signup">Sign Up</Link> &nbsp;
         <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
+        <Link to="/student-lplist">Enrolled Learning Paths</Link> &nbsp;
         <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
         <Link to="/profile">User Profile</Link> &nbsp;
         <Link to="/class-search">Search Classes</Link> &nbsp;
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
-        <Link to="garbage">404</Link> &nbsp;
+        <Link to="/interests">Add or remove interests</Link> &nbsp;
         <Link
           to={{
             pathname: '/LPEdit',
@@ -59,20 +65,23 @@ class App extends Component {
           type="text"
           onChange={event => this.setState({ userID: event.target.value })}
         />
+        {/*TODO: Use firebase.auth().currentUser to check if a user is logged in or not*/}
         {/* probably want to check if you're logged in or not for the home page? */}
+        <NavBar userID={this.state.userID} />
         <Switch>
           <Route exact path="/LPEdit" component={EditLP} />
           <Route exact path="/classCreate" component={ClassCreatePage} />
           <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
+          <Route exact path="/interests" component={AddInterests} />
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
+          <Route exact path="/remove" component={DeleteInterests} />
           <Route
             path="/password-recovery"
             component={PasswordReset} /*placeholder*/
           />
-
           {/*requires userID*/}
           <Route
             path="/profile"
@@ -80,22 +89,22 @@ class App extends Component {
               <ProfilePage {...props} userID={this.state.userID} />
             )}
           />
-
           <Route path="/class-search" component={ClassSearchPage} />
-
           {/*requires userID*/}
-          <Route path="/profile" component={IllegalPath} /*placeholder*/ />
-
-          <Route path="/student-dash" component={IllegalPath} /*placeholder*/ />
+          <Route path="/dashboard" component={Dashboard} /*placeholder*/ />
           <Route
             path="/student-classlist"
             component={IllegalPath} /*placeholder*/
-          />
+          />{' '}
           <Route
             path="/student-lplist"
-            component={IllegalPath} /*placeholder*/
+            render={props => (
+              <LearningPathsEnrolledPage
+                {...props}
+                userID={this.state.userID}
+              />
+            )} /*placeholder*/
           />
-          <Route path="/teacher-dash" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/teacher-class-create"
             component={IllegalPath} /*placeholder*/
@@ -113,16 +122,9 @@ class App extends Component {
             )}
           />
           <Route
-            path="/teacher-classlist"
-            render={props => (
-              <ClasslistPage {...props} userID={this.state.userID} />
-            )}
-          />
-          <Route
             path="/teacher-lplist"
             render={props => <LpPage {...props} userID={this.state.userID} />}
           />
-
           <Route
             path="/teacher-lp-create"
             render={props => (
