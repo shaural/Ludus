@@ -145,7 +145,6 @@ export default class LearningPathCreate extends Component {
 //list of classes to choose from
 const Modal = ({ handleClose, show, children }) => {
   const showHideClassName = show ? 'modal display-block' : 'modal display-none';
-
   return (
     <div className={showHideClassName}>
       <div className="ClassForm">

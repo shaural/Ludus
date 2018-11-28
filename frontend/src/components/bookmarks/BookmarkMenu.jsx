@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Bookmark from './Lp';
+import Bookmark from '../learningpath/Lp';
 //import LpDropButton from './LpDropButton';
 //import './Forms.css';
 //import './ClassList.css';

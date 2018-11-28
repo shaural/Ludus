@@ -11,6 +11,7 @@ class Dashboard extends Component {
           <div className="Learn">
             <Link to="/student-lplist">Enrolled Learning Paths</Link> <br />
             <Link to="/class-search">Search Classes</Link> <br />
+            <Link to="/bookmarks">Bookmarks</Link> <br />
           </div>
           <div className="Teach">
             <Link to="/teacher-classlist">Your Classes</Link> <br />
