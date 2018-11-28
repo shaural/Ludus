@@ -2,7 +2,9 @@ const { firebaseAdmin, ref_has_child } = require('./utils');
 const admin = firebaseAdmin;
 
 const app = require('express')();
-
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
 // Body: Index: Order of class in learning path, class_id
