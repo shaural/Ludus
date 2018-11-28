@@ -5,6 +5,7 @@ import './App.css';
 import { PasswordReset } from './passwordreset/PasswordReset';
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
+import FacebookLogin from './login/facebook';
 import SignUpPage from './components/account/SignUpPage';
 import ClasslistPage from './components/class/ClasslistPage';
 import LpPage from './components/learningpath/LpPage';

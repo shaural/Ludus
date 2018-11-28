@@ -80,8 +80,6 @@ export class FacebookLogin extends Component {
         <Button bsStyle="primary" onClick={this.submitData}>
           Enter
         </Button>
-        <FormControl.Feedback />
-        {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
       </Form>
     );
   }
