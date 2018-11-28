@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Lp from './Lp';
+import Bookmark from './Lp';
 //import LpDropButton from './LpDropButton';
 //import './Forms.css';
 //import './ClassList.css';
@@ -10,46 +10,43 @@ class ClassList extends Component {
     super(props);
     this.state = {
       name: '',
-      owner: this.props.userID /*-LNVWR9kD2dvN8GLGFYE*/,
-      update: '',
-      pathIDList: [],
-      pathInfo: []
+      IDList: [],
+      ObjList: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
 
   componentDidMount = () => {
-    this.createPathList();
+    this.fetchBookmarks();
   };
 
   fetchBookmarks = () => {
     Axios.get(
       `https://us-central1-ludusfire.cloudfunctions.net/users/${
         this.props.userID
-      }/student/learningPaths`
-    ).then();
+      }/student/bookmarks`
+    )
+      .then(function(response) {
+        //populate the IDList
+      })
+      .then(function() {
+        //convert the IDList into ObjectList
+      });
+    return <div>a</div>;
   };
 
-  submitSearch = () => {
-    if (this.state.pathIDList === undefined || !this.state.pathIDList)
-      return <h2>No Learning Paths...</h2>;
-    let paths = [];
-    for (let id in this.state.pathIDList) {
-      paths.push(
-        <div className="LpObject" key={id}>
-          {<Lp LearningPathID={this.state.pathIDList[id]} />}
-          {/*<LpDropButton onClick={(event) => this.setState({ update: '' })} classID={this.state.classIDList[id]} />*/}
-        </div>
-      );
+  displayBookmarks = () => {
+    let displayList = [];
+    for (let id in this.state.ObjList) {
     }
-    return paths;
+    return;
   };
 
   render() {
     return (
       <div>
         <br /> <br />
-        <div className="ClassForm">{this.submitSearch()}</div>
+        <div className="ClassForm">{this.displayBookmarks()}</div>
       </div>
     );
   }

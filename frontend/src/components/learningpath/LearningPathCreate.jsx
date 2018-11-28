@@ -109,31 +109,36 @@ export default class LearningPathCreate extends Component {
     if (!this.state.classes) {
       alert('No Classes in LP!');
     }*/
-    const requestBody = {
-      name: this.state.name,
-      topic: this.state.topic,
-      mature: this.state.mature,
-      ClassList: this.state.classes
-    };
-    const config = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    };
-    Axios.post(
-      `https://us-central1-ludusfire.cloudfunctions.net/users/${
-        this.props.userID
-      }/teacher/learningPath/`,
-      querystring.stringify(requestBody),
-      config
-    )
-      .then(function(response) {
-        console.log(response);
-      })
-      .catch(function(error) {
-        console.log(error);
-        alert(error.message);
-      });
-    alert('Published Learning Path!');
-
+    if (this.state.name === '') {
+      alert('Please name your learning path');
+    } else if (this.state.topic === '') {
+      alert('Please provide a topic');
+    } else {
+      const requestBody = {
+        name: this.state.name,
+        topic: this.state.topic,
+        mature: this.state.mature,
+        ClassList: this.state.classes
+      };
+      const config = {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      };
+      Axios.post(
+        `https://us-central1-ludusfire.cloudfunctions.net/users/${
+          this.props.userID
+        }/teacher/learningPath/`,
+        querystring.stringify(requestBody),
+        config
+      )
+        .then(function(response) {
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+          alert(error.message);
+        });
+      alert('Published Learning Path!');
+    }
     return false;
   }
 }
