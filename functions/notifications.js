@@ -43,4 +43,39 @@ app.get('/:user_id', (request, response) => {
   });
 });
 
+//delete notification
+app.delete('/:user_id/:notification_id', async (request, response) => {
+  const notRef = admin
+    .database()
+    .ref(`/Notifications/${request.params.user_id}`);
+  let notId = request.params.notification_id;
+  await notRef.once('value', function(snapshot) {
+    if (!snapshot.hasChild(notId)) {
+      // not does not exist
+      return response.status(400).json({
+        message: `User with id: ${
+          request.params.user_id
+        } does not notification with id: ${request.params.notification_id}.`
+      });
+    }
+  });
+  //remove from db
+  try {
+    await notRef.remove();
+    return response
+      .status(200)
+      .json({
+        message: `Notification with id ${
+          request.params.notification_id
+        } deleted.`
+      });
+  } catch (err) {
+    return response.status(500).json({
+      message: `Error, Could not delete notification with id ${
+        request.params.notification_id
+      }`
+    });
+  }
+});
+
 exports.route = app;
