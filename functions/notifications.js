@@ -9,11 +9,12 @@ app.post('/:receiver_id', async (request, response) => {
     .database()
     .ref(`/Notifications/${request.params.receiver_id}`);
   let receiver = request.params.receiver_id;
-  const { sender_name, text } = request.body;
-  if (sender_name.length > 0 && text.length > 0) {
+  const { subject, text, sender_name } = request.body;
+  if (subject.length > 0 && text.length > 0) {
     db.push({
-      sender_name: sender_name,
-      text: text
+      subject: subject,
+      text: text,
+      sender_name: sender_name || ''
     });
     return response.status(200).json({
       message: `Notification successfully sent.`
@@ -31,14 +32,7 @@ app.get('/:user_id', (request, response) => {
   const ref = admin.database().ref(`/Notifications/${request.params.user_id}`);
   ref.once('value', function(snapshot) {
     if (snapshot.hasChildren()) {
-      let resp = [];
-      snapshot.forEach(function(childSnap) {
-        resp.push([
-          childSnap.child('sender_name').val(),
-          childSnap.child('text').val()
-        ]);
-      });
-      return response.status(200).json(resp);
+      return response.status(200).json(snapshot.val());
     } else {
       return response.status(400).json({
         message: `User with id: ${
