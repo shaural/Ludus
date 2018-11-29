@@ -1,17 +1,31 @@
-const admin = require('./utils').firebaseAdmin;
+const { firebaseAdmin, ref_has_child } = require('./utils');
+const admin = firebaseAdmin;
 
 const app = require('express')();
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
 app.post('/', async (request, response) => {
   const db = admin.database().ref(`/Classes`);
 
-  const { name, content_type, owner, mature, tags } = request.body;
+  const {
+    name,
+    content_type,
+    owner,
+    mature,
+    tags,
+    time,
+    content
+  } = request.body;
   try {
     await db
       .push({
         Name: name,
         Owner: owner,
+        Content: content,
+        Time: time || [],
         Content_type: content_type || [],
         Mature: mature || 'no',
         Tags: tags || []
@@ -43,13 +57,17 @@ app.patch('/:class_id', async (request, response) => {
     owner,
     mature,
     tags,
-    comments
+    comments,
+    time,
+    content
   } = request.body;
 
   await db
     .push({
       Name: name,
       Owner: owner,
+      Content: content,
+      Time: time || [],
       Ratings: rating || [],
       Content_type: content_type || [],
       Mature: mature || 'no',
@@ -68,11 +86,15 @@ app.patch('/:class_id', async (request, response) => {
 });
 
 app.delete('/:class_id', async (request, response) => {
-  const db = admin.database().ref(`/Classes/${request.params.class_id}`);
-  if (!db)
+  const found = await ref_has_child(
+    admin.database().ref(`/Classes/`),
+    request.params.class_id
+  );
+  if (!found)
     return response.status(404).json({
       message: `class with id ${request.params.id} not found`
     });
+  const db = admin.database().ref(`/Classes/${request.params.class_id}`);
   return db
     .remove()
     .then(() =>
@@ -101,14 +123,18 @@ app.get('/classlist/:user_id', (request, response) => {
 
 // Class information API
 app.get('/:class_id/info', async (request, response) => {
+  const found = await ref_has_child(
+    admin.database().ref('/Classes'),
+    request.params.class_id
+  );
+  if (!found)
+    return response.status(404).json({
+      message: `class with id ${request.params.id} not found`
+    });
   const db = admin
     .database()
     .ref(`/Classes/`)
     .child(request.params.class_id);
-  if (!db)
-    return response.status(404).json({
-      message: `class with id ${request.params.id} not found`
-    });
   var out = {};
   db.once('value').then(function(snapshot) {
     out = snapshot.val();

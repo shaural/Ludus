@@ -10,7 +10,7 @@ class ClassContent extends Component {
       name: '',
       owner: this.props.userID,
       etc: '', //estimated time to completed
-      video: ''
+      content: ''
     };
     this.submitLP = this.submitClass.bind(this);
   }
@@ -34,12 +34,12 @@ class ClassContent extends Component {
             onChange={event => this.setState({ etc: event.target.value })}
           />
           <br /> <br />
-          Video Link:&nbsp;
+          Video Link or Text:&nbsp;
           {'\t\t'}
           <input
             className="long"
             type="text"
-            onChange={event => this.setState({ video: event.target.value })}
+            onChange={event => this.setState({ content: event.target.value })}
           />
         </form>
         <h1>
@@ -57,18 +57,13 @@ class ClassContent extends Component {
   }
 
   submitClass() {
-    /*
-    if (!this.state.classes) {
-      alert('No Classes in LP!');
-    }*/
+    
     const requestBody = {
       name: this.state.name,
       owner: this.props.userID,
       etc: this.state.etc,
-      video: this.state.video
+      content: this.state.content
     };
-
-    //NEED TO MAKE CALL TO PUBLISH ACTUAL CLASS CONTENT IN DATABASE
 
     Axios.post(
       `https://us-central1-ludusfire.cloudfunctions.net/classes/`,
