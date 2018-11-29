@@ -14,7 +14,8 @@ app.post('/:receiver_id', async (request, response) => {
   console.log(text);
   if (sender_name.length > 0 && text.length > 0) {
     db.push({
-      sender_name: text
+      sender_name: sender_name,
+      text: text
     });
     return response.status(200).json({
       message: `Notification successfully sent.`
