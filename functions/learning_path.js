@@ -54,7 +54,6 @@ app.post('/:lp_id/class', async (request, response) => {
 });
 
 app.get('/:lp_id/classes', (request, response) => {
-  //console.log('Ran new code');
   const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
   if (!db)
     return response
@@ -365,7 +364,6 @@ app.get('/search', async (request, response) => {
         if (nameCheck && ownerCheck && matureCheck && topicCheck) {
           if (interests.length > 0) {
             // if snap matches interest then add to resp, else add to resp2
-            // console.log(snapshot.val());
             interests.forEach(element => {
               if (
                 JSON.stringify(childSnapshot.val())
@@ -373,7 +371,6 @@ app.get('/search', async (request, response) => {
                   .indexOf(element.toLowerCase()) != -1
               ) {
                 //snapshot contains interest
-                console.log(childSnapshot.val());
                 resp.push([childSnapshot.key, childSnapshot.val()]);
               } else {
                 resp2.push([childSnapshot.key, childSnapshot.val()]);
@@ -440,7 +437,6 @@ app.get('/student/:user_id/similarCompleted', async (request, response) => {
   });
   let resp = [];
   await lpRef.once('value', function(snapshot) {
-    console.log(lps_compelted);
     lps_compelted.forEach(completedLp => {
       //get info for compeletedLp
       let owner = '';
@@ -509,10 +505,83 @@ app.get('/student/:user_id/similarCompleted', async (request, response) => {
       // if(snapshot.child(completedLp).hasChild("Name")) {
       //   name = snapshot.child(completedLp).child("Name").val();
       // }
-
-      // get all lps that have same owner as in lps_completed
     });
   });
+  return response.status(200).json(resp);
+});
+
+// fetch similar lps to ones others that have similar interests to me have completed
+// first fetch my interests, then get LPs that other users that have the some of my interests have completed
+app.get('/student/:user_id/similarOthers', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  const userRef = admin.database().ref(`/Users`);
+  let uid = request.params.user_id;
+  // get LPs user with uid has completed
+  let interests = [];
+  let lps_suggested = [];
+  await userRef.once('value', function(snapshot) {
+    if (snapshot.hasChild(uid)) {
+      if (snapshot.child(uid).hasChild('Interests')) {
+        // student has at least 1 interest
+        snapshot
+          .child(uid)
+          .child('Interests')
+          .forEach(function(intSnap) {
+            interests.push(intSnap.val());
+          });
+      } else {
+        // student not enrolled in any lps
+        return response.status(400).json({
+          message: `User with id: ${uid} Does not have any interests.`
+        });
+      }
+    } else {
+      // User does not exist
+      return response.status(400).json({
+        message: `User with id: ${uid} not found.`
+      });
+    }
+    // find users with similar interests
+    snapshot.forEach(function(childSnapshot) {
+      if (childSnapshot.key.indexOf(uid) == -1) {
+        if (childSnapshot.hasChild('Interests')) {
+          var interestMatch = false;
+          childSnapshot.child('Interests').forEach(function(interestSnap) {
+            interests.forEach(element => {
+              if (
+                JSON.stringify(interestSnap.val())
+                  .toLowerCase()
+                  .indexOf(element.toLowerCase()) != -1
+              ) {
+                interestMatch = true;
+              }
+            });
+          });
+          if (interestMatch) {
+            // suggest LPs that this user has completed
+            // check if childSnap has completed lps
+            if (childSnapshot.hasChild('Student/LP_Enrolled')) {
+              childSnapshot
+                .child('Student/LP_Enrolled')
+                .forEach(function(lpSnap) {
+                  if (
+                    lpSnap
+                      .child('LP_Status')
+                      .val()
+                      .indexOf('Complete') != -1
+                  ) {
+                    if (!lps_suggested.includes(lpSnap.key)) {
+                      lps_suggested.push(lpSnap.key);
+                    }
+                  }
+                });
+            }
+          }
+        }
+      }
+    });
+  });
+  let resp = lps_suggested;
   return response.status(200).json(resp);
 });
 
