@@ -61,14 +61,10 @@ app.delete('/:user_id/:notification_id', async (request, response) => {
   });
   //remove from db
   try {
-    await notRef.remove();
-    return response
-      .status(200)
-      .json({
-        message: `Notification with id ${
-          request.params.notification_id
-        } deleted.`
-      });
+    await notRef.child(notId).remove();
+    return response.status(200).json({
+      message: `Notification with id ${request.params.notification_id} deleted.`
+    });
   } catch (err) {
     return response.status(500).json({
       message: `Error, Could not delete notification with id ${
