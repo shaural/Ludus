@@ -42,6 +42,28 @@ app.get('/:user_id', (request, response) => {
     }
   });
 });
+// GET notification info from notification id.
+app.get('/notification/:notification_id', (request, response) => {
+  const ref = admin.database().ref(`/Notifications`);
+  ref.once('value', function(snapshot) {
+    if (snapshot.hasChildren()) {
+      snapshot.forEach(function(childSnap) {
+        childSnap.forEach(function(notificationSnap) {
+          if (
+            notificationSnap.key.indexOf(request.params.notification_id) != -1
+          ) {
+            // found
+            return response.status(200).json(notificationSnap.val());
+          }
+        });
+      });
+    } else {
+      return response.status(400).json({
+        message: `There are no notifications.`
+      });
+    }
+  });
+});
 
 //delete notification
 app.delete('/:user_id/:notification_id', async (request, response) => {
