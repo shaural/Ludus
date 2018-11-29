@@ -74,17 +74,7 @@ class App extends Component {
           <Route exact path="/student-lpview" component={LpOverview} />
           <Route exact path="/LPEdit" component={EditLP} />
           <Route exact path="/classCreate" component={ClassCreatePage} />
-<<<<<<< HEAD
-          <Route
-            exact
-            path="/"
-            render={props => (
-              <HomePage {...props} userID={this.state.userID} />
-            )} /*placeholder*/
-          />
-=======
           <Route exact path="/" component={HomePage} />
->>>>>>> 23860668f704fe1a059ba629389af6deedf1df48
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route exact path="/interests" component={AddInterests} />
