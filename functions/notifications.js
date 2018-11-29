@@ -30,9 +30,15 @@ app.post('/:receiver_id', async (request, response) => {
 app.get('/:user_id', (request, response) => {
   const ref = admin.database().ref(`/Notifications/${request.params.user_id}`);
   ref.once('value', function(snapshot) {
-    console.log(snapshot.val());
     if (snapshot.hasChildren()) {
-      return response.status(200).json(snapshot.val());
+      let resp = [];
+      snapshot.forEach(function(childSnap) {
+        resp.push([
+          childSnap.child('sender_name').val(),
+          childSnap.child('text').val()
+        ]);
+      });
+      return response.status(200).json(resp);
     } else {
       return response.status(400).json({
         message: `User with id: ${
