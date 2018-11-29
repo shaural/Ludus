@@ -482,11 +482,17 @@ app.get('/student/:user_id/similarCompleted', async (request, response) => {
             if (
               t.length > 0 &&
               childSnap.hasChild('Topic') &&
-              childSnap
+              (childSnap
                 .child('Topic')
                 .val()
                 .toLowerCase()
-                .indexOf(t.toLowerCase()) != -1
+                .indexOf(t.toLowerCase()) != -1 ||
+                t.toLowerCase().indexOf(
+                  childSnap
+                    .child('Topic')
+                    .val()
+                    .toLowerCase()
+                ) != -1)
             ) {
               if (
                 !lps_compelted.includes(childSnap.key) &&
