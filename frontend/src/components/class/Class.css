@@ -1,6 +1,6 @@
 .ClassInfo {
   display: block;
-  width: 750px;
+  width: 100%;
   max-width: 750px;
   height: 50px;
   background-color: #fff;
@@ -13,6 +13,12 @@
 }
 .detail {
   float: left;
+}
+
+.mature {
+  float: left;
+  color: red;
+  border: 1px solid rgb(255, 0, 0);
 }
 
 .Rating {

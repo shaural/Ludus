@@ -13,33 +13,16 @@ class ClassList extends Component {
       name: '',
       owner: this.props.userID /*-LNVWR9kD2dvN8GLGFYE*/,
       update: '',
-      classList: []
+      classList: [],
+      classInfo: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
 
   componentDidMount = () => {
-    if (!this.props.userID) return;
-    Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/classes/search/?owner=${
-        this.props.userID
-      }`
-    )
-      .then(response => {
-        console.log(response);
-        let classList = [];
-        for (let id in response.data) {
-          for (let sid in id) {
-            classList.push(response.data[id][sid]);
-          }
-        }
-        this.setState({ classIDList: classList });
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-      .finally(this.submitSearch);
+    this.createClasslist();
   };
+
   createClasslist = () => {
     if (!this.props.userID) return;
     let query = '?';
@@ -52,13 +35,13 @@ class ClassList extends Component {
     )
       .then(response => {
         console.log(response);
-        let classList = [];
+        let classIDList = [];
+        let classInfoList = [];
         for (let id in response.data) {
-          for (let sid in id) {
-            classList.push(response.data[id][sid]);
-          }
+          classIDList.push(response.data[id][0]);
+          classInfoList.push(response.data[id][1]);
         }
-        this.setState({ classIDList: classList });
+        this.setState({ classIDList: classIDList, classInfo: classInfoList });
       })
       .catch(function(error) {
         console.log(error);
@@ -74,7 +57,12 @@ class ClassList extends Component {
     for (let id in this.state.classIDList) {
       classes.push(
         <div className="ClassObject" key={id}>
-          {<Class classID={this.state.classIDList[id]} />}
+          {
+            <Class
+              classID={this.state.classIDList[id]}
+              classInfo={this.state.classInfo[id]}
+            />
+          }
           {
             <ClassRemoveButton
               onClick={event => this.setState({ update: '' })}
@@ -90,7 +78,6 @@ class ClassList extends Component {
   render() {
     return (
       <div>
-        <h1>My Classes</h1>
         <form className="FilterBar">
           <br />
           Filter by name:&nbsp;
