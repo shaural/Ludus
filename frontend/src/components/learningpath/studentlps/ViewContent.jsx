@@ -31,11 +31,12 @@ class ViewContent extends Component {
     Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/classes/${this.props.ContentID}/info`)
     .then(({ data }) => {
        console.log(data);
+       if(data.Content){
        this.setState({
          content: JSON.stringify(data.Content)
  			 });
        var str = this.state.content;
-       console.log(str.substring(33,str.length-1));
+       //console.log(str.substring(33,str.length-1));
        if(str.substring(1,25) === "https://www.youtube.com/") {
          this.setState({
            vid: 1,
@@ -44,7 +45,7 @@ class ViewContent extends Component {
        }else {
          newcontent: str
        }
-
+      }
  	  });
   }
 
