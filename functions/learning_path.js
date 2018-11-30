@@ -391,6 +391,14 @@ app.get('/search', async (request, response) => {
   return response.status(200).json(resp);
 });
 
+
+//Get individual lp with lpID & all children
+app.get('/:lp_id', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
+  lpRef.once('value', function(snapshot) {
+    return response.status(200).json(snapshot.val());
+  });
+});
 // fetch similar LPs like ones I have completed
 app.get('/student/:user_id/similarCompleted', async (request, response) => {
   const lpRef = admin.database().ref(`/Learning_Paths`);
@@ -589,6 +597,7 @@ app.get('/student/:user_id/similarOthers', async (request, response) => {
   });
   let resp = lps_suggested;
   return response.status(200).json(resp);
+
 });
 
 exports.route = app;
