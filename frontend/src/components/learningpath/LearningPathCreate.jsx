@@ -24,22 +24,30 @@ export default class LearningPathCreate extends Component {
   }
 
   submitPrereq = () => {
-    let data = JSON.stringify({
-      pre_reqs_list: this.state.prereq
-    });
+    let data = {
+      pre_reqs_list: this.state.prereq.toString().trim()
+    };
+    // alert(this.state.prereq.toString())
+    alert(this.state.name.toString());
     if (
       this.state.name.toString().length != 0 &&
       this.state.topic.toString().length != 0
     ) {
+      // alert(this.state.name.toString().trim())
+      let request = `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${this.state.name
+        .toString()
+        .trim()}/recommended_pre_reqs`;
+      alert(request);
       Axios.patch(
-        `https://us-central1-ludusfire.cloudfunctions.net/learningPath/
-     ${this.state.topic}/recommended_pre_reqs`,
-        data,
+        request,
+        querystring.stringify(data)
+        /*
         {
           headers: {
             'Content-Type': 'application/json'
           }
         }
+        */
       )
         .then(function(resp) {
           console.log(resp);
@@ -83,7 +91,11 @@ export default class LearningPathCreate extends Component {
       <div>
         <form className="pre-reqs">
           Add a recommended pre-requisite learning path here [optional]:&nbsp;
-          <input className="prereq" type="text" onChange={this.changePrereq} />
+          <input
+            className="prereq"
+            type="text"
+            onChange={event => this.setState({ prereq: event.target.value })}
+          />
           <button type="button" onClick={this.submitPrereq}>
             Click here to add a recommended pre-req
           </button>
