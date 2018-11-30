@@ -19,7 +19,7 @@ class NavBar extends Component {
             {/* <Navbar.Collapse> */}
             <div>
               <Link to="/profile">Profile</Link> <br />
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/bookmarks">Bookmarks</Link> &nbsp;
             </div>
             {/* </Navbar.Collapse> */}
           </Navbar>

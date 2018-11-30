@@ -6,7 +6,7 @@ import './Forms.css';
 import './ClassList.css';
 const Axios = require('axios');
 
-class ClassList extends Component {
+export default class ClassList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,6 +21,14 @@ class ClassList extends Component {
 
   componentDidMount = () => {
     this.createClasslist();
+  };
+
+  showModal = () => {
+    this.setState({ show: true });
+  };
+
+  hideModal = () => {
+    this.setState({ show: false });
   };
 
   createClasslist = () => {
@@ -94,6 +102,7 @@ class ClassList extends Component {
           />{' '}
           &nbsp;
           <ClassAddButton />
+          <Modal show={this.state.show} handleClose={this.hideModal.bind()} />
         </form>
         <br /> <br />
         <div className="ClassForm">{this.submitSearch()}</div>
@@ -102,4 +111,18 @@ class ClassList extends Component {
   }
 }
 
-export default ClassList;
+const Modal = ({ handleClose, show, children }) => {
+  const showHideClassName = show ? 'modal display-block' : 'modal display-none';
+
+  return (
+    <div className={showHideClassName}>
+      <div className="ClassForm">
+        <section className="modal-main">
+          {children}
+          <button onClick={handleClose}>Back</button>
+          <br />
+        </section>
+      </div>
+    </div>
+  );
+};
