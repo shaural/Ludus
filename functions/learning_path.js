@@ -2,26 +2,35 @@ const { firebaseAdmin, ref_has_child } = require('./utils');
 const admin = firebaseAdmin;
 
 const app = require('express')();
-
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(require('cors')({ origin: true }));
 
 // Body: Index: Order of class in learning path, class_id
 app.post('/:lp_id/class', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
+  const found = await ref_has_child(
+    admin.database().ref('/Learning_Paths'),
+    request.params.lp_id
+  );
+  if (!found)
+    return response.status(404).json({
+      message: `learning path with id ${request.params.lp_id} not found`
+    });
+
+  const { index, class_id } = request.body;
   const db = admin
     .database()
     .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
 
-  const { index, class_id } = request.body;
-  if (index < 0) {
+  if (!index || index < 0) {
     // invalid (assuming index starting with 0)
     return response.status(400).json({
       message: `Invalid index.`
     });
   }
-  if (!db)
-    return response.status(404).json({
-      message: `learning path with id ${request.params.lp_id} not found`
-    });
 
   // TODO: append to learningpath/:lp_id/class array without creating UID structure?
   if (!class_id)
@@ -39,6 +48,8 @@ app.post('/:lp_id/class', async (request, response) => {
       return response.status(400).json({
         message: `Learning path already contains class at index ${index}. Please use PATCH method instead.` // TODO create patch endpoint
       });
+
+      //TODO: Call the patch endpoint for any pre-reqs that have been entered?
     }
     db.child(index).set(class_id);
   } catch (e) {
@@ -65,6 +76,7 @@ app.get('/:lp_id/classes', async (request, response) => {
       } does not exist or has no classes`
     });
   else {
+    const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
     db.once('value', function(snapshot) {
       if (snapshot.hasChild('Classes')) {
         return response.status(200).json(snapshot.child('Classes').val());
@@ -265,7 +277,7 @@ app.delete('/:lp_id', async (request, response) => {
 app.post('/', async (request, response) => {
   const db = admin.database().ref('/Learning_Paths');
 
-  const { name, owner, mature, topic, classes } = request.body;
+  const { name, owner, mature, topic } = request.body;
 
   if (!name) {
     return response.status(400).json({
