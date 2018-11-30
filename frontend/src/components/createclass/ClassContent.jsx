@@ -7,10 +7,10 @@ class ClassContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
+      name: 'hag',
       owner: this.props.userID,
-      etc: '', //estimated time to completed
-      content: ''
+      etc: 12, //estimated time to completed
+      content: 'asd'
     };
     this.submitLP = this.submitClass.bind(this);
   }
@@ -51,17 +51,15 @@ class ClassContent extends Component {
             Upload Content
           </button>
         </div>
-        <button onClick={this.submitClass}>Publish</button>
+        <button onClick={this.submitLP}>Publish</button>
       </div>
     );
   }
 
   submitClass() {
-    
     const requestBody = {
       name: this.state.name,
       owner: this.props.userID,
-      etc: this.state.etc,
       content: this.state.content
     };
 

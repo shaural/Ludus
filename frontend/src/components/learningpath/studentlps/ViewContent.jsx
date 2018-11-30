@@ -7,20 +7,37 @@ class ViewContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      vid: 0,
       newcontent: '',
       content: ''
     };
   }
 
-  componentDidMount() {
-    Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/classes/${this.props.ContentID}/info`)
-    .then(({ data }) => {
-       console.log(data);
-       this.setState({
-         content: data.Content
- 			 });
+  callComplete(){
+    Axios.patch(`https://us-central1-ludusfire.cloudfunctions.net/users/
+      ${this.props.userID}/student/learning_path/
+      ${this.props.UserID}/${this.props.ContentID}`)
+      .then(function(response) {
+        console.log(response)
+      })
+      .catch(function(error) {
+        console.log(error)
+      });
 
- 	  });
+      return false;
+  }
+
+  componentDidMount() {
+    Axios.get(
+      `https://us-central1-ludusfire.cloudfunctions.net/classes/${
+        this.props.ContentID
+      }/info`
+    ).then(({ data }) => {
+      console.log(data);
+      this.setState({
+        content: data.Content
+      });
+    });
     var str = this.state.content.substring(32, this.state.content.length);
     this.setState({
       newcontent: str
@@ -28,7 +45,7 @@ class ViewContent extends Component {
   }
 
   _onReady(event) {
-    //event.target.pauseVideo();
+    event.target.pauseVideo();
   }
 
   render() {
@@ -38,7 +55,7 @@ class ViewContent extends Component {
       }
     };
 
-    return(
+    return (
       <div>
         <Youtube
           videoId="dQw4w9WgXcQ"
@@ -48,8 +65,6 @@ class ViewContent extends Component {
       </div>
     );
   }
-
 }
-
 
 export default ViewContent;
