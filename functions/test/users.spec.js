@@ -147,6 +147,12 @@ describe('testing users', function() {
         .end(endfn(done));
     });
     describe('learning paths', function(done) {
+      let lp_id;
+      after(function(done) {
+        request(require('../learning_path').route)
+          .delete(`/${lp_id}`)
+          .expect(200, done);
+      });
       describe('validate learning path information before creation', function(done) {
         it('can handle no data', function(done) {
           request(server)
@@ -178,6 +184,7 @@ describe('testing users', function() {
               mature: false
             })
             .set('Accept', 'application/json')
+            .expect(response => (lp_id = response.body.id))
             .expect(200, done);
         });
       });
