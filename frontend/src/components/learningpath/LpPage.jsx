@@ -18,40 +18,43 @@ class LpPage extends Component {
     };
   }
 
-  componentDidMount() {
-    Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
-        this.props.userID
-      }`
+componentDidMount() {
+	 Axios.get(
+     `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
+       this.props.userID
+     }`
     ).then(({ data }) => {
       console.log(data);
       this.setState({
         length: data.length,
         data: data
-      });
-    });
-  }
+			 });
+	  });
+	}
 
-  createLpPage = () => {
-    //let lpIDList = []
-    //TODO: Call API for lpIDs
-    let learningPaths = [];
-    var y = this.state.length;
-    //for (let i = 0; i < lpIDList.length; i++) {
-    for (let i = 0; i < y; i++) {
-      learningPaths.push(
-        <div className="lpObject">
-          {<Lp LearningPathID={this.state.data} i={i} />}
-          <span className="Placeholder">
-            {<LpEditBtn LearningPathID={this.state.data[i]} />} <text> </text>{' '}
-            {<LpDeleteBtn lpID={this.state.data[0]} />}
-          </span>
-        </div>
-      );
-    }
-
-    return learningPaths;
-  };
+createLpPage = () => {
+  //let lpIDList = []
+	//TODO: Call API for lpIDs
+	let learningPaths = [];
+	var y = this.state.length;
+	//for (let i = 0; i < lpIDList.length; i++) {
+	for (let i = 0; i < y; i++) {
+		learningPaths.push(
+			<div className="lpObject">
+				{<Lp LearningPathID={this.state.data} i={i} />}
+				<span className="Placeholder">
+					{<LpEditBtn />} <text> </text> {<LpDeleteBtn lpID={this.state.data[0]}/>}
+				</span>
+			</div>
+		);
+	}
+	if(y=0){
+		learningPaths.push(
+			<text>"No Learning Paths enrolled or created yet" </text>
+		);
+	}
+	return learningPaths;
+};
 
   render() {
     return (

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './UserInfoContainer.css';
+import EditProfileBtn from './EditProfileBtn'
 import conf from '../../conf.js';
 import 'firebase-auth';
 import firebase from 'firebase';
@@ -9,6 +10,7 @@ class UserInfoContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showPopup: false,
       Name: 'nametest',
       Email: 'emailtest',
       DoB: 'dobtest',
@@ -62,6 +64,9 @@ class UserInfoContainer extends React.Component {
           <div className="userInfo">EMAIL: {this.state.Email}</div>
           <br />
           <div className="userInfo">DOB: {this.state.DoB}</div>
+        </div>
+        <div>
+          <EditProfileBtn />
         </div>
       </container>
     );

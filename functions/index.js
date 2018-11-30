@@ -5,6 +5,9 @@ exports.learningPath = functions.https.onRequest(
 );
 exports.tags = functions.https.onRequest(require('./tags').route);
 exports.classes = functions.https.onRequest(require('./classes').route);
+exports.notifications = functions.https.onRequest(
+  require('./notifications').route
+);
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
 //
