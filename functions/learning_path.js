@@ -9,21 +9,28 @@ app.use(require('cors')({ origin: true }));
 
 // Body: Index: Order of class in learning path, class_id
 app.post('/:lp_id/class', async (request, response) => {
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
+  const found = await ref_has_child(
+    admin.database().ref('/Learning_Paths'),
+    request.params.lp_id
+  );
+  if (!found)
+    return response.status(404).json({
+      message: `learning path with id ${request.params.lp_id} not found`
+    });
+
+  const { index, class_id } = request.body;
   const db = admin
     .database()
     .ref(`/Learning_Paths/${request.params.lp_id}/Classes`);
 
-  const { index, class_id } = request.body;
-  if (index < 0) {
+  if (!index || index < 0) {
     // invalid (assuming index starting with 0)
     return response.status(400).json({
       message: `Invalid index.`
     });
   }
-  if (!db)
-    return response.status(404).json({
-      message: `learning path with id ${request.params.lp_id} not found`
-    });
 
   // TODO: append to learningpath/:lp_id/class array without creating UID structure?
   if (!class_id)
@@ -55,14 +62,21 @@ app.post('/:lp_id/class', async (request, response) => {
   });
 });
 
-app.get('/:lp_id/classes', (request, response) => {
-  //console.log('Ran new code');
-  const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
-  if (!db)
+app.get('/:lp_id/classes', async (request, response) => {
+  const found_lp = await ref_has_child(
+    admin.database().ref('/Learning_Paths'),
+    request.params.lp_id
+  );
+  if (!found_lp)
     return response
       .status(404)
-      .json({ message: `${request.params.lp_id} does not have any classes` });
+      .json({
+        message: `learning path with id ${
+          request.params.lp_id
+        } does not exist or has no classes`
+      });
   else {
+    const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
     db.once('value', function(snapshot) {
       if (snapshot.hasChild('Classes')) {
         return response.status(200).json(snapshot.child('Classes').val());
@@ -241,6 +255,52 @@ app.get('/teacher/:user_id', (request, response) => {
     .equalTo(request.params.user_id)
     .once('value', function(snapshot) {
       return response.status(200).json(snapshot.val());
+    });
+});
+
+app.delete('/:lp_id/class/:index', async (request, response) => {
+  const found_lp = await ref_has_child(
+    admin.database().ref('/Learning_Paths'),
+    request.params.lp_id
+  );
+  if (!found_lp)
+    return response
+      .status(404)
+      .json({
+        message: `learning path with id ${request.params.lp_id} not found`
+      });
+  const found_idx = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${request.params.lp_id}/Classes`),
+    request.params.index
+  );
+  if (!found_idx)
+    return response
+      .status(404)
+      .json({
+        message: `learning path has no class at index ${request.params.index}`
+      });
+
+  try {
+    await admin
+      .database()
+      .ref(
+        `/Learning_Paths/${request.params.lp_id}/Classes/${
+          request.params.index
+        }`
+      )
+      .remove();
+  } catch (err) {
+    return response.status(500).json({
+      message: 'an error occurred when removing the class',
+      err
+    });
+  }
+  return response
+    .status(200)
+    .json({
+      message: `successfully removed class at index ${
+        request.params.index
+      } from learning path`
     });
 });
 
