@@ -30,7 +30,7 @@ getOwnerInfo() {
 }
 
 componentDidMount() {
-	 Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/-LO0Mk238mCqz4fbfMjh`)
+	 Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/-LQ1SMJladZM5nJ52mDP`)
    .then(({ data }) => {
       console.log(data);
       this.setState({
