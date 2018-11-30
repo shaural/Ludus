@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from '../../logo.svg';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Dashboard from '../navigation/Dashboard';
 
 //import 'IllegalPath.css';
@@ -8,7 +8,7 @@ import Dashboard from '../navigation/Dashboard';
 export default class HomePage extends Component {
   render() {
     if (this.props.userID !== '') {
-      return <Dashboard />;
+      return <Redirect to={'/dashboard'} />;
     } else {
       return (
         <div>

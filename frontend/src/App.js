@@ -2,12 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 // import custom component
 
-import conf from './conf.js';
-import 'firebase-auth';
-import firebase from 'firebase';
-
 import { PasswordReset } from './passwordreset/PasswordReset';
-import ClassCreatePage from './components/createclass/ClassCreatePage';
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
@@ -24,41 +19,15 @@ import LearningPathsEnrolledPage from './components/learningpath/LearningPathsEn
 import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
 import { DeleteInterests } from './components/interests/delete-interests';
-import LpOverview from './components/learningpath/studentlps/LpOverview';
-import AllLps from './components/learningpath/studentlps/AllLps';
-
-const Axios = require('axios');
+import BookmarkMenu from './components/bookmarks/BookmarkMenu';
+import ClassMenu from './components/class/ClassMenu';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userID: '',
-      email: ''
+      userID: ''
     };
-  }
-
-  getLoggedIn(){
-    var user = firebase.auth().currentUser;
-    var email;
-    if(user){
-      console.log("found logged in user!");
-      this.setState({
-        email: user.email
-      });
-    }
-    return;
-  }
-
-  componentDidMount(){
-    this.getLoggedIn();
-    Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${this.state.email}`)
-    .then(({ data }) => {
-      console.log("userid", data);
-      this.setState({
-          userID: data
-      });
-    });
   }
 
   render() {
@@ -76,7 +45,6 @@ class App extends Component {
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
-        <Link to="/all-lp-list">All LPs</Link> &nbsp;
         <Link
           to={{
             pathname: '/LPEdit',
@@ -102,35 +70,56 @@ class App extends Component {
         {/* probably want to check if you're logged in or not for the home page? */}
         <NavBar userID={this.state.userID} />
         <Switch>
-          <Route exact path="/student-lpview" component={LpOverview} />
           <Route exact path="/LPEdit" component={EditLP} />
-          <Route exact path="/classCreate" component={ClassCreatePage} />
-          <Route exact path="/" component={HomePage} />
+          <Route
+            exact
+            path="/"
+            render={props => (
+              <HomePage {...props} userID={this.state.userID} />
+            )} /*placeholder*/
+          />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route exact path="/interests" component={AddInterests} />
-          <Route path="/login" component={LoginPage} />
-          <Route path="/signup" component={SignUpPage} />
+          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/signup" component={SignUpPage} />
           <Route exact path="/remove" component={DeleteInterests} />
           <Route
+            exact
             path="/password-recovery"
             component={PasswordReset} /*placeholder*/
           />
           {/*requires userID*/}
           <Route
+            exact
             path="/profile"
             render={props => (
               <ProfilePage {...props} userID={this.state.userID} />
             )}
           />
-          <Route path="/class-search" component={ClassSearchPage} />
+          <Route exact path="/class-search" component={ClassSearchPage} />
           {/*requires userID*/}
-          <Route path="/dashboard" component={Dashboard} /*placeholder*/ />
           <Route
+            exact
+            path="/dashboard"
+            render={props => (
+              <Dashboard {...props} userID={this.state.userID} />
+            )}
+          />
+          <Route
+            exact
+            path="/bookmarks"
+            render={props => (
+              <BookmarkMenu {...props} userID={this.state.userID} />
+            )} /*placeholder*/
+          />
+          <Route
+            exact
             path="/student-classlist"
             component={IllegalPath} /*placeholder*/
           />{' '}
           <Route
+            exact
             path="/student-lplist"
             render={props => (
               <LearningPathsEnrolledPage
@@ -140,36 +129,45 @@ class App extends Component {
             )} /*placeholder*/
           />
           <Route
+            exact
+            path="/class-menu/:classID"
+            render={props => (
+              <ClassMenu {...props} userID={this.state.userID} />
+            )}
+          />
+          <Route
+            exact
             path="/teacher-class-create"
             component={IllegalPath} /*placeholder*/
           />
           <Route
+            exact
             path="/teacher-class-edit"
             render={props => (
               <IllegalPath {...props} userID={this.state.userID} />
             )} /*placeholder*/
           />
           <Route
+            exact
             path="/teacher-classlist"
             render={props => (
               <ClasslistPage {...props} userID={this.state.userID} />
             )}
           />
           <Route
+            exact
             path="/teacher-lplist"
             render={props => <LpPage {...props} userID={this.state.userID} />}
           />
           <Route
-            path="/all-lp-list"
-            render={props => <AllLps {...props} userID={this.state.userID} />}
-          />
-          <Route
+            exact
             path="/teacher-lp-create"
             render={props => (
               <LearningPathCreatePage {...props} userID={this.state.userID} />
             )}
           />
           <Route
+            exact
             path="/teacher-lp-edit"
             component={IllegalPath} /*placeholder*/
           />
