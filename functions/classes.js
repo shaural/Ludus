@@ -141,6 +141,206 @@ app.get('/:class_id/info', async (request, response) => {
   });
 });
 
+app.post('/:class_id/comment', async (request, response) => {
+  const found = await ref_has_child(
+    admin.database().ref(`/Classes`),
+    request.params.class_id
+  );
+  if (!found)
+    return response.status(404).json({
+      message: `class with id ${request.params.class_id} not found`
+    });
+
+  if (!request.body)
+    return response.status(400).json({ message: 'malformed request' });
+
+  const { author, comment } = request.body;
+  if (!author)
+    return response.status(400).json({ message: 'author cannot be blank' });
+  if (!comment)
+    return response
+      .status(400)
+      .json({ message: 'cannot post an empty comment' });
+
+  try {
+    let resp;
+    await admin
+      .database()
+      .ref(`/Classes/${request.params.class_id}/Comments`)
+      .push({
+        Author: author,
+        Comment: comment,
+        Created: new Date() // doesn't work?
+      })
+      .once('value')
+      .then(
+        snapshot =>
+          (resp = {
+            id: snapshot.key,
+            ...snapshot.val()
+          })
+      );
+    return response.status(200).json(resp);
+  } catch (err) {
+    return response.status(500).json({
+      message: 'an error occurred when posting a comment',
+      err
+    });
+  }
+});
+
+app.get('/:class_id/comments', async (request, response) => {
+  const found = await ref_has_child(
+    admin.database().ref('/Classes'),
+    request.params.class_id
+  );
+  if (!found)
+    return response.status(404).json({
+      message: `class with id ${request.params.class_id} not found`
+    });
+
+  const has_comments = await ref_has_child(
+    admin.database().ref(`/Classes/${request.params.class_id}`),
+    'Comments'
+  );
+  if (!has_comments) return response.status(200).json([]);
+
+  try {
+    let resp = [];
+    await admin
+      .database()
+      .ref(`/Classes/${request.params.class_id}/Comments`)
+      .once('value')
+      .then(snapshot => {
+        snapshot.forEach(child =>
+          resp.push({
+            id: child.key,
+            ...child.val()
+          })
+        );
+      });
+    return response.status(200).json(resp);
+  } catch (err) {
+    return response.status(500).json({
+      message: 'an error occurred when retrieving comments',
+      err
+    });
+  }
+});
+
+app.patch('/:class_id/comment/:comment_id', async (request, response) => {
+  const found_class = await ref_has_child(
+    admin.database().ref('/Classes'),
+    request.params.class_id
+  );
+  if (!found_class)
+    return response.status(404).json({
+      message: `class with id ${request.params.class_id} not found`
+    });
+
+  const has_comments = await ref_has_child(
+    admin.database().ref(`/Classes/${request.params.class_id}`),
+    'Comments'
+  );
+  if (!has_comments)
+    return response.status(404).json({
+      message: `class with id ${request.params.class_id} has no comments`
+    });
+
+  const found_comment = await ref_has_child(
+    admin.database().ref(`/Classes/${request.params.class_id}/Comments`),
+    request.params.comment_id
+  );
+  if (!found_comment)
+    return response.status(404).json({
+      message: `class with id ${
+        request.params.class_id
+      } has no comment with id ${request.params.comment_id}`
+    });
+
+  if (!request.body || !request.body.comment)
+    return response.status(400).json({
+      message: `need to provide an updated comment`
+    });
+
+  try {
+    // update comment
+    await admin
+      .database()
+      .ref(
+        `/Classes/${request.params.class_id}/Comments/${
+          request.params.comment_id
+        }`
+      )
+      .child('Comment')
+      .set(request.body.comment);
+    // update edited timestamp
+    await admin
+      .database()
+      .ref(
+        `/Classes/${request.params.class_id}/Comments/${
+          request.params.comment_id
+        }`
+      )
+      .child('Edited')
+      .set(new Date());
+  } catch (err) {
+    return response.status(500).json({
+      message: 'an error occurred when updating the comment',
+      err
+    });
+  }
+  return response.status(200).json({});
+});
+
+app.delete('/:class_id/comment/:comment_id', async (request, response) => {
+  const found_class = await ref_has_child(
+    admin.database().ref('/Classes'),
+    request.params.class_id
+  );
+  if (!found_class)
+    return response.status(404).json({
+      message: `class with id ${request.params.class_id} not found`
+    });
+
+  const has_comments = await ref_has_child(
+    admin.database().ref(`/Classes/${request.params.class_id}`),
+    'Comments'
+  );
+  if (!has_comments)
+    return response.status(404).json({
+      message: `class with id ${request.params.class_id} has no comments`
+    });
+
+  const found_comment = await ref_has_child(
+    admin.database().ref(`/Classes/${request.params.class_id}/Comments`),
+    request.params.comment_id
+  );
+  if (!found_comment)
+    return response.status(404).json({
+      message: `class with id ${
+        request.params.class_id
+      } has no comment with id ${request.params.comment_id}`
+    });
+
+  try {
+    await admin
+      .database()
+      .ref(
+        `/Classes/${request.params.class_id}/Comments/${
+          request.params.comment_id
+        }`
+      )
+      .remove();
+  } catch (err) {
+    return response.status(500).json({
+      message: 'an error occurred when deleting the comment',
+      err
+    });
+  }
+  return response.status(200).json({});
+});
+
 // Code for Class Search by: name, owner, content_type, Tags, mature filter
 app.get('/search', async (request, response) => {
   const classRef = admin.database().ref(`/Classes`);
