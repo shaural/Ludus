@@ -102,7 +102,9 @@ class App extends Component {
           <Route
             exact
             path="/dashboard"
-            component={Dashboard} /*placeholder*/
+            render={props => (
+              <Dashboard {...props} userID={this.state.userID}
+          />)}
           />
           <Route
             exact
