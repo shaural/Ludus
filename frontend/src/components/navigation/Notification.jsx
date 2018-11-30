@@ -13,38 +13,24 @@ class Notification extends Component {
 
   componentDidMount = () => {
     let vars = [];
-    for (let key in this.props.classInfo) {
-      if (key === 'Name') {
+    for (let key in this.props.notInfo) {
+      if (key === 'subject') {
         const name = (
-          <div className="className" key={key}>
-            <b>{this.props.classInfo[key]}</b> <br />
+          <div className="notName" key={key}>
+            <b>{this.props.notInfo[key]}</b> <br />
           </div>
         );
         vars = [name, ...vars];
-      } else if (key === 'Tag') {
+      } else if (key === 'sender_name') {
         vars.push(
           <span className="detail" key={key}>
-            {key + ': ' + this.props.classInfo[key]} &nbsp;
-          </span>
-        );
-      } else if (key === 'Content_type') {
-        vars.push(
-          <span className="detail" key={key}>
-            {'Content Type: ' + this.props.classInfo[key]} &nbsp;
-          </span>
-        );
-      } else if (key === 'Mature' && this.props.classInfo[key] === 'yes') {
-        vars.push(
-          <span className="mature" key={'Tags'}>
-            &nbsp;
-            {'Mature Content'}
-            &nbsp;
+            {'from: ' + this.props.notInfo[key]} &nbsp;
           </span>
         );
       } else {
         vars.push(
           <span className="detail" key={key}>
-            {key + ': ' + this.props.classInfo[key]} &nbsp;
+            {this.props.notInfo[key]} &nbsp;
           </span>
         );
       }

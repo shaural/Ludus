@@ -24,7 +24,7 @@ export default class NotificationList extends Component {
         let notlist = [];
         console.log(response);
         for (let entry in response.data) {
-          notlist.push(<Notification notinfo={response.data[entry]} />);
+          notlist.push(<Notification notInfo={response.data[entry]} />);
         }
         this.setState({ notificationList: notlist });
       })
