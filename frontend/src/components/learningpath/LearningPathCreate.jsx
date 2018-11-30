@@ -14,8 +14,9 @@ export default class LearningPathCreate extends Component {
       topic: '',
       prereq: '',
       mature: 'no',
-      hidden: true,
-      classes: []
+      classes: [],
+      classInfo: [],
+      hidden: true
     };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
@@ -24,6 +25,7 @@ export default class LearningPathCreate extends Component {
     this.submitPrereq = this.submitPrereq.bind(this);
   }
 
+  //modal show and hide
   submitPrereq = () => {
     let data = {
       pre_reqs_list: this.state.prereq.toString().trim()
@@ -66,14 +68,13 @@ export default class LearningPathCreate extends Component {
     this.setState({ show: false });
   };
 
+  //mature checkbox
   handleMatureCheck = event => {
-    console.log(this.state.mature);
     if (event.target.checked) {
       this.setState({ mature: 'yes' });
     } else {
       this.setState({ mature: 'no' });
     }
-    console.log(this.state.mature);
   };
 
   render() {
@@ -91,45 +92,6 @@ export default class LearningPathCreate extends Component {
               Click here to add a recommended pre-req
             </button>
           </form>
-
-          <form className="inputs">
-            Learning Path Name:&nbsp;
-            <input
-              className="long"
-              type="text"
-              onChange={event => this.setState({ name: event.target.value })}
-            />
-            <br /> <br />
-            Topic:&nbsp;
-            {'\t\t'}
-            <input
-              className="long"
-              type="text"
-              onChange={event => this.setState({ topic: event.target.value })}
-            />
-            <br /> <br />
-            Mature Content&nbsp;
-            {'\t\t'}
-            <input
-              className="check"
-              type="checkbox"
-              onChange={event => this.handleMatureCheck(event)}
-            />
-          </form>
-          <div className="lpcontainer">
-            {' '}
-            <CreationList
-              classIDs={this.state.classes}
-              callback={this.handleRemoveClass}
-            />
-            <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
-              <AddList callback={this.handleAddClass} />
-            </Modal>
-            <button type="button" onClick={this.showModal}>
-              Add Classes...
-            </button>
-          </div>
-          <button onClick={this.submitLP}>Publish</button>
         </div>
       );
     } else {
@@ -160,11 +122,13 @@ export default class LearningPathCreate extends Component {
             />
           </form>
           <div className="lpcontainer">
-            {' '}
+            {/*List of currently selected classes*/}
             <CreationList
               classIDs={this.state.classes}
+              classInfo={this.state.classInfo}
               callback={this.handleRemoveClass}
             />
+            {/*Popup with search for classes to add to lp*/}
             <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
               <AddList callback={this.handleAddClass} />
             </Modal>
@@ -178,66 +142,71 @@ export default class LearningPathCreate extends Component {
     }
   }
 
-  //list of classes chosen so far
-  handleAddClass(event) {
-    console.log(event);
+  //callback for adding a class to the selection
+  handleAddClass(classID, classInfo) {
     if (!this.state.classes);
     else {
-      if (this.state.classes.indexOf(event) !== -1) {
+      if (this.state.classes.indexOf(classID) != -1) {
         alert('That class is already in the learning path!');
         return;
       }
     }
-    var array = [...this.state.classes, event];
-    this.setState({ classes: array });
+    console.log(classInfo);
+    var idArray = [...this.state.classes, classID];
+    var infoArray = [...this.state.classInfo, classInfo];
+    this.setState({ classes: idArray, classInfo: infoArray });
   }
 
+  //callback for removing a class from the selection
   handleRemoveClass(event) {
     console.log(event);
-    var array = [...this.state.classes];
-    var index = array.indexOf(event);
-    array.splice(index, 1);
-    this.setState({ classes: array });
+    var idArray = [...this.state.classes];
+    var infoArray = [...this.state.classInfo];
+    var index = idArray.indexOf(event);
+    idArray.splice(index, 1);
+    infoArray.splice(index, 1);
+    this.setState({ classes: idArray, classInfo: infoArray });
   }
 
   submitLP() {
-    /*
-    if (!this.state.classes) {
-      alert('No Classes in LP!');
-    }*/
-    const requestBody = {
-      name: this.state.name,
-      topic: this.state.topic,
-      mature: this.state.mature,
-      ClassList: this.state.classes
-    };
-    const config = {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    };
-
-    Axios.post(
-      `https://us-central1-ludusfire.cloudfunctions.net/users/${
-        this.props.userID
-      }/teacher/learningPath/`,
-      querystring.stringify(requestBody),
-      config
-    )
-      .then(function(response) {
-        console.log(response);
-      })
-      .catch(function(error) {
-        console.log(error);
-        alert(error.message);
-      });
-    alert('Published Learning Path!');
-    this.state.hidden = false;
+    if (this.state.name === '') {
+      alert('Please name your learning path');
+    } else if (this.state.topic === '') {
+      alert('Please provide a topic');
+    } else {
+      const requestBody = {
+        name: this.state.name,
+        topic: this.state.topic,
+        mature: this.state.mature,
+        ClassList: this.state.classes
+      };
+      const config = {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      };
+      Axios.post(
+        `https://us-central1-ludusfire.cloudfunctions.net/users/${
+          this.props.userID
+        }/teacher/learningPath/`,
+        querystring.stringify(requestBody),
+        config
+      )
+        .then(response => {
+          this.setState({ hidden: false });
+          console.log(response);
+        })
+        .catch(function(error) {
+          console.log(error);
+          alert(error.message);
+        });
+      alert('Published Learning Path!');
+    }
     return false;
   }
 }
-//list of classes to choose from
+
+//modal functionality for class chooser
 const Modal = ({ handleClose, show, children }) => {
   const showHideClassName = show ? 'modal display-block' : 'modal display-none';
-
   return (
     <div className={showHideClassName}>
       <div className="ClassForm">

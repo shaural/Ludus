@@ -64,7 +64,7 @@ app.post('/', async (request, response) => {
     .catch(function(error) {
       return response.status(400).json(error);
     });
-
+  //might want to auto call the teacher and student post functions, or just roll it all into this one.
   return response.status(200).json(resp);
 });
 
@@ -113,9 +113,123 @@ app.post('/:user_id/student', async (request, response) => {
     Nickname: name,
     Interests: [],
     LP_Enrolled: [],
-    T_Following: []
+    T_Following: [],
+    Bookmarks: []
   });
   return response.status(200).json();
+});
+
+// Get all bookmarks associated with a student
+app.get('/:user_id/student/bookmarks', async (request, response) => {
+  const found_user = await ref_has_child(
+    admin.database().ref('/Users'),
+    request.params.user_id
+  );
+  if (!found_user)
+    return response
+      .status(404)
+      .json({ message: `user with id ${request.params.user_id} not found` });
+  const found_student = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Student'
+  );
+  if (!found_student)
+    return response.status(404).json({
+      message: `user with id ${request.params.user_id} is not a student`
+    });
+
+  const db = admin
+    .database()
+    .ref(`/Users/`)
+    .child(request.params.user_id);
+  if (!db)
+    return response.status(404).json({
+      message: 'Unable to make reference to database'
+    });
+  db.child('Student')
+    .child('Bookmarks')
+    .orderByValue()
+    .on('value', function(snapshot) {
+      const out = [];
+      out.push(snapshot.val());
+      try {
+        return response.status(200).json({ message: 'Got Bookmarks', out });
+      } catch (e) {
+        response.status(400).json({
+          e,
+          message: 'Something went wrong getting your bookmarks'
+        });
+      }
+    });
+});
+
+//patch function for bookmark
+app.patch('/:user_id/bookmarks/:bookmarkid', async (request, response) => {
+  const found = await ref_has_child(admin.database().ref(), 'Users');
+  if (!found) {
+    return response.status(404).json('Error: No bookmarks found!');
+  }
+
+  const db = admin.database().ref(`/Users/${request.params.user_id}`);
+  let bookmark = request.params.bookmark_object;
+
+  if (!db) {
+    return response.status(404).json(' Could not connect to db');
+  }
+
+  let bookmarksRef = db.push();
+  bookmarksRef.update({
+    bookmark: bookmark
+  });
+  return response.status(200).json('Successfully added an bookmark');
+});
+
+//delete a bookmark
+app.delete('/:user_id/bookmarks/:bookmarkid', async (request, response) => {
+  let bookmark = request.params.bookmark_object;
+
+  let found = await ref_has_child(
+    admin.database().ref(`/Users/${request.params.user_id}`),
+    'Bookmarks'
+  );
+  if (!found) {
+    return response.status(404).json('Could not find the bookmarks list');
+  }
+
+  const db = admin
+    .database()
+    .ref(`/Users/${request.params.user_id}`)
+    .child('Bookmarks');
+  if (!db) {
+    return response.status(404).json({
+      message: 'Unable to find the bookmarks'
+    });
+  }
+
+  //query to find the correct bookmark to delete
+  await db.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      childSnapshot.forEach(function(grandChildSnapshot) {
+        let testbookmark = grandChildSnapshot.val();
+        if (testbookmark == bookmark) {
+          db.child(childSnapshot.key)
+            .child(grandChildSnapshot.key)
+            .remove()
+            .then(() => {
+              try {
+                return response
+                  .status(200)
+                  .json('Successfully removed bookmark');
+              } catch (e) {
+                return response
+                  .status(500)
+                  .json('A server error occurred during deletion');
+              }
+            });
+        }
+      });
+    });
+  });
 });
 
 //patch function for interests
@@ -576,7 +690,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
     .push({
       Topic: topic,
       Name: name,
-      Mature: mature,
+      Mature: mature || 'no',
       Owner: request.params.user_id,
       Class_List: ClassList || [],
       St_Enrolled: [],
