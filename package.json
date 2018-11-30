@@ -31,5 +31,8 @@
     "lint-staged": "^7.3.0",
     "npm-merge-driver": "^2.3.5",
     "prettier": "^1.14.3"
+  },
+  "dependencies": {
+    "querystring": "^0.2.0"
   }
 }

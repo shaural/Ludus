@@ -7,7 +7,7 @@ class Lp extends Component {
   }
 
   fetchData(LearningPathID) {
-		var index = this.props.i;
+    var index = this.props.i;
     var obj = this.props.LearningPathID[index];
     console.log(index);
     console.log('in child', obj);

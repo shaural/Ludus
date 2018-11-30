@@ -15,7 +15,9 @@ class LpDeleteBtn extends Component {
   removeLp() {
     console.log(this.props.lpID[0]);
     Axios.delete(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${this.props.lpID[0]}`
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${
+        this.props.lpID[0]
+      }`
     )
       .then(function(response) {
         console.log(response);
