@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import './Class.css';
 const Axios = require('axios');
 
@@ -16,9 +17,16 @@ class Class extends Component {
     //Not scalable yet for sanity's sake atm
     for (let key in this.props.classInfo) {
       if (key === 'Name') {
+        const newTo = {
+          pathname: `/class-menu/${this.props.classID}`,
+          state: 'rip'
+        };
         const name = (
           <div className="className" key={key}>
-            <b>{this.props.classInfo[key]}</b> <br />
+            <b>
+              <Link to={newTo}>{this.props.classInfo[key]}</Link>
+            </b>{' '}
+            <br />
           </div>
         );
         vars = [name, ...vars];

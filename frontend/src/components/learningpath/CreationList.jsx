@@ -14,12 +14,7 @@ class CreationList extends Component {
       if (classlist[id] === undefined) return;
       classes.push(
         <div key={classlist[id]} className="ClassObject">
-          {
-            <Class
-              classID={classlist[id]}
-              classInfo={this.props.classInfo[id]}
-            />
-          }
+          {this.props.classArray[id]}
           <span className="Highlight">
             <button onClick={this.handleRemoveButton} value={classlist[id]}>
               Remove

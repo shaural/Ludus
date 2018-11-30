@@ -12,7 +12,8 @@ class SignUpForm extends Component {
       content: '',
       tag: '',
       classIDList: [],
-      classInfo: []
+      classInfo: [],
+      classArray: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
@@ -63,20 +64,21 @@ class SignUpForm extends Component {
     let classes = [];
     for (let id in this.state.classIDList) {
       if (this.state.classIDList[id] === undefined) return;
+      let classy = (
+        <Class
+          classID={this.state.classIDList[id]}
+          classInfo={this.state.classInfo[id]}
+        />
+      );
       classes.push(
         <div className="ClassObject" key={id}>
-          {
-            <Class
-              classID={this.state.classIDList[id]}
-              classInfo={this.state.classInfo[id]}
-            />
-          }
+          {classy}
           {
             <div>
               <button
                 onClick={event => this.handleClick(event)}
                 name={this.state.classIDList[id]}
-                value={this.state.classInfo[id]}
+                value={id}
               >
                 Add
               </button>
@@ -89,9 +91,10 @@ class SignUpForm extends Component {
   };
 
   handleClick = e => {
-    let s = e.target.name;
-    let d = e.target.value;
-    this.props.callback(s, d);
+    let classy = this.state.classArray[e.target.value];
+    let id = e.target.name;
+    console.log(classy);
+    this.props.callback(id, classy);
   };
   render() {
     return (

@@ -24,3 +24,23 @@
 .Rating {
   float: right;
 }
+
+.expandedClassInfo {
+  display: fixed;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: auto;
+  position: center;
+  max-width: 900px;
+  padding: 10px;
+  margin: auto;
+  height: 570px;
+  max-height: 10%;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
+
+.expandedDetail {
+  text-align: left;
+}

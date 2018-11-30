@@ -22,6 +22,7 @@ import { AddInterests } from './components/interests/add-interests';
 import { DeleteInterests } from './components/interests/delete-interests';
 import BookmarkMenu from './components/bookmarks/BookmarkMenu';
 import LpOverview from './components/learningpath/studentlps/LpOverview';
+import ClassMenu from './components/class/ClassMenu';
 
 class App extends Component {
   constructor(props) {
@@ -111,9 +112,11 @@ class App extends Component {
           />
           <Route
             exact
-            path="/student-classlist"
-            component={IllegalPath} /*placeholder*/
-          />{' '}
+            path="/class-menu/:classID"
+            render={props => (
+              <ClassMenu {...props} userID={this.state.userID} />
+            )}
+          />
           <Route
             exact
             path="/student-lplist"
@@ -129,7 +132,7 @@ class App extends Component {
             path="/teacher-class-edit"
             render={props => (
               <IllegalPath {...props} userID={this.state.userID} />
-            )} /*placeholder*/
+            )}
           />
           <Route
             exact

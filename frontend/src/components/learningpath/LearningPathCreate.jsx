@@ -13,7 +13,7 @@ export default class LearningPathCreate extends Component {
       topic: '',
       mature: 'no',
       classes: [],
-      classesinfo: []
+      classArray: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
@@ -67,7 +67,7 @@ export default class LearningPathCreate extends Component {
           {' '}
           <CreationList
             classIDs={this.state.classes}
-            classInfo={this.state.classesinfo}
+            classArray={this.state.classArray}
             callback={this.handleRemoveClass}
           />
           <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
@@ -83,7 +83,7 @@ export default class LearningPathCreate extends Component {
   }
 
   //list of classes chosen so far
-  handleAddClass(classID, classInfo) {
+  handleAddClass(classID, classy) {
     if (!this.state.classes);
     else {
       if (this.state.classes.indexOf(classID) != -1) {
@@ -91,19 +91,19 @@ export default class LearningPathCreate extends Component {
         return;
       }
     }
-    var array = [...this.state.classes, classInfo];
-    var infoarray = [...this.state.classesinfo, classID];
-    this.setState({ classes: array, classesinfo: infoarray });
+    var idArray = [...this.state.classes, classID];
+    var classArray = [...this.state.classArray, classy];
+    this.setState({ classes: idArray, classArray: classArray });
   }
 
   handleRemoveClass(event) {
     console.log(event);
-    var array = [...this.state.classes];
-    var infoarray = [...this.state.classesinfo];
-    var index = array.indexOf(event);
-    array.splice(index, 1);
-    infoarray.splice(index, 1);
-    this.setState({ classes: array, classesinfo: infoarray });
+    var idArray = [...this.state.classes];
+    var classArray = [...this.state.classArray];
+    var index = idArray.indexOf(event);
+    idArray.splice(index, 1);
+    classArray.splice(index, 1);
+    this.setState({ classes: idArray, classArray: classArray });
   }
 
   submitLP() {
