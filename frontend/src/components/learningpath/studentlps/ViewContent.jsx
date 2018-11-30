@@ -49,7 +49,7 @@ class ViewContent extends Component {
   }
 
   _onReady(event) {
-    //event.target.pauseVideo();
+    event.target.pauseVideo();
   }
 
   render() {
@@ -66,7 +66,7 @@ class ViewContent extends Component {
           <Youtube
             videoId={this.state.newcontent}
             opts={opts}
-            //onReady={this._onReady}
+            onReady={this._onReady}
             />
         </div>
         <div>

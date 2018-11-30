@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import GoToLpButton from './GoToLpButton'
 import '../Lp.css';
+
 const Axios = require('axios');
 
 
@@ -49,7 +51,6 @@ class LpNew extends Component {
     if (!obj) {
       return <text>empty</text>;
     }
-    if (this.state.length > 0) {
       return (
         <container>
           <span className="lpInfo">
@@ -57,27 +58,12 @@ class LpNew extends Component {
               {'LearningPath:'} {this.state.name}
             </span>
             <div>Topic: {this.state.topic} </div>
-            <div>
-              First Class: {this.state.data.Classes[0]}{' '}
-            </div>
+            <GoToLpButton LearningPathID={this.props.LearningPathID}/>
           </span>
         </container>
       );
     }
-    if (this.state.length === 0) {
-      return (
-        <container>
-          <span className="lpInfo">
-            <span>
-              {'LearningPath:'} {this.state.name}
-            </span>
-            <div>Topic: {this.state.topic} </div>
-            <div>First Class: {'No Classes in LP'} </div>
-          </span>
-        </container>
-      );
-    }
-  }
+
 }
 
 export default LpNew;
