@@ -159,7 +159,7 @@ app.patch('/:lp_id/recommended_pre_reqs', async (request, response) => {
   //will discuss during meeting or via slack
 
   //checks that the learning path name actually exists
-  for (v in pre_reqs_array) {
+  for (let v in pre_reqs_array)
     let temp2 = pre_reqs_array[v];
     //placeholder, will always evaluate to false
     //so we must wait for the loop below to find the correct path
