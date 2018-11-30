@@ -77,6 +77,70 @@ app.get('/:lp_id/classes', (request, response) => {
   }
 });
 
+app.path('/:lp_name/mandatory_pre_reqs', async (request, response) => {
+  //note, this function should not be passed an array of pre-reqs, but rather one at a time
+
+  let temp = request.body.pre_reqs_list;
+  // console.log(request.params.lp_id);
+  // let pre_reqs_array = temp.toString().split(',');
+  let name = request.params.lp_name;
+  let db = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${name}`),
+    'Pre-reqs'
+  );
+  if (!db) {
+    return response.status(404).json('Unable to find pre-requisites');
+  }
+  let tempref = admin
+    .database()
+    .ref(`/Users/Learning_Paths`)
+    .child(name);
+  if (!tempref) {
+    let out = 'Error: Learning Path ' + temp2 + ' does not exist';
+    return response.status(404).json({
+      out
+    });
+  }
+
+  await admin
+    .database()
+    .ref('/Users/Learning_Paths')
+    .on('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        //we found the learning path
+        console.log(snapshot.key + ' ' + snapshot.val());
+        if (childSnapshot.key == 'Name') {
+          tempref = admin
+            .database()
+            .ref(`/Users/Learning_Paths/${snapshot.key}`);
+        }
+      });
+    });
+
+  let mandatory = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${name}/Pre-reqs`),
+    'Mandatory'
+  );
+
+  if (!mandatory) {
+    return response.status(404).json('Unable to make mandatory pre-requisite');
+  }
+
+  let rec_ref = admin
+    .database()
+    .ref(`/Learning_Paths/${lpid}/Pre-reqs/Mandatory`);
+  try {
+    // console.log(preq);
+    await rec_ref.push({ Prereq: preq });
+  } catch (err) {
+    // console.log(err);
+    return response
+      .status(404)
+      .json('An error happened when setting the mandatory pre-requsisites');
+  }
+  return response.status(200).json('Successfully set mandatory pre-req');
+});
+
 app.patch('/:lp_id/recommended_pre_reqs', async (request, response) => {
   let temp = request.body.pre_reqs_list;
   console.log(request.params.lp_id);
