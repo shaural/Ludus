@@ -7,7 +7,6 @@ class ClassCreatePage extends Component {
   render() {
     return (
       <main>
-        <NavBar />
         <h1>Create a Class</h1>
         <ClassContent userID={this.props.userID} />
       </main>

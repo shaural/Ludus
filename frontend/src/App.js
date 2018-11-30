@@ -75,19 +75,18 @@ class App extends Component {
           <Route exact path="/student-lpview" component={LpOverview} />
           <Route exact path="/LPEdit" component={EditLP} />
           <Route exact path="/classCreate" component={ClassCreatePage} />
-          <Route exact path="/" component={HomePage} />
+          <Route
+            exact
+            path="/"
+            render={props => <HomePage {...props} userID={this.state.userID} />}
+          />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route exact path="/interests" component={AddInterests} />
           <Route exact path="/login" component={LoginPage} />
           <Route exact path="/signup" component={SignUpPage} />
           <Route exact path="/remove" component={DeleteInterests} />
-          <Route
-            exact
-            path="/password-recovery"
-            component={PasswordReset} /*placeholder*/
-          />
-          {/*requires userID*/}
+          <Route exact path="/password-recovery" component={PasswordReset} />
           <Route
             exact
             path="/profile"
@@ -96,18 +95,19 @@ class App extends Component {
             )}
           />
           <Route exact path="/class-search" component={ClassSearchPage} />
-          {/*requires userID*/}
           <Route
             exact
             path="/dashboard"
-            component={Dashboard} /*placeholder*/
+            render={props => (
+              <Dashboard {...props} userID={this.state.userID} />
+            )}
           />
           <Route
             exact
             path="/bookmarks"
             render={props => (
               <BookmarkMenu {...props} userID={this.state.userID} />
-            )} /*placeholder*/
+            )}
           />
           <Route
             exact
@@ -122,12 +122,7 @@ class App extends Component {
                 {...props}
                 userID={this.state.userID}
               />
-            )} /*placeholder*/
-          />
-          <Route
-            exact
-            path="/teacher-class-create"
-            component={IllegalPath} /*placeholder*/
+            )}
           />
           <Route
             exact
@@ -154,11 +149,6 @@ class App extends Component {
             render={props => (
               <LearningPathCreatePage {...props} userID={this.state.userID} />
             )}
-          />
-          <Route
-            exact
-            path="/teacher-lp-edit"
-            component={IllegalPath} /*placeholder*/
           />
           <Route component={IllegalPath} />
         </Switch>
