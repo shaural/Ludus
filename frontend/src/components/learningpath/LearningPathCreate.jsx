@@ -77,10 +77,9 @@ export default class LearningPathCreate extends Component {
   };
 
   render() {
-    return (
-      <div>
-        if(!this.state.hidden)
-        {
+    if (!this.state.hidden) {
+      return (
+        <div>
           <form className="pre-reqs">
             Add a recommended pre-requisite learning path here [optional]:&nbsp;
             <input
@@ -92,47 +91,91 @@ export default class LearningPathCreate extends Component {
               Click here to add a recommended pre-req
             </button>
           </form>
-        }
-        <form className="inputs">
-          Learning Path Name:&nbsp;
-          <input
-            className="long"
-            type="text"
-            onChange={event => this.setState({ name: event.target.value })}
-          />
-          <br /> <br />
-          Topic:&nbsp;
-          {'\t\t'}
-          <input
-            className="long"
-            type="text"
-            onChange={event => this.setState({ topic: event.target.value })}
-          />
-          <br /> <br />
-          Mature Content&nbsp;
-          {'\t\t'}
-          <input
-            className="check"
-            type="checkbox"
-            onChange={event => this.handleMatureCheck(event)}
-          />
-        </form>
-        <div className="lpcontainer">
-          {' '}
-          <CreationList
-            classIDs={this.state.classes}
-            callback={this.handleRemoveClass}
-          />
-          <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
-            <AddList callback={this.handleAddClass} />
-          </Modal>
-          <button type="button" onClick={this.showModal}>
-            Add Classes...
-          </button>
+
+          <form className="inputs">
+            Learning Path Name:&nbsp;
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ name: event.target.value })}
+            />
+            <br /> <br />
+            Topic:&nbsp;
+            {'\t\t'}
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ topic: event.target.value })}
+            />
+            <br /> <br />
+            Mature Content&nbsp;
+            {'\t\t'}
+            <input
+              className="check"
+              type="checkbox"
+              onChange={event => this.handleMatureCheck(event)}
+            />
+          </form>
+          <div className="lpcontainer">
+            {' '}
+            <CreationList
+              classIDs={this.state.classes}
+              callback={this.handleRemoveClass}
+            />
+            <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
+              <AddList callback={this.handleAddClass} />
+            </Modal>
+            <button type="button" onClick={this.showModal}>
+              Add Classes...
+            </button>
+          </div>
+          <button onClick={this.submitLP}>Publish</button>
         </div>
-        <button onClick={this.submitLP}>Publish</button>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div>
+          <form className="inputs">
+            Learning Path Name:&nbsp;
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ name: event.target.value })}
+            />
+            <br /> <br />
+            Topic:&nbsp;
+            {'\t\t'}
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ topic: event.target.value })}
+            />
+            <br /> <br />
+            Mature Content&nbsp;
+            {'\t\t'}
+            <input
+              className="check"
+              type="checkbox"
+              onChange={event => this.handleMatureCheck(event)}
+            />
+          </form>
+          <div className="lpcontainer">
+            {' '}
+            <CreationList
+              classIDs={this.state.classes}
+              callback={this.handleRemoveClass}
+            />
+            <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
+              <AddList callback={this.handleAddClass} />
+            </Modal>
+            <button type="button" onClick={this.showModal}>
+              Add Classes...
+            </button>
+          </div>
+          <button onClick={this.submitLP}>Publish</button>
+        </div>
+      );
+    }
   }
 
   //list of classes chosen so far
