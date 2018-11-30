@@ -43,6 +43,7 @@ export default class LearningPathCreate extends Component {
         .then(function(resp) {
           // console.log(resp);
           alert('Successfully added pre-requisite');
+          this.setState({ hidden: false });
         })
         .catch(function(err) {
           alert(err);
@@ -67,115 +68,82 @@ export default class LearningPathCreate extends Component {
   };
 
   handleMatureCheck = event => {
-    console.log(this.state.mature);
+    // console.log(this.state.mature);
     if (event.target.checked) {
       this.setState({ mature: 'yes' });
     } else {
       this.setState({ mature: 'no' });
     }
-    console.log(this.state.mature);
+    // console.log(this.state.mature);
   };
 
-  render() {
-    if (!this.state.hidden) {
-      return (
-        <div>
-          <form className="pre-reqs">
-            Add a recommended pre-requisite learning path here [optional]:&nbsp;
-            <input
-              className="prereq"
-              type="text"
-              onChange={event => this.setState({ prereq: event.target.value })}
-            />
-            <button type="button" onClick={this.submitPrereq}>
-              Click here to add a recommended pre-req
-            </button>
-          </form>
+  toggleHide() {
+    this.setState({
+      hidden: !this.state.hidden
+    });
+  }
 
-          <form className="inputs">
-            Learning Path Name:&nbsp;
-            <input
-              className="long"
-              type="text"
-              onChange={event => this.setState({ name: event.target.value })}
-            />
-            <br /> <br />
-            Topic:&nbsp;
-            {'\t\t'}
-            <input
-              className="long"
-              type="text"
-              onChange={event => this.setState({ topic: event.target.value })}
-            />
-            <br /> <br />
-            Mature Content&nbsp;
-            {'\t\t'}
-            <input
-              className="check"
-              type="checkbox"
-              onChange={event => this.handleMatureCheck(event)}
-            />
-          </form>
-          <div className="lpcontainer">
-            {' '}
-            <CreationList
-              classIDs={this.state.classes}
-              callback={this.handleRemoveClass}
-            />
-            <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
-              <AddList callback={this.handleAddClass} />
-            </Modal>
-            <button type="button" onClick={this.showModal}>
-              Add Classes...
-            </button>
-          </div>
-          <button onClick={this.submitLP}>Publish</button>
+  preReqForm = () => {
+    <div>
+      <form className="pre-reqs">
+        Add a recommended pre-requisite learning path here [optional]:&nbsp;
+        <input
+          className="prereq"
+          type="text"
+          onChange={event => this.setState({ prereq: event.target.value })}
+        />
+        <button type="button" onClick={this.submitPrereq}>
+          Click here to add a recommended pre-req
+        </button>
+      </form>
+    </div>;
+  };
+  render() {
+    const shouldshow = this.state.hidden;
+    return (
+      <div>
+        {!this.state.hidden && <preReqForm />}
+
+        <form className="inputs">
+          Learning Path Name:&nbsp;
+          <input
+            className="long"
+            type="text"
+            onChange={event => this.setState({ name: event.target.value })}
+          />
+          <br /> <br />
+          Topic:&nbsp;
+          {'\t\t'}
+          <input
+            className="long"
+            type="text"
+            onChange={event => this.setState({ topic: event.target.value })}
+          />
+          <br /> <br />
+          Mature Content&nbsp;
+          {'\t\t'}
+          <input
+            className="check"
+            type="checkbox"
+            onChange={event => this.handleMatureCheck(event)}
+          />
+        </form>
+        <div className="lpcontainer">
+          {' '}
+          <CreationList
+            classIDs={this.state.classes}
+            callback={this.handleRemoveClass}
+          />
+          <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
+            <AddList callback={this.handleAddClass} />
+          </Modal>
+          <button type="button" onClick={this.showModal}>
+            Add Classes...
+          </button>
         </div>
-      );
-    } else {
-      return (
-        <div>
-          <form className="inputs">
-            Learning Path Name:&nbsp;
-            <input
-              className="long"
-              type="text"
-              onChange={event => this.setState({ name: event.target.value })}
-            />
-            <br /> <br />
-            Topic:&nbsp;
-            {'\t\t'}
-            <input
-              className="long"
-              type="text"
-              onChange={event => this.setState({ topic: event.target.value })}
-            />
-            <br /> <br />
-            Mature Content&nbsp;
-            {'\t\t'}
-            <input
-              className="check"
-              type="checkbox"
-              onChange={event => this.handleMatureCheck(event)}
-            />
-          </form>
-          <div className="lpcontainer">
-            {' '}
-            <CreationList
-              classIDs={this.state.classes}
-              callback={this.handleRemoveClass}
-            />
-            <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
-              <AddList callback={this.handleAddClass} />
-            </Modal>
-            <button type="button" onClick={this.showModal}>
-              Add Classes...
-            </button>
-          </div>
-          <button onClick={this.submitLP}>Publish</button>
-        </div>
-      );
-    }
+        <button onClick={this.submitLP}>Publish</button>
+      </div>
+    );
   }
 
   //list of classes chosen so far
