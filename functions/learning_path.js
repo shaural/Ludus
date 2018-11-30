@@ -70,13 +70,11 @@ app.get('/:lp_id/classes', async (request, response) => {
     request.params.lp_id
   );
   if (!found_lp)
-    return response
-      .status(404)
-      .json({
-        message: `learning path with id ${
-          request.params.lp_id
-        } does not exist or has no classes`
-      });
+    return response.status(404).json({
+      message: `learning path with id ${
+        request.params.lp_id
+      } does not exist or has no classes`
+    });
   else {
     const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
     db.once('value', function(snapshot) {
@@ -175,7 +173,7 @@ app.patch('/:lp_id/recommended_pre_reqs', async (request, response) => {
   //will discuss during meeting or via slack
 
   //checks that the learning path name actually exists
-  for (let v in pre_reqs_array)
+  for (let v in pre_reqs_array) {
     let temp2 = pre_reqs_array[v];
     //placeholder, will always evaluate to false
     //so we must wait for the loop below to find the correct path
@@ -419,21 +417,17 @@ app.delete('/:lp_id/class/:index', async (request, response) => {
     request.params.lp_id
   );
   if (!found_lp)
-    return response
-      .status(404)
-      .json({
-        message: `learning path with id ${request.params.lp_id} not found`
-      });
+    return response.status(404).json({
+      message: `learning path with id ${request.params.lp_id} not found`
+    });
   const found_idx = await ref_has_child(
     admin.database().ref(`/Learning_Paths/${request.params.lp_id}/Classes`),
     request.params.index
   );
   if (!found_idx)
-    return response
-      .status(404)
-      .json({
-        message: `learning path has no class at index ${request.params.index}`
-      });
+    return response.status(404).json({
+      message: `learning path has no class at index ${request.params.index}`
+    });
 
   try {
     await admin
@@ -450,13 +444,11 @@ app.delete('/:lp_id/class/:index', async (request, response) => {
       err
     });
   }
-  return response
-    .status(200)
-    .json({
-      message: `successfully removed class at index ${
-        request.params.index
-      } from learning path`
-    });
+  return response.status(200).json({
+    message: `successfully removed class at index ${
+      request.params.index
+    } from learning path`
+  });
 });
 
 // add ability to sort by interests for specific uid -> if interest match then lp will be ranked higher
@@ -608,7 +600,6 @@ app.get('/search', async (request, response) => {
   }
   return response.status(200).json(resp);
 });
-
 
 //Get individual lp with lpID & all children
 app.get('/:lp_id', async (request, response) => {
@@ -815,7 +806,6 @@ app.get('/student/:user_id/similarOthers', async (request, response) => {
   });
   let resp = lps_suggested;
   return response.status(200).json(resp);
-
 });
 
 exports.route = app;

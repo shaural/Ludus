@@ -8,7 +8,7 @@ const endfn = done => (err, res) => {
 
 describe('testing learning paths', function() {
   let server;
-  const test_lp_id = '-LSWz0JGlvEvzhTBhQQ6';
+  const test_lp_id = '-LQ1SMJladZM5nJ52mDP';
   before(function() {
     server = require('../learning_path').route;
   });
