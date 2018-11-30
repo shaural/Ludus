@@ -12,6 +12,7 @@ class LpOverview extends Component {
       ownerid: '',
       name: 'error',
       ownername: '',
+      lpid: window.location.href.substring(37,window.location.href.length),
       data: [],
       userdata: []
     };
@@ -21,6 +22,7 @@ getOwnerInfo() {
   Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/${this.state.ownerid}/`)
   .then(({ data }) => {
     console.log(data);
+    console.log(this.state.lpid);
     this.setState({
         userdata: data,
         ownername: data.Name
@@ -30,7 +32,7 @@ getOwnerInfo() {
 }
 
 componentDidMount() {
-	 Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/-LO0Mk238mCqz4fbfMjh`)
+	 Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/${this.state.lpid}`)
    .then(({ data }) => {
       console.log(data);
       this.setState({
@@ -53,7 +55,7 @@ componentDidMount() {
 
   		classes.push(
   			<div className="classObject">
-  				<Class ClassID={this.state.data.Classes[i]} Num={i}/>
+  				<Class ClassID={this.state.data.Classes[i]} Num={i} LpID={this.state.lpid} UserID={this.props.UserID}/>
   				<span className="Placeholder">
   				</span>
   			</div>

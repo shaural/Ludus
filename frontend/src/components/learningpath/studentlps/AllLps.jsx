@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
-import Lp from './Lp';
-import LpCreateBtn from './LpCreateBtn';
-import LpDeleteBtn from './LpDeleteBtn';
-import LpEditBtn from './LpEditBtn';
-import LpFilter from './LpFilter';
-import './lpPage.css';
+import LpNew from './LpNew';
+
 
 const Axios = require('axios');
 
-class LpPage extends Component {
+class AllLps extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,31 +16,29 @@ class LpPage extends Component {
 
   componentDidMount() {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
-        this.props.userID
-      }`
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search`
     ).then(({ data }) => {
-      console.log(data);
+      console.log(Object.keys(data));
       this.setState({
-        length: data.length,
+        length: 10,
         data: data
       });
     });
   }
 
   createLpPage = () => {
+
     //let lpIDList = []
     //TODO: Call API for lpIDs
     let learningPaths = [];
     var y = this.state.length;
     //for (let i = 0; i < lpIDList.length; i++) {
-    for (let i = 0; i < y; i++) {
+    for (var key in this.state.data) {
+      console.log(key);
       learningPaths.push(
         <div className="lpObject">
-          {<Lp LearningPathID={this.state.data} i={i} />}
+          {<LpNew LearningPathID={key} />}
           <span className="Placeholder">
-            {<LpEditBtn LearningPathID={this.state.data[i]} />} <text> </text>{' '}
-            {<LpDeleteBtn lpID={this.state.data[0]} />}
           </span>
         </div>
       );
@@ -63,7 +57,6 @@ class LpPage extends Component {
       <div>
         <div>
           {' '}
-          {<LpCreateBtn />} {<LpFilter />}
         </div>
         <div className="LpPage">{this.createLpPage()}</div>;
       </div>
@@ -71,4 +64,4 @@ class LpPage extends Component {
   }
 }
 
-export default LpPage;
+export default AllLps;

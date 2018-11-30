@@ -36,6 +36,11 @@ class Class extends Component {
          time: data.Time,
          num: this.props.Num + 1
  			 });
+       if(!this.state.time){
+         this.setState({
+           time: "unknown"
+         });
+       }
  	  });
   }
 
@@ -53,7 +58,7 @@ render() {
         View Content
       </button>
       <Modal show={this.state.show} handleClose={this.hideModal}>
-        <ViewContent ContentID={this.props.ClassID} />
+        <ViewContent ContentID={this.props.ClassID} LpID={this.props.LpID} UserID={this.props.UserID}/>
       </Modal>
     </container>
     );

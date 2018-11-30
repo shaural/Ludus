@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import './App.css';
 // import custom component
 
+import conf from './conf.js';
+import 'firebase-auth';
+import firebase from 'firebase';
+
 import { PasswordReset } from './passwordreset/PasswordReset';
 import ClassCreatePage from './components/createclass/ClassCreatePage';
 import HomePage from './components/home/HomePage';
@@ -21,13 +25,40 @@ import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
 import { DeleteInterests } from './components/interests/delete-interests';
 import LpOverview from './components/learningpath/studentlps/LpOverview';
+import AllLps from './components/learningpath/studentlps/AllLps';
+
+const Axios = require('axios');
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userID: ''
+      userID: '',
+      email: ''
     };
+  }
+
+  getLoggedIn(){
+    var user = firebase.auth().currentUser;
+    var email;
+    if(user){
+      console.log("found logged in user!");
+      this.setState({
+        email: user.email
+      });
+    }
+    return;
+  }
+
+  componentDidMount(){
+    this.getLoggedIn();
+    Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${this.state.email}`)
+    .then(({ data }) => {
+      console.log("userid", data);
+      this.setState({
+          userID: data
+      });
+    });
   }
 
   render() {
@@ -45,7 +76,7 @@ class App extends Component {
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
-        <Link to="/student-lpview">Testing studentlp</Link> &nbsp;
+        <Link to="/all-lp-list">All LPs</Link> &nbsp;
         <Link
           to={{
             pathname: '/LPEdit',
@@ -127,6 +158,10 @@ class App extends Component {
           <Route
             path="/teacher-lplist"
             render={props => <LpPage {...props} userID={this.state.userID} />}
+          />
+          <Route
+            path="/all-lp-list"
+            render={props => <AllLps {...props} userID={this.state.userID} />}
           />
           <Route
             path="/teacher-lp-create"
