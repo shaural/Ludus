@@ -14,6 +14,7 @@ export default class LearningPathCreate extends Component {
       topic: '',
       prereq: '',
       mature: 'no',
+      hidden: true,
       classes: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
@@ -78,18 +79,20 @@ export default class LearningPathCreate extends Component {
   render() {
     return (
       <div>
-        <form className="pre-reqs">
-          Add a recommended pre-requisite learning path here [optional]:&nbsp;
-          <input
-            className="prereq"
-            type="text"
-            onChange={event => this.setState({ prereq: event.target.value })}
-          />
-          <button type="button" onClick={this.submitPrereq}>
-            Click here to add a recommended pre-req
-          </button>
-        </form>
-
+        if(!this.state.hidden)
+        {
+          <form className="pre-reqs">
+            Add a recommended pre-requisite learning path here [optional]:&nbsp;
+            <input
+              className="prereq"
+              type="text"
+              onChange={event => this.setState({ prereq: event.target.value })}
+            />
+            <button type="button" onClick={this.submitPrereq}>
+              Click here to add a recommended pre-req
+            </button>
+          </form>
+        }
         <form className="inputs">
           Learning Path Name:&nbsp;
           <input
@@ -184,7 +187,7 @@ export default class LearningPathCreate extends Component {
         alert(error.message);
       });
     alert('Published Learning Path!');
-
+    this.state.hidden = false;
     return false;
   }
 }

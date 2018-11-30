@@ -77,7 +77,7 @@ app.get('/:lp_id/classes', (request, response) => {
   }
 });
 
-app.path('/:lp_name/mandatory_pre_reqs', async (request, response) => {
+app.patch('/:lp_name/mandatory_pre_reqs', async (request, response) => {
   //note, this function should not be passed an array of pre-reqs, but rather one at a time
 
   let temp = request.body.pre_reqs_list;
@@ -105,11 +105,11 @@ app.path('/:lp_name/mandatory_pre_reqs', async (request, response) => {
   await admin
     .database()
     .ref('/Users/Learning_Paths')
-    .on('value', function(snapshot) {
+    .once('value', function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         //we found the learning path
-        console.log(snapshot.key + ' ' + snapshot.val());
-        if (childSnapshot.key == 'Name') {
+        // console.log(snapshot.key + ' ' + snapshot.val());
+        if (childSnapshot.key === 'Name') {
           tempref = admin
             .database()
             .ref(`/Users/Learning_Paths/${snapshot.key}`);
