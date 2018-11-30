@@ -42,7 +42,6 @@ class SignUpForm extends Component {
       `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
     )
       .then(response => {
-        console.log(response);
         let classList = [];
         let classInfo = [];
         for (let id in response.data) {
@@ -76,7 +75,8 @@ class SignUpForm extends Component {
             <div>
               <button
                 onClick={event => this.handleClick(event)}
-                value={this.state.classIDList[id]}
+                name={this.state.classIDList[id]}
+                value={this.state.classInfo[id]}
               >
                 Add
               </button>
@@ -89,9 +89,9 @@ class SignUpForm extends Component {
   };
 
   handleClick = e => {
-    let s = e.target.value;
-    console.log(s);
-    this.props.callback(s);
+    let s = e.target.name;
+    let d = e.target.value;
+    this.props.callback(s, d);
   };
   render() {
     return (

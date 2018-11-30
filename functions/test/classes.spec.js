@@ -36,7 +36,8 @@ describe('testing classes', function() {
         .post('/')
         .send({
           name: 'test class!',
-          owner: '-LNVWR9kD2dvN8GLGFYE'
+          owner: '-LNVWR9kD2dvN8GLGFYE',
+          content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
         })
         .expect(200)
         .end(function(err, res) {
@@ -53,6 +54,7 @@ describe('testing classes', function() {
             .to.be.an('object')
             .that.deep.includes({
               [test_class_id]: {
+                Content: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 Mature: 'no',
                 Name: 'test class!',
                 Owner: '-LNVWR9kD2dvN8GLGFYE'

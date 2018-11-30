@@ -3,6 +3,7 @@ import './App.css';
 // import custom component
 
 import { PasswordReset } from './passwordreset/PasswordReset';
+import ClassCreatePage from './components/createclass/ClassCreatePage';
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
@@ -20,6 +21,7 @@ import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
 import { DeleteInterests } from './components/interests/delete-interests';
 import BookmarkMenu from './components/bookmarks/BookmarkMenu';
+import LpOverview from './components/learningpath/studentlps/LpOverview';
 
 class App extends Component {
   constructor(props) {
@@ -44,6 +46,7 @@ class App extends Component {
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
+        <Link to="/student-lpview">Testing studentlp</Link> &nbsp;
         <Link
           to={{
             pathname: '/LPEdit',
@@ -69,14 +72,10 @@ class App extends Component {
         {/* probably want to check if you're logged in or not for the home page? */}
         <NavBar userID={this.state.userID} />
         <Switch>
+          <Route exact path="/student-lpview" component={LpOverview} />
           <Route exact path="/LPEdit" component={EditLP} />
-          <Route
-            exact
-            path="/"
-            render={props => (
-              <HomePage {...props} userID={this.state.userID} />
-            )} /*placeholder*/
-          />
+          <Route exact path="/classCreate" component={ClassCreatePage} />
+          <Route exact path="/" component={HomePage} />
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route exact path="/interests" component={AddInterests} />

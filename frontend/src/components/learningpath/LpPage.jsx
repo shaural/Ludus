@@ -43,13 +43,17 @@ class LpPage extends Component {
         <div className="lpObject">
           {<Lp LearningPathID={this.state.data} i={i} />}
           <span className="Placeholder">
-            {<LpEditBtn LearningPathID={this.state.data[i]} />} <text> </text>{' '}
+            {<LpEditBtn />} <text> </text>{' '}
             {<LpDeleteBtn lpID={this.state.data[0]} />}
           </span>
         </div>
       );
     }
-
+    if ((y = 0)) {
+      learningPaths.push(
+        <text>"No Learning Paths enrolled or created yet" </text>
+      );
+    }
     return learningPaths;
   };
 

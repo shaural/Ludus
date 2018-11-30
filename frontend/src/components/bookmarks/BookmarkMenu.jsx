@@ -13,7 +13,6 @@ class ClassList extends Component {
       IDList: [],
       ObjList: []
     };
-    this.submitSearch = this.submitSearch.bind(this);
   }
 
   componentDidMount = () => {
@@ -45,7 +44,8 @@ class ClassList extends Component {
   render() {
     return (
       <div>
-        <br /> <br />
+        <h1>Your Bookmarks</h1>
+        <br />
         <div className="ClassForm">{this.displayBookmarks()}</div>
       </div>
     );

@@ -10,12 +10,22 @@ app.use(require('cors')({ origin: true }));
 app.post('/', async (request, response) => {
   const db = admin.database().ref(`/Classes`);
 
-  const { name, content_type, owner, mature, tags } = request.body;
+  const {
+    name,
+    content_type,
+    owner,
+    mature,
+    tags,
+    time,
+    content
+  } = request.body;
   try {
     await db
       .push({
         Name: name,
         Owner: owner,
+        Content: content,
+        Time: time || [],
         Content_type: content_type || [],
         Mature: mature || 'no',
         Tags: tags || []
@@ -47,13 +57,17 @@ app.patch('/:class_id', async (request, response) => {
     owner,
     mature,
     tags,
-    comments
+    comments,
+    time,
+    content
   } = request.body;
 
   await db
     .push({
       Name: name,
       Owner: owner,
+      Content: content,
+      Time: time || [],
       Ratings: rating || [],
       Content_type: content_type || [],
       Mature: mature || 'no',

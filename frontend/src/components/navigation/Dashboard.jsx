@@ -19,6 +19,10 @@ class Dashboard extends Component {
             <Link to="/teacher-lp-create">Create Learning Path</Link> <br />
           </div>
         </div>
+        <div className="DashWrapper">
+          <div className="Recommendations">a</div>
+          <div className="Notifications">a</div>
+        </div>
       </div>
     );
   }

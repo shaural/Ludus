@@ -12,7 +12,8 @@ export default class LearningPathCreate extends Component {
       name: '',
       topic: '',
       mature: 'no',
-      classes: []
+      classes: [],
+      classesinfo: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
@@ -28,13 +29,11 @@ export default class LearningPathCreate extends Component {
   };
 
   handleMatureCheck = event => {
-    console.log(this.state.mature);
     if (event.target.checked) {
       this.setState({ mature: 'yes' });
     } else {
       this.setState({ mature: 'no' });
     }
-    console.log(this.state.mature);
   };
 
   render() {
@@ -68,6 +67,7 @@ export default class LearningPathCreate extends Component {
           {' '}
           <CreationList
             classIDs={this.state.classes}
+            classInfo={this.state.classesinfo}
             callback={this.handleRemoveClass}
           />
           <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
@@ -83,25 +83,27 @@ export default class LearningPathCreate extends Component {
   }
 
   //list of classes chosen so far
-  handleAddClass(event) {
-    console.log(event);
+  handleAddClass(classID, classInfo) {
     if (!this.state.classes);
     else {
-      if (this.state.classes.indexOf(event) !== -1) {
+      if (this.state.classes.indexOf(classID) != -1) {
         alert('That class is already in the learning path!');
         return;
       }
     }
-    var array = [...this.state.classes, event];
-    this.setState({ classes: array });
+    var array = [...this.state.classes, classInfo];
+    var infoarray = [...this.state.classesinfo, classID];
+    this.setState({ classes: array, classesinfo: infoarray });
   }
 
   handleRemoveClass(event) {
     console.log(event);
     var array = [...this.state.classes];
+    var infoarray = [...this.state.classesinfo];
     var index = array.indexOf(event);
     array.splice(index, 1);
-    this.setState({ classes: array });
+    infoarray.splice(index, 1);
+    this.setState({ classes: array, classesinfo: infoarray });
   }
 
   submitLP() {
