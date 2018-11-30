@@ -53,7 +53,7 @@ componentDidMount() {
 
   		classes.push(
   			<div className="classObject">
-  				<Class ClassID={this.state.data.Classes[i]} Num={i}/>
+  				<Class ClassID={this.state.data.Classes[i]} Num={i} LpID="-LQ1SMJladZM5nJ52mDP" UserID={this.props.UserID}/>
   				<span className="Placeholder">
   				</span>
   			</div>

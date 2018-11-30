@@ -7,9 +7,24 @@ class ViewContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      vid: 0,
       newcontent: '',
       content: ''
     };
+  }
+
+  callComplete(){
+    Axios.patch(`https://us-central1-ludusfire.cloudfunctions.net/users/
+      ${this.props.userID}/student/learning_path/
+      ${this.props.UserID}/${this.props.ContentID}`)
+      .then(function(response) {
+        console.log(response)
+      })
+      .catch(function(error) {
+        console.log(error)
+      });
+
+      return false;
   }
 
   componentDidMount() {
@@ -17,14 +32,20 @@ class ViewContent extends Component {
     .then(({ data }) => {
        console.log(data);
        this.setState({
-         content: data.Content
+         content: JSON.stringify(data.Content)
  			 });
+       var str = this.state.content;
+       console.log(str.substring(33,str.length-1));
+       if(str.substring(1,25) === "https://www.youtube.com/") {
+         this.setState({
+           vid: 1,
+           newcontent: str.substring(33,str.length-1)
+         });
+       }else {
+         newcontent: str
+       }
 
  	  });
-    var str = this.state.content.substring(32, this.state.content.length);
-    this.setState({
-      newcontent: str
-    });
   }
 
   _onReady(event) {
@@ -38,15 +59,33 @@ class ViewContent extends Component {
       }
     };
 
-    return(
-      <div>
-        <Youtube
-          videoId="dQw4w9WgXcQ"
-          opts={opts}
-          //onReady={this._onReady}
-        />
-      </div>
-    );
+    if( this.state.vid === 1){
+      return(
+        <main>
+        <div>
+          <Youtube
+            videoId={this.state.newcontent}
+            opts={opts}
+            //onReady={this._onReady}
+            />
+        </div>
+        <div>
+          <button> Mark Complete </button>
+        </div>
+        </main>
+      );
+    } else {
+      return(
+        <main>
+        <div>
+          <p> {this.state.content} </p>
+        </div>
+        <div>
+          <button> Mark Complete </button>
+        </div>
+        </main>
+      );
+    }
   }
 
 }
