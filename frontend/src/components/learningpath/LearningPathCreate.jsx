@@ -28,7 +28,7 @@ export default class LearningPathCreate extends Component {
       pre_reqs_list: this.state.prereq.toString().trim()
     };
     // alert(this.state.prereq.toString())
-    alert(this.state.name.toString());
+    // alert(this.state.name.toString());
     if (
       this.state.name.toString().length != 0 &&
       this.state.topic.toString().length != 0
@@ -37,30 +37,19 @@ export default class LearningPathCreate extends Component {
       let request = `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${this.state.name
         .toString()
         .trim()}/recommended_pre_reqs`;
-      alert(request);
-      Axios.patch(
-        request,
-        querystring.stringify(data)
-        /*
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-        */
-      )
+      // alert(request);
+      Axios.patch(request, querystring.stringify(data))
         .then(function(resp) {
-          console.log(resp);
+          // console.log(resp);
+          alert('Successfully added pre-requisite');
         })
         .catch(function(err) {
           alert(err);
-          console.log(err.data);
+          // console.log(err.data);
         });
     } else {
       //ignore empty lp
-      alert(
-        'You may not create pre-requisites for a non-existent learning path'
-      );
+      alert('You may not create pre-requisites for an empty learning path');
     }
   };
 
