@@ -427,7 +427,6 @@ app.get('/search', async (request, response) => {
         if (nameCheck && ownerCheck && matureCheck && topicCheck) {
           if (interests.length > 0) {
             // if snap matches interest then add to resp, else add to resp2
-            // console.log(snapshot.val());
             interests.forEach(element => {
               if (
                 JSON.stringify(childSnapshot.val())
@@ -435,7 +434,6 @@ app.get('/search', async (request, response) => {
                   .indexOf(element.toLowerCase()) != -1
               ) {
                 //snapshot contains interest
-                console.log(childSnapshot.val());
                 resp.push([childSnapshot.key, childSnapshot.val()]);
               } else {
                 resp2.push([childSnapshot.key, childSnapshot.val()]);
@@ -453,6 +451,206 @@ app.get('/search', async (request, response) => {
   if (resp2.length > 0) {
     resp = resp.concat(resp2);
   }
+  return response.status(200).json(resp);
+});
+
+// fetch similar LPs like ones I have completed
+app.get('/student/:user_id/similarCompleted', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  const userRef = admin.database().ref(`/Users`);
+  let uid = request.params.user_id;
+  // get LPs user with uid has completed
+  let lps_compelted = [];
+  await userRef.once('value', function(snapshot) {
+    if (snapshot.hasChild(uid)) {
+      if (
+        snapshot
+          .child(uid)
+          .child('Student')
+          .hasChild('LP_Enrolled')
+      ) {
+        // student is enrolled in atleast 1 lp
+        snapshot
+          .child(uid)
+          .child('Student')
+          .child('LP_Enrolled')
+          .forEach(function(childSnap) {
+            if (
+              childSnap
+                .child('LP_Status')
+                .val()
+                .indexOf('Completed') != -1
+            ) {
+              // childSnap lp is completed
+              lps_compelted.push(childSnap.key);
+            }
+          });
+      } else {
+        // student not enrolled in any lps
+        return response.status(400).json({
+          message: `User with id: ${uid} not enrolled in any Learning Paths.`
+        });
+      }
+    } else {
+      // User does not exist
+      return response.status(400).json({
+        message: `User with id: ${uid} not found.`
+      });
+    }
+  });
+  let resp = [];
+  await lpRef.once('value', function(snapshot) {
+    lps_compelted.forEach(completedLp => {
+      //get info for compeletedLp
+      let owner = '';
+      let topic = '';
+      // let name = "";
+      let topic_split = [];
+      let lp_id_inserted = [];
+      if (snapshot.child(completedLp).hasChild('Owner')) {
+        owner = snapshot
+          .child(completedLp)
+          .child('Owner')
+          .val();
+        snapshot.forEach(function(childSnap) {
+          if (
+            owner.length > 0 &&
+            childSnap.hasChild('Owner') &&
+            childSnap
+              .child('Owner')
+              .val()
+              .toLowerCase()
+              .indexOf(owner.toLowerCase()) != -1
+          ) {
+            if (
+              !lps_compelted.includes(childSnap.key) &&
+              !lp_id_inserted.includes(childSnap.key)
+            ) {
+              // not already completed -> need to suggest
+              resp.push([childSnap.key, childSnap.val()]);
+              lp_id_inserted.push(childSnap.key);
+            }
+          }
+        });
+      }
+      if (snapshot.child(completedLp).hasChild('Topic')) {
+        topic = snapshot
+          .child(completedLp)
+          .child('Topic')
+          .val();
+        // looks like topic is stored as a ', ' seperated string (will not change this now, since might mess up something someone else implemented)
+        topic_split = topic.split(', ');
+        snapshot.forEach(function(childSnap) {
+          for (var t of topic_split) {
+            if (
+              t.length > 0 &&
+              childSnap.hasChild('Topic') &&
+              (childSnap
+                .child('Topic')
+                .val()
+                .toLowerCase()
+                .indexOf(t.toLowerCase()) != -1 ||
+                t.toLowerCase().indexOf(
+                  childSnap
+                    .child('Topic')
+                    .val()
+                    .toLowerCase()
+                ) != -1)
+            ) {
+              if (
+                !lps_compelted.includes(childSnap.key) &&
+                !lp_id_inserted.includes(childSnap.key)
+              ) {
+                // not already completed -> need to suggest
+                resp.push([childSnap.key, childSnap.val()]);
+                lp_id_inserted.push(childSnap.key);
+                break;
+              }
+            }
+          }
+        });
+      }
+      // do I need to check for name, as name can be arbitrary...?
+      // if(snapshot.child(completedLp).hasChild("Name")) {
+      //   name = snapshot.child(completedLp).child("Name").val();
+      // }
+    });
+  });
+  return response.status(200).json(resp);
+});
+
+// fetch similar lps to ones others that have similar interests to me have completed
+// first fetch my interests, then get LPs that other users that have the some of my interests have completed
+app.get('/student/:user_id/similarOthers', async (request, response) => {
+  const lpRef = admin.database().ref(`/Learning_Paths`);
+  const userRef = admin.database().ref(`/Users`);
+  let uid = request.params.user_id;
+  // get LPs user with uid has completed
+  let interests = [];
+  let lps_suggested = [];
+  await userRef.once('value', function(snapshot) {
+    if (snapshot.hasChild(uid)) {
+      if (snapshot.child(uid).hasChild('Interests')) {
+        // student has at least 1 interest
+        snapshot
+          .child(uid)
+          .child('Interests')
+          .forEach(function(intSnap) {
+            interests.push(intSnap.val());
+          });
+      } else {
+        // student not enrolled in any lps
+        return response.status(400).json({
+          message: `User with id: ${uid} Does not have any interests.`
+        });
+      }
+    } else {
+      // User does not exist
+      return response.status(400).json({
+        message: `User with id: ${uid} not found.`
+      });
+    }
+    // find users with similar interests
+    snapshot.forEach(function(childSnapshot) {
+      if (childSnapshot.key.indexOf(uid) == -1) {
+        if (childSnapshot.hasChild('Interests')) {
+          var interestMatch = false;
+          childSnapshot.child('Interests').forEach(function(interestSnap) {
+            interests.forEach(element => {
+              if (
+                JSON.stringify(interestSnap.val())
+                  .toLowerCase()
+                  .indexOf(element.toLowerCase()) != -1
+              ) {
+                interestMatch = true;
+              }
+            });
+          });
+          if (interestMatch) {
+            // suggest LPs that this user has completed
+            // check if childSnap has completed lps
+            if (childSnapshot.hasChild('Student/LP_Enrolled')) {
+              childSnapshot
+                .child('Student/LP_Enrolled')
+                .forEach(function(lpSnap) {
+                  if (
+                    lpSnap
+                      .child('LP_Status')
+                      .val()
+                      .indexOf('Complete') != -1
+                  ) {
+                    if (!lps_suggested.includes(lpSnap.key)) {
+                      lps_suggested.push(lpSnap.key);
+                    }
+                  }
+                });
+            }
+          }
+        }
+      }
+    });
+  });
+  let resp = lps_suggested;
   return response.status(200).json(resp);
 });
 
