@@ -20,6 +20,7 @@ import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
 import { DeleteInterests } from './components/interests/delete-interests';
 import BookmarkMenu from './components/bookmarks/BookmarkMenu';
+import ClassMenu from './components/class/ClassMenu';
 
 class App extends Component {
   constructor(props) {
@@ -124,6 +125,13 @@ class App extends Component {
                 userID={this.state.userID}
               />
             )} /*placeholder*/
+          />
+          <Route
+            exact
+            path="/class-menu/:classID"
+            render={props => (
+              <ClassMenu {...props} userID={this.state.userID} />
+            )}
           />
           <Route
             exact
