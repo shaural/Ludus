@@ -27,7 +27,6 @@ describe('testing learning paths', function() {
           .expect(200, done);
       });
   });
-  console.log(test_lp_id);
   describe('population', function() {
     it('can validate the learning path', function(done) {
       request(server)
