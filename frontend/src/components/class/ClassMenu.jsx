@@ -27,6 +27,9 @@ class Class extends Component {
   drawMenu = classInfo => {
     let vars = [];
     let menu = '';
+    let owner = '';
+
+    //Class Info Display
     for (let key in classInfo) {
       if (key === 'Name') {
         const newTo = {
@@ -42,10 +45,18 @@ class Class extends Component {
           </div>
         );
         vars = [name, ...vars];
-      } else if (key === 'Tag') {
+      } else if (key === 'Owner') {
+        owner = classInfo[key];
         vars.push(
           <div className="expandedDetail" key={key}>
             {key + ': ' + classInfo[key]} <br />
+          </div>
+        );
+      } else if (key === 'Tags') {
+        let stringo = classInfo[key].substring(1, classInfo[key].length - 1);
+        vars.push(
+          <div className="expandedDetail" key={key}>
+            {key + ': ' + stringo} &nbsp;
           </div>
         );
       } else if (key === 'Content_type') {
@@ -76,37 +87,41 @@ class Class extends Component {
         );
       }
     }
+
+    //Action Menu Items
     vars.push(
-      <div className="expandedDetail">
+      <div className="expandedDetail" key="View">
         <br />
-        <Link to="/">Edit Class</Link>
+        <Link to="/">View Class</Link>
       </div>
     );
-    vars.push(
-      <div className="expandedDetail">
-        <Link to="/">Edit Class</Link>
-      </div>
-    );
-    vars.push(
-      <div className="expandedDetail">
-        <Link to="/">Edit Class</Link>
-      </div>
-    );
-    if (this.props.userID) {
-      vars.push(this.props.userID);
+    if (this.props.userID === owner) {
+      vars.push(
+        <div className="expandedDetail" key="Edit">
+          <Link to="/">Edit Class</Link>
+        </div>
+      );
     }
+    vars.push(
+      <div className="expandedDetail" key="Delete">
+        <Link to="/">Edit Class</Link>
+      </div>
+    );
+    if (owner !== this.props.userID) {
+      vars.push(
+        <div className="expandedDetail" key="Delete">
+          <Link to="/">Rate Class</Link>
+        </div>
+      );
+    }
+    vars.push(this.props.userID);
     menu = <div className="expandedClassInfo">{vars}</div>;
     this.setState({ display: menu });
     return;
   };
 
   render() {
-    return (
-      <div>
-        {this.props.match.params.classID}
-        {this.state.display}
-      </div>
-    );
+    return <div>{this.state.display}</div>;
   }
 }
 

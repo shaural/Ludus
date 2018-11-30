@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Class from '../class/Class';
+import ClassAlt from '../class/ClassAlt';
 
 class CreationList extends Component {
   handleRemoveButton = e => {
@@ -14,7 +14,12 @@ class CreationList extends Component {
       if (classlist[id] === undefined) return;
       classes.push(
         <div key={classlist[id]} className="ClassObject">
-          {this.props.classArray[id]}
+          {
+            <ClassAlt
+              classID={classlist[id]}
+              classInfo={this.props.classInfo[id]}
+            />
+          }
           <span className="Highlight">
             <button onClick={this.handleRemoveButton} value={classlist[id]}>
               Remove

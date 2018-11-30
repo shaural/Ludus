@@ -13,13 +13,14 @@ export default class LearningPathCreate extends Component {
       topic: '',
       mature: 'no',
       classes: [],
-      classArray: []
+      classInfo: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
     this.submitLP = this.submitLP.bind(this);
   }
 
+  //modal show and hide
   showModal = () => {
     this.setState({ show: true });
   };
@@ -28,6 +29,7 @@ export default class LearningPathCreate extends Component {
     this.setState({ show: false });
   };
 
+  //mature checkbox
   handleMatureCheck = event => {
     if (event.target.checked) {
       this.setState({ mature: 'yes' });
@@ -64,12 +66,13 @@ export default class LearningPathCreate extends Component {
           />
         </form>
         <div className="lpcontainer">
-          {' '}
+          {/*List of currently selected classes*/}
           <CreationList
             classIDs={this.state.classes}
-            classArray={this.state.classArray}
+            classInfo={this.state.classInfo}
             callback={this.handleRemoveClass}
           />
+          {/*Popup with search for classes to add to lp*/}
           <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
             <AddList callback={this.handleAddClass} />
           </Modal>
@@ -82,8 +85,8 @@ export default class LearningPathCreate extends Component {
     );
   }
 
-  //list of classes chosen so far
-  handleAddClass(classID, classy) {
+  //callback for adding a class to the selection
+  handleAddClass(classID, classInfo) {
     if (!this.state.classes);
     else {
       if (this.state.classes.indexOf(classID) != -1) {
@@ -91,26 +94,24 @@ export default class LearningPathCreate extends Component {
         return;
       }
     }
+    console.log(classInfo);
     var idArray = [...this.state.classes, classID];
-    var classArray = [...this.state.classArray, classy];
-    this.setState({ classes: idArray, classArray: classArray });
+    var infoArray = [...this.state.classInfo, classInfo];
+    this.setState({ classes: idArray, classInfo: infoArray });
   }
 
+  //callback for removing a class from the selection
   handleRemoveClass(event) {
     console.log(event);
     var idArray = [...this.state.classes];
-    var classArray = [...this.state.classArray];
+    var infoArray = [...this.state.classInfo];
     var index = idArray.indexOf(event);
     idArray.splice(index, 1);
-    classArray.splice(index, 1);
-    this.setState({ classes: idArray, classArray: classArray });
+    infoArray.splice(index, 1);
+    this.setState({ classes: idArray, classInfo: infoArray });
   }
 
   submitLP() {
-    /*
-    if (!this.state.classes) {
-      alert('No Classes in LP!');
-    }*/
     if (this.state.name === '') {
       alert('Please name your learning path');
     } else if (this.state.topic === '') {
@@ -144,7 +145,8 @@ export default class LearningPathCreate extends Component {
     return false;
   }
 }
-//list of classes to choose from
+
+//modal functionality for class chooser
 const Modal = ({ handleClose, show, children }) => {
   const showHideClassName = show ? 'modal display-block' : 'modal display-none';
   return (

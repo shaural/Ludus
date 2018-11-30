@@ -13,12 +13,13 @@ class SignUpForm extends Component {
       tag: '',
       classIDList: [],
       classInfo: [],
-      classArray: []
+      transferInfo: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
 
   createClasslist = () => {
+    //search functionality
     let query = '?';
     let multi = 0;
     if (this.state.name.toString().length) {
@@ -45,11 +46,23 @@ class SignUpForm extends Component {
       .then(response => {
         let classList = [];
         let classInfo = [];
+        let transfer = [];
         for (let id in response.data) {
           classList.push(response.data[id][0]);
+          let temp = [];
+          for (let bid in response.data[id][1]) {
+            temp.push(bid);
+            temp.push(response.data[id][1][bid]);
+          }
+          transfer.push(temp);
           classInfo.push(response.data[id][1]);
         }
-        this.setState({ classIDList: classList, classInfo: classInfo });
+        console.log(transfer);
+        this.setState({
+          classIDList: classList,
+          classInfo: classInfo,
+          transferInfo: transfer
+        });
         this.submitSearch();
       })
       .catch(function(error) {
@@ -64,15 +77,14 @@ class SignUpForm extends Component {
     let classes = [];
     for (let id in this.state.classIDList) {
       if (this.state.classIDList[id] === undefined) return;
-      let classy = (
-        <Class
-          classID={this.state.classIDList[id]}
-          classInfo={this.state.classInfo[id]}
-        />
-      );
       classes.push(
         <div className="ClassObject" key={id}>
-          {classy}
+          {
+            <Class
+              classID={this.state.classIDList[id]}
+              classInfo={this.state.classInfo[id]}
+            />
+          }
           {
             <div>
               <button
@@ -91,10 +103,9 @@ class SignUpForm extends Component {
   };
 
   handleClick = e => {
-    let classy = this.state.classArray[e.target.value];
+    let info = this.state.transferInfo[e.target.value];
     let id = e.target.name;
-    console.log(classy);
-    this.props.callback(id, classy);
+    this.props.callback(id, info);
   };
   render() {
     return (

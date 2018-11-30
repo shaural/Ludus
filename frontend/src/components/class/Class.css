@@ -2,7 +2,8 @@
   display: block;
   width: 100%;
   max-width: 750px;
-  height: 50px;
+  height: auto;
+  max-height: 70px;
   background-color: #fff;
   float: left;
 }
