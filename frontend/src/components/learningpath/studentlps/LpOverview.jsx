@@ -30,7 +30,7 @@ getOwnerInfo() {
 }
 
 componentDidMount() {
-	 Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/-LO0Mk238mCqz4fbfMjh`)
+	 Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/learningPath/-LQ1SMJladZM5nJ52mDP`)
    .then(({ data }) => {
       console.log(data);
       this.setState({
@@ -53,7 +53,7 @@ componentDidMount() {
 
   		classes.push(
   			<div className="classObject">
-  				<Class ClassID={this.state.data.Classes[i]} Num={i}/>
+  				<Class ClassID={this.state.data.Classes[i]} Num={i} LpID="-LQ1SMJladZM5nJ52mDP" UserID={this.props.UserID}/>
   				<span className="Placeholder">
   				</span>
   			</div>

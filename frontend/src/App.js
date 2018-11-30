@@ -21,6 +21,7 @@ import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
 import { DeleteInterests } from './components/interests/delete-interests';
 import LpOverview from './components/learningpath/studentlps/LpOverview';
+import AllLps from './components/learningpath/studentlps/AllLps';
 
 class App extends Component {
   constructor(props) {
@@ -46,6 +47,7 @@ class App extends Component {
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
         <Link to="/student-lpview">Testing studentlp</Link> &nbsp;
+        <Link to="/all-lp-list">All LPs</Link> &nbsp;
         <Link
           to={{
             pathname: '/LPEdit',
@@ -127,6 +129,10 @@ class App extends Component {
           <Route
             path="/teacher-lplist"
             render={props => <LpPage {...props} userID={this.state.userID} />}
+          />
+          <Route
+            path="/all-lp-list"
+            render={props => <AllLps {...props} userID={this.state.userID} />}
           />
           <Route
             path="/teacher-lp-create"

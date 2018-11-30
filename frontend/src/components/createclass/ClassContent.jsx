@@ -57,11 +57,10 @@ class ClassContent extends Component {
   }
 
   submitClass() {
-    
+
     const requestBody = {
       name: this.state.name,
       owner: this.props.userID,
-      etc: this.state.etc,
       content: this.state.content
     };
 
