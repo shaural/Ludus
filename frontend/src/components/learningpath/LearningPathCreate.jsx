@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import CreationList from './CreationList';
 import AddList from './AddList';
 import '../class/ClassList.css';
@@ -11,16 +12,54 @@ export default class LearningPathCreate extends Component {
     this.state = {
       name: '',
       topic: '',
+      prereq: '',
       mature: 'no',
+      hidden: true,
       classes: []
     };
     this.handleAddClass = this.handleAddClass.bind(this);
     this.handleRemoveClass = this.handleRemoveClass.bind(this);
     this.submitLP = this.submitLP.bind(this);
+    this.changePrereq = this.changePrereq.bind(this);
+    this.submitPrereq = this.submitPrereq.bind(this);
   }
+
+  submitPrereq = () => {
+    let data = {
+      pre_reqs_list: this.state.prereq.toString().trim()
+    };
+    // alert(this.state.prereq.toString())
+    // alert(this.state.name.toString());
+    if (
+      this.state.name.toString().length != 0 &&
+      this.state.topic.toString().length != 0
+    ) {
+      // alert(this.state.name.toString().trim())
+      let request = `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${this.state.name
+        .toString()
+        .trim()}/recommended_pre_reqs`;
+      // alert(request);
+      Axios.patch(request, querystring.stringify(data))
+        .then(function(resp) {
+          // console.log(resp);
+          alert('Successfully added pre-requisite');
+        })
+        .catch(function(err) {
+          alert(err);
+          // console.log(err.data);
+        });
+    } else {
+      //ignore empty lp
+      alert('You may not create pre-requisites for an empty learning path');
+    }
+  };
 
   showModal = () => {
     this.setState({ show: true });
+  };
+
+  changePrereq = e => {
+    this.setState({ preq: e.value });
   };
 
   hideModal = () => {
@@ -38,48 +77,105 @@ export default class LearningPathCreate extends Component {
   };
 
   render() {
-    return (
-      <div>
-        <form className="inputs">
-          Learning Path Name:&nbsp;
-          <input
-            className="long"
-            type="text"
-            onChange={event => this.setState({ name: event.target.value })}
-          />
-          <br /> <br />
-          Topic:&nbsp;
-          {'\t\t'}
-          <input
-            className="long"
-            type="text"
-            onChange={event => this.setState({ topic: event.target.value })}
-          />
-          <br /> <br />
-          Mature Content&nbsp;
-          {'\t\t'}
-          <input
-            className="check"
-            type="checkbox"
-            onChange={event => this.handleMatureCheck(event)}
-          />
-        </form>
-        <div className="lpcontainer">
-          {' '}
-          <CreationList
-            classIDs={this.state.classes}
-            callback={this.handleRemoveClass}
-          />
-          <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
-            <AddList callback={this.handleAddClass} />
-          </Modal>
-          <button type="button" onClick={this.showModal}>
-            Add Classes...
-          </button>
+    if (!this.state.hidden) {
+      return (
+        <div>
+          <form className="pre-reqs">
+            Add a recommended pre-requisite learning path here [optional]:&nbsp;
+            <input
+              className="prereq"
+              type="text"
+              onChange={event => this.setState({ prereq: event.target.value })}
+            />
+            <button type="button" onClick={this.submitPrereq}>
+              Click here to add a recommended pre-req
+            </button>
+          </form>
+
+          <form className="inputs">
+            Learning Path Name:&nbsp;
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ name: event.target.value })}
+            />
+            <br /> <br />
+            Topic:&nbsp;
+            {'\t\t'}
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ topic: event.target.value })}
+            />
+            <br /> <br />
+            Mature Content&nbsp;
+            {'\t\t'}
+            <input
+              className="check"
+              type="checkbox"
+              onChange={event => this.handleMatureCheck(event)}
+            />
+          </form>
+          <div className="lpcontainer">
+            {' '}
+            <CreationList
+              classIDs={this.state.classes}
+              callback={this.handleRemoveClass}
+            />
+            <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
+              <AddList callback={this.handleAddClass} />
+            </Modal>
+            <button type="button" onClick={this.showModal}>
+              Add Classes...
+            </button>
+          </div>
+          <button onClick={this.submitLP}>Publish</button>
         </div>
-        <button onClick={this.submitLP}>Publish</button>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div>
+          <form className="inputs">
+            Learning Path Name:&nbsp;
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ name: event.target.value })}
+            />
+            <br /> <br />
+            Topic:&nbsp;
+            {'\t\t'}
+            <input
+              className="long"
+              type="text"
+              onChange={event => this.setState({ topic: event.target.value })}
+            />
+            <br /> <br />
+            Mature Content&nbsp;
+            {'\t\t'}
+            <input
+              className="check"
+              type="checkbox"
+              onChange={event => this.handleMatureCheck(event)}
+            />
+          </form>
+          <div className="lpcontainer">
+            {' '}
+            <CreationList
+              classIDs={this.state.classes}
+              callback={this.handleRemoveClass}
+            />
+            <Modal show={this.state.show} handleClose={this.hideModal.bind()}>
+              <AddList callback={this.handleAddClass} />
+            </Modal>
+            <button type="button" onClick={this.showModal}>
+              Add Classes...
+            </button>
+          </div>
+          <button onClick={this.submitLP}>Publish</button>
+        </div>
+      );
+    }
   }
 
   //list of classes chosen so far
@@ -118,6 +214,7 @@ export default class LearningPathCreate extends Component {
     const config = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     };
+
     Axios.post(
       `https://us-central1-ludusfire.cloudfunctions.net/users/${
         this.props.userID
@@ -133,7 +230,7 @@ export default class LearningPathCreate extends Component {
         alert(error.message);
       });
     alert('Published Learning Path!');
-
+    this.state.hidden = false;
     return false;
   }
 }
