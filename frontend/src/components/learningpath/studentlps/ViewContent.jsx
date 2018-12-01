@@ -13,18 +13,20 @@ class ViewContent extends Component {
     };
   }
 
-  callComplete(){
-    Axios.patch(`https://us-central1-ludusfire.cloudfunctions.net/users/
+  callComplete() {
+    Axios.patch(
+      `https://us-central1-ludusfire.cloudfunctions.net/users/
       ${this.props.userID}/student/learning_path/
-      ${this.props.UserID}/${this.props.ContentID}`)
+      ${this.props.UserID}/${this.props.ContentID}`
+    )
       .then(function(response) {
-        console.log(response)
+        console.log(response);
       })
       .catch(function(error) {
-        console.log(error)
+        console.log(error);
       });
 
-      return false;
+    return false;
   }
 
   componentDidMount() {

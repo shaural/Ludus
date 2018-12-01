@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import NotificationList from './NotificationList';
+import SimilarCompletedList from './DashboardLps/SimilarCompletedList';
+import SimilarOthersList from './DashboardLps/SimilarOthersList';
 import './Dashboard.css';
 
 class Dashboard extends Component {
@@ -32,6 +34,16 @@ class Dashboard extends Component {
             <div className="Notifications">
               <h3>Notifications</h3>
               <NotificationList userID={this.props.userID} />
+            </div>
+          </div>
+          <div className="DashWrapper">
+            <div className="Recommendations">
+              <h3>Similar Completed</h3>
+              <SimilarCompletedList userID={this.props.userID} />
+            </div>
+            <div className="SimilarOthers">
+              <h3>Similar to Others</h3>
+              <SimilarOthersList userID={this.props.userID} />
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import conf from '../conf.js';
+import { Redirect } from 'react-router-dom';
+import app from '../conf';
 import 'firebase-auth';
 import firebase from 'firebase';
 import {
@@ -9,8 +10,12 @@ import {
   FormControl,
   Button
 } from 'react-bootstrap';
-firebase.initializeApp(conf);
+//  firebase.initializeApp(conf);
+
+const Axios = require('axios');
+
 export class Login extends Component {
+
   constructor(props, context) {
     super(props, context);
     this.userNameHandleChange = this.userNameHandleChange.bind(this);
@@ -20,6 +25,25 @@ export class Login extends Component {
       password: ''
     };
   }
+
+  componentWillMount() {
+    app.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log(user.email);
+
+      } else {
+    // No user is signed in.
+      }
+    });
+  }
+
+  /*logOut(){
+    app.auth().signOut().then(function() {
+      console.log("Signout Successful");
+    }).catch(function(error) {
+
+    });
+  }*/
 
   submitData() {
     let uname = this.state.username;
@@ -70,8 +94,11 @@ export class Login extends Component {
           Enter
         </Button>
         <FormControl.Feedback />
+        &nbsp;
+      {/*<Button bsStyle="primary" onClick={this.logOut()}> LogOut </Button>*/}
         {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
       </Form>
+
     );
   }
 }

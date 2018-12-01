@@ -23,9 +23,7 @@ class Lp extends Component {
               {'LearningPath:'} {this.props.LearningPathID[index][1].Name}
             </span>
             <div>Topic: {this.props.LearningPathID[index][1].Topic} </div>
-            <div>
-              First Class: {this.props.LearningPathID[index][1].Classes[0]}{' '}
-            </div>
+            <div>First Class: {this.props.LearningPathID[index][1].Classes[0]} </div>
           </span>
         </container>
       );
