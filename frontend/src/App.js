@@ -3,6 +3,7 @@ import './App.css';
 // import custom component
 
 import { PasswordReset } from './passwordreset/PasswordReset';
+import ClassCreatePage from './components/createclass/ClassCreatePage'
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
@@ -14,13 +15,15 @@ import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
 import EditLP from './components/learning_path/edit_learning_path';
 import ClassSearchPage from './components/class/ClassSearchPage';
-import Dashboard from './components/navigation/Dashboard';
 import LearningPathsEnrolledPage from './components/learningpath/LearningPathsEnrolledPage';
 import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
+import Dashboard from './components/navigation/Dashboard';
 import { DeleteInterests } from './components/interests/delete-interests';
 import BookmarkMenu from './components/bookmarks/BookmarkMenu';
 import ClassMenu from './components/class/ClassMenu';
+import AllLps from './components/learningpath/studentlps/AllLps';
+import LpOverview from './components/learningpath/studentlps/LpOverview';
 
 class App extends Component {
   constructor(props) {
@@ -45,6 +48,7 @@ class App extends Component {
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
         <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
+        <Link to="/all-lp-list">All Lps</Link> &nbsp;
         <Link
           to={{
             pathname: '/LPEdit',
@@ -98,6 +102,7 @@ class App extends Component {
             )}
           />
           <Route exact path="/class-search" component={ClassSearchPage} />
+          <Route exact path="/classCreate" component={ClassCreatePage} />
           {/*requires userID*/}
           <Route
             exact
@@ -127,6 +132,15 @@ class App extends Component {
                 userID={this.state.userID}
               />
             )} /*placeholder*/
+          />
+          <Route
+            path="/all-lp-list"
+            render={props => <AllLps {...props} userID={this.state.userID} /> }
+          />
+          <Route
+            exact
+            path="/student-lpview"
+            component={LpOverview}
           />
           <Route
             exact
