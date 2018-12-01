@@ -75,9 +75,9 @@ class App extends Component {
         <Link to="/student-lplist">Enrolled Learning Paths</Link> &nbsp;
         <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
         <Link to="/profile">User Profile</Link> &nbsp;
-        <Link to="/class-search">Search Classes</Link> &nbsp;
+        {/**/} <Link to="/class-search">Search Classes</Link> &nbsp;
         <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
-        <Link to="/password-recovery">Reset Password</Link> &nbsp;
+        {/**/} <Link to="/password-recovery">Reset Password</Link> &nbsp;
         <Link to="/interests">Add or remove interests</Link> &nbsp;
         <Link to="/all-lp-list">All LPs</Link> &nbsp;
         <Link
