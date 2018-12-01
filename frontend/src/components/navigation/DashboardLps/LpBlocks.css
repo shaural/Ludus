@@ -1,0 +1,7 @@
+.BlockBorder {
+  width: 60%;
+  display: block;
+  margin: auto;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}
