@@ -67,40 +67,6 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        Working Navigation: &nbsp;
-        <Link to="/">Home</Link> &nbsp;
-        <Link to="/login">Login</Link> &nbsp;
-        <Link to="/signup">Sign Up</Link> &nbsp;
-        <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
-        <Link to="/student-lplist">Enrolled Learning Paths</Link> &nbsp;
-        <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
-        <Link to="/profile">User Profile</Link> &nbsp;
-        <Link to="/class-search">Search Classes</Link> &nbsp;
-        <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
-        <Link to="/password-recovery">Reset Password</Link> &nbsp;
-        <Link to="/interests">Add or remove interests</Link> &nbsp;
-        <Link to="/all-lp-list">All LPs</Link> &nbsp;
-        <Link
-          to={{
-            pathname: '/LPEdit',
-            state: {
-              lpid: '-LNWF1Itj0gydp4gt02V',
-              name: 'John Doe',
-              topic: 'Juggling',
-              owner: 'Jack Smith'
-            }
-          }}
-        >
-          Edit learning_path
-        </Link>{' '}
-        &nbsp;
-        {/* probably want to check if you're logged in or not for the home page */}
-        <Link to="garbage">404</Link> &nbsp; userID:&nbsp;
-        <input
-          className="inLine"
-          type="text"
-          onChange={event => this.setState({ userID: event.target.value })}
-        />
         {/*TODO: Use firebase.auth().currentUser to check if a user is logged in or not*/}
         {/* probably want to check if you're logged in or not for the home page? */}
         <NavBar userID={this.state.userID} />
