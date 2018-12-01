@@ -39,31 +39,12 @@ class App extends Component {
     };
   }
 
-  getLoggedIn() {
-    var user = firebase.auth().currentUser;
-    var email;
-    if (user) {
-      console.log('found logged in user!');
-      this.setState({
-        email: user.email
-      });
-    }
-    return;
-  }
-
-  componentDidMount() {
-    this.getLoggedIn();
-    Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${
-        this.state.email
-      }`
-    ).then(({ data }) => {
-      console.log('userid', data);
-      this.setState({
-        userID: data
-      });
+  getUserID = (uid) => {
+    this.setState({
+      userID: uid
     });
-  }
+  };
+
 
   render() {
     return (
@@ -119,7 +100,7 @@ class App extends Component {
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route exact path="/interests" component={AddInterests} />
-          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/login" render={(props) => <LoginPage {...props} callBack={this.getUserID} />} />
           <Route exact path="/signup" component={SignUpPage} />
           <Route exact path="/remove" component={DeleteInterests} />
           <Route

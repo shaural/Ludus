@@ -22,15 +22,24 @@ export class Login extends Component {
     this.submitData = this.submitData.bind(this);
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      uid: ''
     };
   }
 
   componentWillMount() {
-    app.auth().onAuthStateChanged(function(user) {
+    app.auth().onAuthStateChanged( user => {
       if (user) {
         console.log(user.email);
-
+        Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${user.email}`)
+          .then(({ data }) => {
+            console.log(data);
+            this.setState({
+              uid: data
+            });
+            console.log("hi",this.state.uid);
+            this.props.callBack(this.state.uid);
+          });
       } else {
     // No user is signed in.
       }
@@ -95,7 +104,6 @@ export class Login extends Component {
         </Button>
         <FormControl.Feedback />
         &nbsp;
-      {/*<Button bsStyle="primary" onClick={this.logOut()}> LogOut </Button>*/}
         {/* <HelpBlock>Validation is based on string length.</HelpBlock> */}
       </Form>
 
