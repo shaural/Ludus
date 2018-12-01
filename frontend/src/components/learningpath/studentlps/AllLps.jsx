@@ -41,7 +41,7 @@ class AllLps extends Component {
       );
     }
 
-    if ((y = 0)) {
+    if (y === 0) {
       learningPaths.push(
         <text>"No Learning Paths enrolled or created yet :(" </text>
       );
