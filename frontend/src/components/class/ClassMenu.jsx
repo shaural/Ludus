@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import CommentSection from './CommentSection';
 import './Class.css';
 const Axios = require('axios');
 
@@ -33,7 +34,7 @@ class Class extends Component {
     for (let key in classInfo) {
       if (key === 'Name') {
         const newTo = {
-          pathname: `/class-menu/${this.props.classID}`,
+          pathname: `/class-menu/${this.props.match.params.classID}`,
           state: 'rip'
         };
         const name = (
@@ -95,7 +96,7 @@ class Class extends Component {
         <Link to="/">View Class</Link>
       </div>
     );
-    if (this.props.userID === owner) {
+    if (this.props.location.state === owner) {
       vars.push(
         <div className="expandedDetail" key="Edit">
           <Link to="/">Edit Class</Link>
@@ -107,14 +108,19 @@ class Class extends Component {
         <Link to="/">Edit Class</Link>
       </div>
     );
-    if (owner !== this.props.userID) {
+    if (owner.trim() !== this.props.location.state) {
       vars.push(
         <div className="expandedDetail" key="Delete">
           <Link to="/">Rate Class</Link>
         </div>
       );
     }
-    vars.push(<CommentSection classID={this.props.classID} />);
+    vars.push(
+      <CommentSection
+        classID={this.props.match.params.classID}
+        userID={this.props.location.state}
+      />
+    );
     menu = <div className="expandedClassInfo">{vars}</div>;
     this.setState({ display: menu });
     return;

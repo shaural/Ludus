@@ -1,3 +1,10 @@
 .FilterBar {
   display: inline-block;
 }
+.CommentBox {
+  width: 500px;
+  max-width: 60%;
+  height: auto;
+  max-height: 20%;
+  overflow-y: auto;
+}
