@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Lp from './Lp';
+import LearningPath from './LearningPath';
 //import LpDropButton from './LpDropButton';
 //import './Forms.css';
 //import './ClassList.css';
@@ -37,7 +37,9 @@ class ClassList extends Component {
             for (let sid in response.data[id]) {
               for (let did in response.data[id][sid]) {
                 console.log(did);
+                console.log(response.data[id][sid][did]);
                 IDList.push(did);
+                InfoList.push(response.data[id][sid][did]);
               }
             }
           }
@@ -56,9 +58,15 @@ class ClassList extends Component {
       return <h2>No Learning Paths...</h2>;
     let paths = [];
     for (let id in this.state.pathIDList) {
+      console.log(this.state.pathInfo[id]);
       paths.push(
         <div className="LpObject" key={id}>
-          {<Lp LearningPathID={this.state.pathIDList[id]} />}
+          {
+            <LearningPath
+              LearningPathID={this.state.pathIDList[id]}
+              LearningPathInfo={this.state.pathInfo[id]}
+            />
+          }
           {/*<LpDropButton onClick={(event) => this.setState({ update: '' })} classID={this.state.classIDList[id]} />*/}
         </div>
       );

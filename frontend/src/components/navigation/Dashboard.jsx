@@ -15,6 +15,7 @@ class Dashboard extends Component {
             <div className="Learn">
               <h3>Learn</h3>
               <Link to="/student-lplist">Enrolled Learning Paths</Link> <br />
+              <Link to="/all-lp-list">Browse Learning Paths</Link> <br />
               <Link to="/class-search">Search Classes</Link> <br />
               <Link to="/bookmarks">Bookmarks</Link> <br />
             </div>
@@ -22,7 +23,8 @@ class Dashboard extends Component {
               <h3>Teach</h3>
               <Link to="/teacher-classlist">Your Classes</Link> <br />
               <Link to="/teacher-lplist">Learning Paths</Link> <br />
-              <Link to="/teacher-lp-create">Create Learning Path</Link> <br />
+              <Link to="/classCreate">Create a Class</Link> <br />
+              <Link to="/teacher-lp-create">Create a Learning Path</Link> <br />
             </div>
           </div>
           <div className="DashWrapper">
