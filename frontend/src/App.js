@@ -38,11 +38,11 @@ class App extends Component {
     };
   }
 
-  getLoggedIn(){
+  getLoggedIn() {
     var user = firebase.auth().currentUser;
     var email;
-    if(user){
-      console.log("found logged in user!");
+    if (user) {
+      console.log('found logged in user!');
       this.setState({
         email: user.email
       });
@@ -50,13 +50,12 @@ class App extends Component {
     return;
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getLoggedIn();
-    Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${this.state.email}`)
-    .then(({ data }) => {
-      console.log("userid", data);
+    Axios.get(`https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${this.state.email}`).then(({ data }) => {
+      console.log('userid', data);
       this.setState({
-          userID: data
+        userID: data
       });
     });
   }
@@ -93,11 +92,7 @@ class App extends Component {
         &nbsp;
         {/* probably want to check if you're logged in or not for the home page */}
         <Link to="garbage">404</Link> &nbsp; userID:&nbsp;
-        <input
-          className="inLine"
-          type="text"
-          onChange={event => this.setState({ userID: event.target.value })}
-        />
+        <input className="inLine" type="text" onChange={(event) => this.setState({ userID: event.target.value })} />
         {/*TODO: Use firebase.auth().currentUser to check if a user is logged in or not*/}
         {/* probably want to check if you're logged in or not for the home page? */}
         <NavBar userID={this.state.userID} />
@@ -112,67 +107,33 @@ class App extends Component {
           <Route path="/login" component={LoginPage} />
           <Route path="/signup" component={SignUpPage} />
           <Route exact path="/remove" component={DeleteInterests} />
-          <Route
-            path="/password-recovery"
-            component={PasswordReset} /*placeholder*/
-          />
+          <Route path="/password-recovery" component={PasswordReset} /*placeholder*/ />
           {/*requires userID*/}
-          <Route
-            path="/profile"
-            render={props => (
-              <ProfilePage {...props} userID={this.state.userID} />
-            )}
-          />
+          <Route path="/profile" render={(props) => <ProfilePage {...props} userID={this.state.userID} />} />
           <Route path="/class-search" component={ClassSearchPage} />
           {/*requires userID*/}
           <Route path="/dashboard" component={Dashboard} /*placeholder*/ />
-          <Route
-            path="/student-classlist"
-            component={IllegalPath} /*placeholder*/
-          />{' '}
+          <Route path="/student-classlist" component={IllegalPath} /*placeholder*/ />{' '}
           <Route
             path="/student-lplist"
-            render={props => (
-              <LearningPathsEnrolledPage
-                {...props}
-                userID={this.state.userID}
-              />
-            )} /*placeholder*/
+            render={(props) => <LearningPathsEnrolledPage {...props} userID={this.state.userID} />} /*placeholder*/
           />
-          <Route
-            path="/teacher-class-create"
-            component={IllegalPath} /*placeholder*/
-          />
+          <Route path="/teacher-class-create" component={IllegalPath} /*placeholder*/ />
           <Route
             path="/teacher-class-edit"
-            render={props => (
-              <IllegalPath {...props} userID={this.state.userID} />
-            )} /*placeholder*/
+            render={(props) => <IllegalPath {...props} userID={this.state.userID} />} /*placeholder*/
           />
           <Route
             path="/teacher-classlist"
-            render={props => (
-              <ClasslistPage {...props} userID={this.state.userID} />
-            )}
+            render={(props) => <ClasslistPage {...props} userID={this.state.userID} />}
           />
-          <Route
-            path="/teacher-lplist"
-            render={props => <LpPage {...props} userID={this.state.userID} />}
-          />
-          <Route
-            path="/all-lp-list"
-            render={props => <AllLps {...props} userID={this.state.userID} />}
-          />
+          <Route path="/teacher-lplist" render={(props) => <LpPage {...props} userID={this.state.userID} />} />
+          <Route path="/all-lp-list" render={(props) => <AllLps {...props} userID={this.state.userID} />} />
           <Route
             path="/teacher-lp-create"
-            render={props => (
-              <LearningPathCreatePage {...props} userID={this.state.userID} />
-            )}
+            render={(props) => <LearningPathCreatePage {...props} userID={this.state.userID} />}
           />
-          <Route
-            path="/teacher-lp-edit"
-            component={IllegalPath} /*placeholder*/
-          />
+          <Route path="/teacher-lp-edit" component={IllegalPath} /*placeholder*/ />
           <Route component={IllegalPath} />
         </Switch>
       </div>

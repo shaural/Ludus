@@ -20,9 +20,7 @@ class LpPage extends Component {
 
   componentDidMount() {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
-        this.props.userID
-      }`
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${this.props.userID}`
     ).then(({ data }) => {
       console.log(data);
       this.setState({
@@ -50,13 +48,11 @@ class LpPage extends Component {
       );
     }
 
-		if(y=0){
-			learningPaths.push(
-				<text>"No Learning Paths enrolled or created yet :(" </text>
-			);
-		}
-		return learningPaths;
-	};
+    if ((y = 0)) {
+      learningPaths.push(<text>"No Learning Paths enrolled or created yet :(" </text>);
+    }
+    return learningPaths;
+  };
 
   render() {
     return (
