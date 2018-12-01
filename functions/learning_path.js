@@ -301,8 +301,10 @@ app.post('/', async (request, response) => {
         Mature: mature || 'no',
         Classes: classes || []
       })
+
       .once('value')
       .then(snapshot => {
+        lpid = snapshot.key;
         resp = {
           id: snapshot.key,
           learning_path: { ...snapshot.val() }
