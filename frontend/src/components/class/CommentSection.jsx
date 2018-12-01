@@ -12,7 +12,8 @@ export default class CommentList extends Component {
       owner: this.props.userID /*-LNVWR9kD2dvN8GLGFYE*/,
       update: '',
       commentList: [],
-      commentInfo: [],
+      commentAuths: [],
+      commentIDs: [],
       commentMessage: ''
     };
     this.submitSearch = this.submitSearch.bind(this);
@@ -30,19 +31,32 @@ export default class CommentList extends Component {
       query += '&name=' + this.state.name;
     }
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
+      `https://us-central1-ludusfire.cloudfunctions.net/classes/${
+        this.props.classID
+      }/comments`
     )
       .then(response => {
         console.log(response);
-        let commentIDList = [];
-        let commentInfoList = [];
+        let commentList = [];
+        let commentAuths = [];
+        let commentIDs = [];
         for (let id in response.data) {
-          commentIDList.push(response.data[id][0]);
-          commentInfoList.push(response.data[id][1]);
+          let i = 0;
+          for (let sid in response.data[id]) {
+            if (i == 0) {
+              commentIDs.push(response.data[id][sid]);
+            } else if (i == 1) {
+              commentAuths.push(response.data[id][sid]);
+            } else if (i == 2) {
+              commentList.push(response.data[id][sid]);
+            }
+            i++;
+          }
         }
         this.setState({
-          commentIDList: commentIDList,
-          commentInfo: commentInfoList
+          commentList: commentList,
+          commentAuths: commentAuths,
+          commentIDs: commentIDs
         });
       })
       .catch(function(error) {
@@ -76,19 +90,44 @@ export default class CommentList extends Component {
     return;
   };
 
+  handleDelete = () => {
+    const requestBody = {
+      author: this.props.userID,
+      comment: this.state.commentMessage
+    };
+    const config = {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    };
+    Axios.post(
+      `https://us-central1-ludusfire.cloudfunctions.net/classes/${
+        this.props.classID
+      }/comment/`,
+      querystring.stringify(requestBody),
+      config
+    )
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error.message);
+      });
+    return;
+  };
+
   submitSearch = () => {
-    if (this.state.commentIDList === undefined || !this.state.commentIDList)
+    if (this.state.commentList === undefined || !this.state.commentList)
       return <h2>No comments...</h2>;
     let comments = [];
-    for (let id in this.state.commentIDList) {
+    for (let id in this.state.commentList) {
       comments.push(
         <div className="ClassObject" key={id}>
           {
-            <Comment
-              commentID={this.state.commentIDList[id]}
-              commentInfo={this.state.commentInfo[id]}
-            />
+            <div className="ClassInfo">
+              <b>{this.state.commentAuths[id] + ': '}</b>
+              {this.state.commentList[id]}
+            </div>
           }
+          {<Comment commentData={this.state.commentList[id]} />}
         </div>
       );
     }

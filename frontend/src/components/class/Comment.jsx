@@ -7,19 +7,23 @@ class Class extends Component {
     super(props);
     this.state = { values: [] };
   }
+
   render() {
-    return (
-      <div className="ClassInfo">
-        {this.props.commentInfo[0] + ': ' + this.props.commentInfo[1]}
-      </div>
-    );
+    let author, comment, id;
+    let i = 0;
+    console.log(commentData);
+    for (let index in this.props.commentData) {
+      if (i == 0) {
+        author = this.props.commentData[index];
+      } else if (i == 1) {
+        comment = this.props.commentData[index];
+      } else if (i == 2) {
+        id = this.props.commentData[index];
+      }
+      i++;
+    }
+    return <div className="ClassInfo">{author + ': ' + comment}</div>;
   }
-
-  componentDidMount = () => {
-    let vars = [];
-
-    this.setState({ values: vars });
-  };
 }
 
 export default Class;
