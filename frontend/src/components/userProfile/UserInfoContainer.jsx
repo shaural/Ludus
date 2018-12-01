@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './UserInfoContainer.css';
-import EditProfileBtn from './EditProfileBtn'
+import EditProfileBtn from './EditProfileBtn';
 import conf from '../../conf.js';
 import 'firebase-auth';
 import firebase from 'firebase';

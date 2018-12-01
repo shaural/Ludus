@@ -48,6 +48,8 @@ app.post('/:lp_id/class', async (request, response) => {
       return response.status(400).json({
         message: `Learning path already contains class at index ${index}. Please use PATCH method instead.` // TODO create patch endpoint
       });
+
+      //TODO: Call the patch endpoint for any pre-reqs that have been entered?
     }
     db.child(index).set(class_id);
   } catch (e) {
@@ -68,13 +70,11 @@ app.get('/:lp_id/classes', async (request, response) => {
     request.params.lp_id
   );
   if (!found_lp)
-    return response
-      .status(404)
-      .json({
-        message: `learning path with id ${
-          request.params.lp_id
-        } does not exist or has no classes`
-      });
+    return response.status(404).json({
+      message: `learning path with id ${
+        request.params.lp_id
+      } does not exist or has no classes`
+    });
   else {
     const db = admin.database().ref(`/Learning_Paths/${request.params.lp_id}`);
     db.once('value', function(snapshot) {
@@ -89,6 +89,159 @@ app.get('/:lp_id/classes', async (request, response) => {
       }
     });
   }
+});
+
+app.patch('/:lp_name/mandatory_pre_reqs', async (request, response) => {
+  //note, this function should not be passed an array of pre-reqs, but rather one at a time
+
+  let temp = request.body.pre_reqs_list;
+  // console.log(request.params.lp_id);
+  // let pre_reqs_array = temp.toString().split(',');
+  let name = request.params.lp_name;
+  let db = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${name}`),
+    'Pre-reqs'
+  );
+  if (!db) {
+    return response.status(404).json('Unable to find pre-requisites');
+  }
+  let tempref = admin
+    .database()
+    .ref(`/Users/Learning_Paths`)
+    .child(name);
+  if (!tempref) {
+    let out = 'Error: Learning Path ' + temp2 + ' does not exist';
+    return response.status(404).json({
+      out
+    });
+  }
+
+  await admin
+    .database()
+    .ref('/Users/Learning_Paths')
+    .once('value', function(snapshot) {
+      snapshot.forEach(function(childSnapshot) {
+        //we found the learning path
+        // console.log(snapshot.key + ' ' + snapshot.val());
+        if (childSnapshot.key === 'Name') {
+          tempref = admin
+            .database()
+            .ref(`/Users/Learning_Paths/${snapshot.key}`);
+        }
+      });
+    });
+
+  let mandatory = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${name}/Pre-reqs`),
+    'Mandatory'
+  );
+
+  if (!mandatory) {
+    return response.status(404).json('Unable to make mandatory pre-requisite');
+  }
+
+  let rec_ref = admin
+    .database()
+    .ref(`/Learning_Paths/${lpid}/Pre-reqs/Mandatory`);
+  try {
+    // console.log(preq);
+    await rec_ref.push({ Prereq: preq });
+  } catch (err) {
+    // console.log(err);
+    return response
+      .status(404)
+      .json('An error happened when setting the mandatory pre-requsisites');
+  }
+  return response.status(200).json('Successfully set mandatory pre-req');
+});
+
+app.patch('/:lp_id/recommended_pre_reqs', async (request, response) => {
+  let temp = request.body.pre_reqs_list;
+  console.log(request.params.lp_id);
+  let pre_reqs_array = temp.toString().split(',');
+
+  let db = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${request.params.lp_id}`),
+    'Pre-reqs'
+  );
+  if (!db) {
+    return response.status(404).json('Unable to find pre-requisites');
+  }
+
+  //the loop may need to be removed in the future because this function will
+  //likely only be called with one learning path at a time
+  //will discuss during meeting or via slack
+
+  //checks that the learning path name actually exists
+  for (let v in pre_reqs_array) {
+    let temp2 = pre_reqs_array[v];
+    //placeholder, will always evaluate to false
+    //so we must wait for the loop below to find the correct path
+    let tempref = admin
+      .database()
+      .ref(`/Users/Learning_Paths`)
+      .child(temp2);
+    await admin
+      .database()
+      .ref('/Users/Learning_Paths')
+      .on('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          //we found the learning path
+          console.log(snapshot.key + ' ' + snapshot.val());
+          if (childSnapshot.key == 'Name') {
+            tempref = admin
+              .database()
+              .ref(`/Users/Learning_Paths/${snapshot.key}`);
+          }
+        });
+      });
+    if (!tempref) {
+      let out = 'Error: Learning Path ' + temp2 + ' does not exist';
+      return response.status(404).json({
+        out
+      });
+    }
+  }
+
+  let lpid = request.params.lp_id;
+
+  //For now, we will push to recommended pre-reqs
+  //there will be a different endpoint that pushes to mandatory pre-reqs
+  //something like /:lp_id/mandatory_pre_reqs
+
+  let rec = await ref_has_child(
+    admin.database().ref(`/Learning_Paths/${lpid}/Pre-reqs`),
+    'Recommended'
+  );
+
+  // let rec = admin.database().ref(`/Learning_Paths/${lpid}/Pre-reqs`).child('Recommended')
+  if (!rec) {
+    return response
+      .status(404)
+      .json('Unable to make recommended pre-requisite');
+  }
+  let rec_ref = admin
+    .database()
+    .ref(`/Learning_Paths/${lpid}/Pre-reqs/Recommended`);
+  try {
+    for (t in pre_reqs_array) {
+      let preq = pre_reqs_array[t];
+      // console.log(preq);
+      await rec_ref.push({ Prereq: preq });
+    }
+  } catch (err) {
+    // console.log(err);
+    return response
+      .status(404)
+      .json('An error happened when setting the pre-requsisites');
+  }
+  return response.status(200).json('Successfully set pre-reqs');
+  // console.log(temp.length)
+  /*
+    for(t in temp){
+    console.log("Pre-reqs: " + temp[t])
+    }
+    */
 });
 
 // delete learning path with id lp_id
@@ -264,21 +417,17 @@ app.delete('/:lp_id/class/:index', async (request, response) => {
     request.params.lp_id
   );
   if (!found_lp)
-    return response
-      .status(404)
-      .json({
-        message: `learning path with id ${request.params.lp_id} not found`
-      });
+    return response.status(404).json({
+      message: `learning path with id ${request.params.lp_id} not found`
+    });
   const found_idx = await ref_has_child(
     admin.database().ref(`/Learning_Paths/${request.params.lp_id}/Classes`),
     request.params.index
   );
   if (!found_idx)
-    return response
-      .status(404)
-      .json({
-        message: `learning path has no class at index ${request.params.index}`
-      });
+    return response.status(404).json({
+      message: `learning path has no class at index ${request.params.index}`
+    });
 
   try {
     await admin
@@ -295,13 +444,11 @@ app.delete('/:lp_id/class/:index', async (request, response) => {
       err
     });
   }
-  return response
-    .status(200)
-    .json({
-      message: `successfully removed class at index ${
-        request.params.index
-      } from learning path`
-    });
+  return response.status(200).json({
+    message: `successfully removed class at index ${
+      request.params.index
+    } from learning path`
+  });
 });
 
 // add ability to sort by interests for specific uid -> if interest match then lp will be ranked higher
@@ -453,7 +600,6 @@ app.get('/search', async (request, response) => {
   }
   return response.status(200).json(resp);
 });
-
 
 //Get individual lp with lpID & all children
 app.get('/:lp_id', async (request, response) => {
@@ -660,7 +806,6 @@ app.get('/student/:user_id/similarOthers', async (request, response) => {
   });
   let resp = lps_suggested;
   return response.status(200).json(resp);
-
 });
 
 exports.route = app;

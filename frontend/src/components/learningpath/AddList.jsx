@@ -12,12 +12,14 @@ class SignUpForm extends Component {
       content: '',
       tag: '',
       classIDList: [],
-      classInfo: []
+      classInfo: [],
+      transferInfo: []
     };
     this.submitSearch = this.submitSearch.bind(this);
   }
 
   createClasslist = () => {
+    //search functionality
     let query = '?';
     let multi = 0;
     if (this.state.name.toString().length) {
@@ -42,14 +44,25 @@ class SignUpForm extends Component {
       `https://us-central1-ludusfire.cloudfunctions.net/classes/search/${query}`
     )
       .then(response => {
-        console.log(response);
         let classList = [];
         let classInfo = [];
+        let transfer = [];
         for (let id in response.data) {
           classList.push(response.data[id][0]);
+          let temp = [];
+          for (let bid in response.data[id][1]) {
+            temp.push(bid);
+            temp.push(response.data[id][1][bid]);
+          }
+          transfer.push(temp);
           classInfo.push(response.data[id][1]);
         }
-        this.setState({ classIDList: classList, classInfo: classInfo });
+        console.log(transfer);
+        this.setState({
+          classIDList: classList,
+          classInfo: classInfo,
+          transferInfo: transfer
+        });
         this.submitSearch();
       })
       .catch(function(error) {
@@ -76,7 +89,8 @@ class SignUpForm extends Component {
             <div>
               <button
                 onClick={event => this.handleClick(event)}
-                value={this.state.classIDList[id]}
+                name={this.state.classIDList[id]}
+                value={id}
               >
                 Add
               </button>
@@ -89,9 +103,9 @@ class SignUpForm extends Component {
   };
 
   handleClick = e => {
-    let s = e.target.value;
-    console.log(s);
-    this.props.callback(s);
+    let info = this.state.transferInfo[e.target.value];
+    let id = e.target.name;
+    this.props.callback(id, info);
   };
   render() {
     return (
