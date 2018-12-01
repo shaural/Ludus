@@ -686,6 +686,7 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
 
   const database = admin.database().ref('/Learning_Paths');
   let resp = {};
+  let lpid = '';
   await database
     .push({
       Topic: topic,
@@ -698,11 +699,24 @@ app.post('/:user_id/teacher/learningPath', async (request, response) => {
     })
     .once('value')
     .then(snapshot => {
+      lpid = snapshot.key;
       resp = {
         id: snapshot.key,
         learning_path: { ...snapshot.val() }
       };
     });
+  await database
+    .child(lpid)
+    .child('Pre-reqs')
+    .child('Recommended')
+    .child('blank')
+    .set('');
+  await database
+    .child(lpid)
+    .child('Pre-reqs')
+    .child('Mandatory')
+    .child('blank')
+    .set('');
 
   return response.status(200).json(resp);
 });
