@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Lp from './Lp';
+import LearningPath from './LearningPath';
 import LpCreateBtn from './LpCreateBtn';
 import LpDeleteBtn from './LpDeleteBtn';
 import LpEditBtn from './LpEditBtn';
@@ -14,42 +14,60 @@ class LpPage extends Component {
     this.state = {
       length: 1,
       LearningPath: '',
-      data: []
+      data: [],
+      pathIDList: [],
+      pathInfo: []
     };
   }
 
   componentDidMount() {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${this.props.userID}`
-    ).then(({ data }) => {
-      console.log(data);
-      this.setState({
-        length: data.length,
-        data: data
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/search/?owner=${
+        this.props.userID
+      }`
+    )
+      .then(response => {
+        console.log(response);
+        let IDList = [];
+        let InfoList = [];
+        for (let id in response.data) {
+          IDList.push(response.data[id][0]);
+          InfoList.push(response.data[id][1]);
+        }
+        this.setState({ pathIDList: IDList, pathInfo: InfoList });
+      })
+      .catch(function(error) {
+        console.log(error);
       });
-    });
   }
 
   createLpPage = () => {
     //let lpIDList = []
     //TODO: Call API for lpIDs
     let learningPaths = [];
-    var y = this.state.length;
+    var y = this.state.pathIDList.length;
     //for (let i = 0; i < lpIDList.length; i++) {
-    for (let i = 0; i < y; i++) {
+    for (let id in this.state.pathIDList) {
       learningPaths.push(
         <div className="lpObject">
-          {<Lp LearningPathID={this.state.data} i={i} />}
+          {
+            <LearningPath
+              LearningPathID={this.state.pathIDList[id]}
+              LearningPathInfo={this.state.pathInfo[id]}
+            />
+          }
           <span className="Placeholder">
-            {<LpEditBtn LearningPathID={this.state.data[i]} />} <text> </text>{' '}
-            {<LpDeleteBtn lpID={this.state.data[0]} />}
+            {<LpEditBtn LearningPathID={this.state.pathIDList[id]} />}
+            {<LpDeleteBtn lpID={this.state.pathIDList[id]} />}
           </span>
         </div>
       );
     }
 
     if ((y = 0)) {
-      learningPaths.push(<text>"No Learning Paths enrolled or created yet :(" </text>);
+      learningPaths.push(
+        <text>"No Learning Paths enrolled or created yet :(" </text>
+      );
     }
     return learningPaths;
   };

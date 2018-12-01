@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import LpNew from './LpNew';
 
-
 const Axios = require('axios');
 
 class AllLps extends Component {
@@ -27,7 +26,6 @@ class AllLps extends Component {
   }
 
   createLpPage = () => {
-
     //let lpIDList = []
     //TODO: Call API for lpIDs
     let learningPaths = [];
@@ -38,26 +36,23 @@ class AllLps extends Component {
       learningPaths.push(
         <div className="lpObject">
           {<LpNew LearningPathID={key} />}
-          <span className="Placeholder">
-          </span>
+          <span className="Placeholder" />
         </div>
       );
     }
 
-		if(y=0){
-			learningPaths.push(
-				<text>"No Learning Paths enrolled or created yet :(" </text>
-			);
-		}
-		return learningPaths;
-	};
+    if (y === 0) {
+      learningPaths.push(
+        <text>"No Learning Paths enrolled or created yet :(" </text>
+      );
+    }
+    return learningPaths;
+  };
 
   render() {
     return (
       <div>
-        <div>
-          {' '}
-        </div>
+        <div> </div>
         <div className="LpPage">{this.createLpPage()}</div>;
       </div>
     );

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Lp.css';
 
-class Lp extends Component {
+class LearningPath extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,8 +13,42 @@ class Lp extends Component {
   }
 
   render() {
-    return <div>{this.fetchData(this.props.LearningPathID)}</div>;
+    return <div>{this.displayData()}</div>;
   }
+
+  displayData = () => {
+    this.props.LearningPathID;
+    let name, owner, topic, mature, classy;
+    for (let key in this.props.LearningPathInfo) {
+      if (key === 'Name') {
+        name = this.props.LearningPathInfo[key];
+      } else if (key === 'Topic') {
+        topic = this.props.LearningPathInfo[key];
+      } else if (key === 'Owner') {
+        owner = this.props.LearningPathInfo[key];
+      } else if (key === 'Mature') {
+        mature = this.props.LearningPathInfo[key];
+      } else if (key === 'Class_List') {
+        classy = this.props.LearningPathInfo[key][0];
+      }
+    }
+    if (!classy) {
+      classy = 'No Classes';
+    }
+    let learningPath = (
+      <span>
+        <span className="lpInfo">
+          <span>
+            {'LearningPath:'} {name}
+          </span>
+          <div>Topic: {topic} </div>
+          <div>First Class: {classy} </div>
+        </span>
+      </span>
+    );
+
+    return learningPath;
+  };
 
   fetchData(LearningPathID) {
     var index = this.props.i;
@@ -56,4 +90,4 @@ class Lp extends Component {
   }
 }
 
-export default Lp;
+export default LearningPath;
