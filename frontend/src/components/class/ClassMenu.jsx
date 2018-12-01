@@ -114,7 +114,7 @@ class Class extends Component {
         </div>
       );
     }
-    vars.push(this.props.userID);
+    vars.push(<CommentSection classID={this.props.classID} />);
     menu = <div className="expandedClassInfo">{vars}</div>;
     this.setState({ display: menu });
     return;

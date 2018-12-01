@@ -45,6 +45,7 @@ export default class LearningPathCreate extends Component {
         .then(function(resp) {
           // console.log(resp);
           alert('Successfully added pre-requisite');
+          this.setState({ hidden: false });
         })
         .catch(function(err) {
           alert(err);
@@ -77,6 +78,27 @@ export default class LearningPathCreate extends Component {
     }
   };
 
+  toggleHide() {
+    this.setState({
+      hidden: !this.state.hidden
+    });
+  }
+
+  preReqForm = () => {
+    <div>
+      <form className="pre-reqs">
+        Add a recommended pre-requisite learning path here [optional]:&nbsp;
+        <input
+          className="prereq"
+          type="text"
+          onChange={event => this.setState({ prereq: event.target.value })}
+        />
+        <button type="button" onClick={this.submitPrereq}>
+          Click here to add a recommended pre-req
+        </button>
+      </form>
+    </div>;
+  };
   render() {
     if (!this.state.hidden) {
       return (
