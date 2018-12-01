@@ -37,3 +37,11 @@
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0.25rem !important;
 }
+
+.SimilarOthers {
+  width: 50%;
+  float: right;
+  padding: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem !important;
+}

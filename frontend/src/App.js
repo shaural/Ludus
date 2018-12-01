@@ -18,10 +18,10 @@ import IllegalPath from './components/IllegalPath';
 import { Route, Link, Switch } from 'react-router-dom';
 import EditLP from './components/learning_path/edit_learning_path';
 import ClassSearchPage from './components/class/ClassSearchPage';
-import Dashboard from './components/navigation/Dashboard';
 import LearningPathsEnrolledPage from './components/learningpath/LearningPathsEnrolledPage';
 import NavBar from './components/NavBar';
 import { AddInterests } from './components/interests/add-interests';
+import Dashboard from './components/navigation/Dashboard';
 import { DeleteInterests } from './components/interests/delete-interests';
 import LpOverview from './components/learningpath/studentlps/LpOverview';
 import AllLps from './components/learningpath/studentlps/AllLps';
@@ -38,31 +38,11 @@ class App extends Component {
     };
   }
 
-  getLoggedIn() {
-    var user = firebase.auth().currentUser;
-    var email;
-    if (user) {
-      console.log('found logged in user!');
-      this.setState({
-        email: user.email
-      });
-    }
-    return;
-  }
-
-  componentDidMount() {
-    this.getLoggedIn();
-    Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/users/getuid/${
-        this.state.email
-      }`
-    ).then(({ data }) => {
-      console.log('userid', data);
-      this.setState({
-        userID: data
-      });
+  getUserID = uid => {
+    this.setState({
+      userID: uid
     });
-  }
+  };
 
   render() {
     return (
@@ -84,7 +64,11 @@ class App extends Component {
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route exact path="/interests" component={AddInterests} />
-          <Route exact path="/login" component={LoginPage} />
+          <Route
+            exact
+            path="/login"
+            render={props => <LoginPage {...props} callBack={this.getUserID} />}
+          />
           <Route exact path="/signup" component={SignUpPage} />
           <Route exact path="/remove" component={DeleteInterests} />
           <Route
@@ -101,6 +85,7 @@ class App extends Component {
             )}
           />
           <Route exact path="/class-search" component={ClassSearchPage} />
+          <Route exact path="/classCreate" component={ClassCreatePage} />
           {/*requires userID*/}
           <Route
             exact
@@ -131,6 +116,11 @@ class App extends Component {
               />
             )} /*placeholder*/
           />
+          <Route
+            path="/all-lp-list"
+            render={props => <AllLps {...props} userID={this.state.userID} />}
+          />
+          <Route exact path="/student-lpview" component={LpOverview} />
           <Route
             exact
             path="/class-menu/:classID"

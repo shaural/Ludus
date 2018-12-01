@@ -41,14 +41,16 @@ class ViewContent extends Component {
           content: JSON.stringify(data.Content)
         });
         var str = this.state.content;
-        //console.log(str.substring(33,str.length-1));
+
         if (str.substring(1, 25) === 'https://www.youtube.com/') {
           this.setState({
             vid: 1,
             newcontent: str.substring(33, str.length - 1)
           });
         } else {
-          newcontent: str;
+          this.setState({
+            newcontent: str
+          });
         }
       }
     });
@@ -64,7 +66,6 @@ class ViewContent extends Component {
         autoplay: 1
       }
     };
-
     if (this.state.vid === 1) {
       return (
         <main>
@@ -85,9 +86,6 @@ class ViewContent extends Component {
         <main>
           <div>
             <p> {this.state.content} </p>
-          </div>
-          <div>
-            <button> Mark Complete </button>
           </div>
         </main>
       );
