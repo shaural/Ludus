@@ -25,6 +25,7 @@ class LpOverview extends Component {
       }/`
     ).then(({ data }) => {
       console.log(data);
+      console.log(this.state.lpid);
       this.setState({
         userdata: data,
         ownername: data.Name
@@ -34,7 +35,9 @@ class LpOverview extends Component {
 
   componentDidMount() {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/-LO0Mk238mCqz4fbfMjh`
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${
+        this.state.lpid
+      }`
     ).then(({ data }) => {
       console.log(data);
       this.setState({
@@ -55,7 +58,12 @@ class LpOverview extends Component {
     for (let i = 0; i < y; i++) {
       classes.push(
         <div className="classObject">
-          <Class ClassID={this.state.data.Classes[i]} Num={i} />
+          <Class
+            ClassID={this.state.data.Classes[i]}
+            Num={i}
+            LpID={this.state.lpid}
+            UserID={this.props.UserID}
+          />
           <span className="Placeholder" />
         </div>
       );
