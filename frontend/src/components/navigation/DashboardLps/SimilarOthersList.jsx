@@ -13,10 +13,12 @@ class SimilarOthersList extends Component {
 
   componentDidMount() {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/student/${this.props.userID}/similarOthers`
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/student/${
+        this.props.userID
+      }/similarOthers`
     ).then(({ data }) => {
       console.log(data);
-      if(data){
+      if (data) {
         this.setState({
           length: data.length,
           data: data
@@ -34,19 +36,13 @@ class SimilarOthersList extends Component {
     for (let i = 0; i < y; i++) {
       learningPaths.push(
         <div className="BlockBorder">
-          <div>
-            Name: {this.state.data[i][1].Name}
-          </div>
-          <div>
-            Topic: {this.state.data[i][1].Topic}
-          </div>
+          <div>Name: {this.state.data[i][1].Name}</div>
+          <div>Topic: {this.state.data[i][1].Topic}</div>
         </div>
       );
     }
-    if(y < 1){
-      learningPaths.push(
-        <div> No Learning Paths similar to others </div>
-      );
+    if (y < 1) {
+      learningPaths.push(<div> No Learning Paths similar to others </div>);
     }
     return learningPaths;
   };

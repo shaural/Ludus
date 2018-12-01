@@ -6,7 +6,7 @@ import firebase from 'firebase';
 // import custom component
 
 import { PasswordReset } from './passwordreset/PasswordReset';
-import ClassCreatePage from './components/createclass/ClassCreatePage'
+import ClassCreatePage from './components/createclass/ClassCreatePage';
 import HomePage from './components/home/HomePage';
 import LoginPage from './login/LoginPage';
 import SignUpPage from './components/account/SignUpPage';
@@ -28,7 +28,6 @@ import AllLps from './components/learningpath/studentlps/AllLps';
 import BookmarkMenu from './components/bookmarks/BookmarkMenu';
 import ClassMenu from './components/class/ClassMenu';
 
-
 const Axios = require('axios');
 class App extends Component {
   constructor(props) {
@@ -39,50 +38,15 @@ class App extends Component {
     };
   }
 
-  getUserID = (uid) => {
+  getUserID = uid => {
     this.setState({
       userID: uid
     });
   };
 
-
   render() {
     return (
       <div className="App">
-        Working Navigation: &nbsp;
-        <Link to="/">Home</Link> &nbsp;
-        <Link to="/login">Login</Link> &nbsp;
-        <Link to="/signup">Sign Up</Link> &nbsp;
-        <Link to="/teacher-classlist">Your Classes</Link> &nbsp;
-        <Link to="/student-lplist">Enrolled Learning Paths</Link> &nbsp;
-        <Link to="/teacher-lplist">Learning Paths</Link> &nbsp;
-        <Link to="/profile">User Profile</Link> &nbsp;
-        {/**/} <Link to="/class-search">Search Classes</Link> &nbsp;
-        <Link to="/teacher-lp-create">Create Learning Path</Link> &nbsp;
-        {/**/} <Link to="/password-recovery">Reset Password</Link> &nbsp;
-        <Link to="/interests">Add or remove interests</Link> &nbsp;
-        <Link to="/all-lp-list">All Lps</Link> &nbsp;
-        <Link
-          to={{
-            pathname: '/LPEdit',
-            state: {
-              lpid: '-LNWF1Itj0gydp4gt02V',
-              name: 'John Doe',
-              topic: 'Juggling',
-              owner: 'Jack Smith'
-            }
-          }}
-        >
-          Edit learning_path
-        </Link>{' '}
-        &nbsp;
-        {/* probably want to check if you're logged in or not for the home page */}
-        <Link to="garbage">404</Link> &nbsp; userID:&nbsp;
-        <input
-          className="inLine"
-          type="text"
-          onChange={event => this.setState({ userID: event.target.value })}
-        />
         {/*TODO: Use firebase.auth().currentUser to check if a user is logged in or not*/}
         {/* probably want to check if you're logged in or not for the home page? */}
         <NavBar userID={this.state.userID} />
@@ -100,7 +64,11 @@ class App extends Component {
           {/* <Route path="/" component={Dash} /> */}
           {/*does not require userID*/}
           <Route exact path="/interests" component={AddInterests} />
-          <Route exact path="/login" render={(props) => <LoginPage {...props} callBack={this.getUserID} />} />
+          <Route
+            exact
+            path="/login"
+            render={props => <LoginPage {...props} callBack={this.getUserID} />}
+          />
           <Route exact path="/signup" component={SignUpPage} />
           <Route exact path="/remove" component={DeleteInterests} />
           <Route
@@ -150,13 +118,9 @@ class App extends Component {
           />
           <Route
             path="/all-lp-list"
-            render={props => <AllLps {...props} userID={this.state.userID} /> }
+            render={props => <AllLps {...props} userID={this.state.userID} />}
           />
-          <Route
-            exact
-            path="/student-lpview"
-            component={LpOverview}
-          />
+          <Route exact path="/student-lpview" component={LpOverview} />
           <Route
             exact
             path="/class-menu/:classID"

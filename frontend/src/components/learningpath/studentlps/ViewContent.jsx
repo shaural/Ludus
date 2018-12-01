@@ -36,23 +36,23 @@ class ViewContent extends Component {
       }/info`
     ).then(({ data }) => {
       console.log(data);
-      if(data.Content){
+      if (data.Content) {
         this.setState({
           content: JSON.stringify(data.Content)
         });
-      var str = this.state.content;
+        var str = this.state.content;
 
-      if(str.substring(1,25) === "https://www.youtube.com/") {
-        this.setState({
-          vid: 1,
-          newcontent: str.substring(33,str.length-1)
-        });
-      } else {
-        this.setState({
-          newcontent: str
-        });
+        if (str.substring(1, 25) === 'https://www.youtube.com/') {
+          this.setState({
+            vid: 1,
+            newcontent: str.substring(33, str.length - 1)
+          });
+        } else {
+          this.setState({
+            newcontent: str
+          });
+        }
       }
-    }
     });
   }
 
@@ -66,19 +66,19 @@ class ViewContent extends Component {
         autoplay: 1
       }
     };
-    if( this.state.vid === 1){
+    if (this.state.vid === 1) {
       return (
         <main>
-        <div>
-          <Youtube
-            videoId={this.state.newcontent}
-            opts={opts}
-            onReady={this._onReady}
-          />
-        </div>
-        <div>
-          <button> Mark Complete </button>
-        </div>
+          <div>
+            <Youtube
+              videoId={this.state.newcontent}
+              opts={opts}
+              onReady={this._onReady}
+            />
+          </div>
+          <div>
+            <button> Mark Complete </button>
+          </div>
         </main>
       );
     } else {
@@ -90,7 +90,6 @@ class ViewContent extends Component {
         </main>
       );
     }
-
   }
 }
 

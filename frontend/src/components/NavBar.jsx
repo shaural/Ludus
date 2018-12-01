@@ -31,16 +31,18 @@ class NavBar extends Component {
           <Navbar fixedTop>
             <Navbar.Header>
               <Navbar.Brand>
-                <h1>
-                  <Link to="/">Ludus</Link>
-                </h1>
+                <Link to="/">Ludus</Link>
               </Navbar.Brand>
             </Navbar.Header>
             {/* <Navbar.Collapse> */}
-            <div>
-              <Link to="/signup">Sign Up</Link> <br />
-              <Link to="/login">Log In</Link>
-            </div>
+            <Nav>
+              <NavItem eventKey={1} href="#">
+                <Link to="/signup">Sign Up</Link> <br />
+              </NavItem>
+              <NavItem eventKey={2} href="#">
+                <Link to="/login">Log In</Link>
+              </NavItem>
+            </Nav>
             {/* </Navbar.Collapse> */}
           </Navbar>
         </div>

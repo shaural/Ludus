@@ -8,7 +8,7 @@ class LoginPage extends Component {
         <p className="App-intro">
           Please enter your username and password to begin
         </p>
-        <Login callBack={this.props.callBack.bind(this)}/>
+        <Login callBack={this.props.callBack.bind(this)} />
         <Link to="/signup">Don't have an account?</Link> &nbsp;
         <Link to="/password-recovery">Forgot your password?</Link> &nbsp;
       </div>

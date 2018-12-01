@@ -13,7 +13,9 @@ class SimilarCompletedList extends Component {
 
   componentDidMount() {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/student/${this.props.userID}/similarCompleted`
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/student/${
+        this.props.userID
+      }/similarCompleted`
     ).then(({ data }) => {
       console.log(data);
       this.setState({
@@ -32,12 +34,8 @@ class SimilarCompletedList extends Component {
     for (let i = 0; i < y; i++) {
       learningPaths.push(
         <div className="BlockBorder">
-          <div>
-            Name: {this.state.data[i][1].Name}
-          </div>
-          <div>
-            Topic: {this.state.data[i][1].Topic}
-          </div>
+          <div>Name: {this.state.data[i][1].Name}</div>
+          <div>Topic: {this.state.data[i][1].Topic}</div>
         </div>
       );
     }

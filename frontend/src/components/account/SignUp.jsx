@@ -1,6 +1,21 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
 import './SignUp.css';
+import {
+  Jumbotron,
+  Grid,
+  Row,
+  Col,
+  Panel,
+  Form,
+  FormGroup,
+  ControlLabel,
+  FormControl,
+  HelpBlock,
+  Button
+} from 'react-bootstrap';
+import { withRouter } from 'react-router-dom';
+import DatePicker from 'react-16-bootstrap-date-picker';
 var querystring = require('querystring');
 const Axios = require('axios');
 
@@ -16,64 +31,151 @@ class SignUpForm extends Component {
     };
     this.submitForm = this.submitForm.bind(this);
   }
+  validateName() {
+    return this.state.displayName ? 'success' : 'error';
+  }
+  validateEmail() {
+    return this.state.email.toString().includes('@') &&
+      this.state.email.toString().includes('.')
+      ? 'success'
+      : 'error';
+  }
+  validatePassword() {
+    return this.state.password &&
+      this.state.confirm &&
+      this.state.password.length >= 10 &&
+      this.state.password === this.state.confirm
+      ? 'success'
+      : 'error';
+  }
+  validateDob() {
+    return this.state.dob ? 'success' : 'error';
+  }
 
   render() {
     return (
-      <div>
-        <h1>Create an Account</h1> <br />
-        <form className="SignUpForm">
-          <br />
-          Display Name:&nbsp;
-          <input
-            className="inLine"
-            type="text"
-            onChange={event =>
-              this.setState({ displayName: event.target.value })
-            }
-          />
-          <br /> <br />
-          Email:&nbsp;
-          {'\t\t'}
-          <input
-            className="inLine"
-            type="text"
-            onChange={event => this.setState({ email: event.target.value })}
-          />
-          <br /> <br />
-          Password:&nbsp;
-          <input
-            className="inLine"
-            type="password"
-            onChange={event => this.setState({ password: event.target.value })}
-          />
-          <br /> <br />
-          Confirm Password:&nbsp;
-          <input
-            className="inLine"
-            type="password"
-            onChange={event => this.setState({ confirm: event.target.value })}
-          />
-          <br /> <br />
-          Date of Birth:&nbsp;
-          <input
-            className="inLinedob"
-            type="date"
-            onChange={event => this.setState({ dob: event.target.value })}
-          />
-          <br /> <br />
-          <input
-            className="centered"
-            type="button"
-            id="submitbutton"
-            value="Submit"
-            onClick={this.submitForm}
-          />
-        </form>
-      </div>
+      <Jumbotron>
+        <Grid>
+          <Row />
+          <Row>
+            <Panel bsStyle="primary">
+              <Panel.Heading>
+                <Panel.Title componentClass="h1">Create an account</Panel.Title>
+              </Panel.Heading>
+              <Panel.Body>
+                <Form horizontal>
+                  <FormGroup validationState={this.validateName()}>
+                    <Col componentClass={ControlLabel} sm={2}>
+                      Display name
+                    </Col>
+                    <Col sm={8}>
+                      <FormControl
+                        type="text"
+                        onChange={event =>
+                          this.setState({ displayName: event.target.value })
+                        }
+                      />
+                      <FormControl.Feedback />
+                    </Col>
+                    {this.validateName() !== 'success' ? (
+                      <Col componentClass={HelpBlock} sm={2}>
+                        Display name cannot be blank
+                      </Col>
+                    ) : (
+                      ''
+                    )}
+                  </FormGroup>
+                  <FormGroup validationState={this.validateEmail()}>
+                    <Col componentClass={ControlLabel} sm={2}>
+                      Email
+                    </Col>
+                    <Col sm={8}>
+                      <FormControl
+                        type="text"
+                        value={this.state.email}
+                        onChange={event =>
+                          this.setState({ email: event.target.value })
+                        }
+                      />
+                      <FormControl.Feedback />
+                    </Col>
+                    {this.validateEmail() !== 'success' ? (
+                      <Col componentClass={HelpBlock} sm={2}>
+                        You must enter a valid email
+                      </Col>
+                    ) : (
+                      ''
+                    )}
+                  </FormGroup>
+                  <FormGroup validationState={this.validatePassword()}>
+                    <Col componentClass={ControlLabel} sm={2}>
+                      Password
+                    </Col>
+                    <Col sm={8}>
+                      <FormControl
+                        type="password"
+                        onChange={event =>
+                          this.setState({ password: event.target.value })
+                        }
+                      />
+                      <FormControl.Feedback />
+                    </Col>
+                  </FormGroup>
+                  <FormGroup validationState={this.validatePassword()}>
+                    <Col componentClass={ControlLabel} sm={2}>
+                      Confirm Password
+                    </Col>
+                    <Col sm={8}>
+                      <FormControl
+                        type="password"
+                        onChange={event =>
+                          this.setState({ confirm: event.target.value })
+                        }
+                      />
+                      <FormControl.Feedback />
+                    </Col>
+                    {this.validatePassword() !== 'success' ? (
+                      <Col componentClass={HelpBlock} sm={2}>
+                        Passwords must match and be >10 characters
+                      </Col>
+                    ) : (
+                      ''
+                    )}
+                  </FormGroup>
+                  <FormGroup validationState={this.validateDob()}>
+                    <Col componentClass={ControlLabel} sm={2}>
+                      Birth Date
+                    </Col>
+                    <Col sm={8}>
+                      <DatePicker
+                        value={this.state.dob}
+                        onChange={val => this.setState({ dob: val })}
+                      />
+                      <FormControl.Feedback />
+                    </Col>
+                    {this.validateDob() !== 'success' ? (
+                      <Col componentClass={HelpBlock} sm={2}>
+                        You must enter a date
+                      </Col>
+                    ) : (
+                      ''
+                    )}
+                  </FormGroup>
+                  <Button type="submit" onClick={this.submitForm}>
+                    Submit
+                  </Button>
+                </Form>
+              </Panel.Body>
+            </Panel>
+          </Row>
+          <Row />
+        </Grid>
+      </Jumbotron>
     );
   }
 
-  submitForm() {
+  submitForm(e) {
+    e.preventDefault();
     if (
       !this.state.email.toString().includes('@') &&
       !this.state.email.toString().includes('.')
@@ -111,14 +213,15 @@ class SignUpForm extends Component {
               this.state.email,
               this.state.password
             );
+          alert('Successfully Signed Up!');
+          this.props.history.push('/login');
         })
         .catch(function(error) {
           alert(error);
         });
-      alert('Successfully Signed Up!');
     }
     return false;
   }
 }
 
-export default SignUpForm;
+export default withRouter(SignUpForm);

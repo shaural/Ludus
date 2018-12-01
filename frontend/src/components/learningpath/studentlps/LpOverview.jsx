@@ -35,7 +35,9 @@ class LpOverview extends Component {
 
   componentDidMount() {
     Axios.get(
-      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${this.state.lpid}`
+      `https://us-central1-ludusfire.cloudfunctions.net/learningPath/${
+        this.state.lpid
+      }`
     ).then(({ data }) => {
       console.log(data);
       this.setState({
